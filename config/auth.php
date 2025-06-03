@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'tenant_users', // EGYEDI PROVIDER
         ],
     ],
 
@@ -64,7 +64,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        'tenant_user' => [
+        'tenant_users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
             'connection' => 'tenant',
