@@ -1,0 +1,25 @@
+https://github.com/slametriky/laravel-sakai
+https://github.com/spatie/laravel-multitenancy
+https://spatie.be/docs/laravel-multitenancy/v3/introduction
+
+// ==============================
+// MIGRÁCIÓK
+// ==============================
+LANDLORD
+php artisan migrate --path=database/migrations/landlord --database=landlord --seed
+php artisan migrate:fresh --path=database/migrations/landlord --database=landlord --seed
+
+TENANT
+php artisan tenants:artisan "migrate --path=database/migrations/tenant --database=tenant --seed"
+php artisan tenants:artisan "migrate:fresh --path=database/migrations/tenant --database=tenant --seed"
+
+
+cache törlés
+php artisan tenants:artisan "cache:clear"
+
+//php artisan cache:clear       # Alkalmazás cache
+php artisan config:clear      # Konfigurációs cache
+php artisan config:cache
+php artisan route:clear       # Útvonal cache
+php artisan view:clear        # Nézet cache
+php artisan event:clear       # Esemény cache
