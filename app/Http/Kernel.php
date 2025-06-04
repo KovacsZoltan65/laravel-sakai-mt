@@ -41,10 +41,11 @@ class Kernel extends HttpKernel
 
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             //\Spatie\Multitenancy\Http\Middleware\CurrentTenant::class,
-            //\Spatie\Multitenancy\Http\Middleware\NeedsTenant::class, 
+            //\Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
-            
+
             \App\Http\Middleware\InitializeTenantConnection::class,
+            \App\Http\Middleware\InitializeTenantByDomain::class,
         ],
 
         'api' => [
@@ -52,7 +53,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\EnsureValidTenantSession::class,
         ],
-        
+
         'tenant' => [
             'needsTenant',
             'ensureValidTenantSession',
@@ -81,15 +82,15 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-        
+
         'needsTenant' => \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
         'ensureValidTenantSession' => \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
     ];
-    
+
     protected $routeMiddleware = [
         'needsTenant' => \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
         'ensureValidTenantSession' => \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
     ];
 
-    
+
 }
