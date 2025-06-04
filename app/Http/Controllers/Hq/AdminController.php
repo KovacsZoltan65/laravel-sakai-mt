@@ -3,11 +3,19 @@
 namespace App\Http\Controllers\Hq;
 
 use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        dd('Admin Controller');
+        return Inertia::render('Hq/Dashboard', [
+            'title' => 'Admin Dashboard',
+            'users' => 10,
+            'roles' => 0,
+            'permissions' => 0,
+            'companies' => 0,
+            'tenants' => 0,
+        ]);
     }
 }

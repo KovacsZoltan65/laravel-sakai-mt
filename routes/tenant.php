@@ -8,6 +8,8 @@ Route::middleware(['tenant'])->middleware(['auth'])->group(function() {
         [App\Http\Controllers\TenantController::class, 'index']
     )->name('tenant.index');
 
+Route::get('/dashboard', ['', 'index'])->name('');
+
     Route::get(
         '/employees', 
         [App\Http\Controllers\Tenants\EmployeeController::class, 'index']
