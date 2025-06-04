@@ -1,5 +1,7 @@
 <script setup>
 import AppLayout from "@/sakai/layout/AppLayout.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+
 import { Head } from "@inertiajs/vue3";
 
 import UsersCard from "@/Components/DashboardCards/UsersCard.vue";
@@ -23,7 +25,7 @@ const props = defineProps({
     
     <Head :title="props.title"/>
 
-    <AppLayout>
+    <AuthenticatedLayout>
         <div class="grid grid-cols-12 gap-8">
             <!-- USERS -->
             <div class="col-span-12 lg:col-span-12 xl:col-span-3">
@@ -51,7 +53,7 @@ const props = defineProps({
             </div>
 
         </div>
-    </AppLayout>
+    </AuthenticatedLayout>
 
 </template>
 
