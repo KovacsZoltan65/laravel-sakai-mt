@@ -10,7 +10,7 @@
 </script>
 
 <template>
-    <app-layout>
+    <AppLayout>
         <div class="grid grid-cols-12 gap-8">
             <div class="col-span-12 lg:col-span-6 xl:col-span-4">
                 <div class="card mb-0">
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-    </app-layout>
+    </AppLayout>
 </template>
     
 <style scoped lang="scss">

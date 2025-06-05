@@ -49,6 +49,8 @@ class DatabaseSeeder extends Seeder
             // ------------------------------------
 
             EmailsSeeder::class,
+
+            MenuItemSeeder::class,
         ]);
 
 

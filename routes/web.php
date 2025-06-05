@@ -23,6 +23,9 @@ use App\Http\Controllers\PermissionController;
 |
 */
 
+Route::get('/menu-items', [App\Http\Controllers\MenuItemController::class, 'index'])->name('get.menu');
+Route::resource('menu-items', App\Http\Controllers\MenuItemController::class);
+
 /*
 Route::get('/', function () {
     return redirect('login');  
