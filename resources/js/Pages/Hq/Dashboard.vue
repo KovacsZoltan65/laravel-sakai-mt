@@ -1,6 +1,5 @@
 <script setup>
 import AppLayout from "@/sakai/layout/AppLayout.vue";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 import { Head } from "@inertiajs/vue3";
 
@@ -22,10 +21,10 @@ const props = defineProps({
 </script>
 
 <template>
-    
+
     <Head :title="props.title"/>
 
-    <AuthenticatedLayout>
+    <AppLayout>
         <div class="grid grid-cols-12 gap-8">
             <!-- USERS -->
             <div class="col-span-12 lg:col-span-12 xl:col-span-3">
@@ -53,7 +52,7 @@ const props = defineProps({
             </div>
 
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 
 </template>
 

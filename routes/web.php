@@ -23,12 +23,12 @@ use App\Http\Controllers\PermissionController;
 |
 */
 
-Route::get('/menu-items', [App\Http\Controllers\MenuItemController::class, 'index'])->name('get.menu');
+//Route::get('/menu-items', [App\Http\Controllers\MenuItemController::class, 'index'])->name('get.menu');
 Route::resource('menu-items', App\Http\Controllers\MenuItemController::class);
 
 /*
 Route::get('/', function () {
-    return redirect('login');  
+    return redirect('login');
 });
 
 Route::get('/dashboard', function () {
@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/user', UserController::class)->except('create', 'show', 'edit');
     Route::post('/user/destroy-bulk', [UserController::class, 'destroyBulk'])->name('user.destroy-bulk');
-    
+
     Route::resource('/role', RoleController::class)->except('create', 'show', 'edit');
 
     Route::resource('/permission', PermissionController::class)->except('create', 'show', 'edit');
