@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\MenuItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
-use App\Models\MenuItem;
 
-class MenuItemSeeder extends Seeder
+class tenantMenuSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -27,21 +27,20 @@ class MenuItemSeeder extends Seeder
             [ 'label' => 'dashboard', 'url' => '/dashboard', 'default_weight' => 1, ]
         );
 
+        /*
         // Főmenü - Administration
         $administration = MenuItem::create(
             [ 'label' => 'administration', 'url' => null, 'default_weight' => 2, ]
         );
 
-        $security = $administration->children()->create(
-            ['label' => 'security', 'url' => null, 'default_weight' => 1,]
-        );
-
-        $security->children()->createMany([
+        $administration->children()->createMany(
+            [
                 [ 'label' => 'users', 'url' => '/users', 'default_weight' => 1, ],
                 [ 'label' => 'roles', 'url' => '/roles', 'default_weight' => 2, ],
                 [ 'label' => 'permissions', 'url' => '/permissions', 'default_weight' => 3, ],
                 [ 'label' => 'activities', 'url' => '/activities', 'default_weight' => 4, ]
-            ]);
+            ]
+        );
 
         // Főmenü - System
         $system = MenuItem::create(
@@ -79,5 +78,11 @@ class MenuItemSeeder extends Seeder
                 [ 'label' => 'entities', 'url' => '/entities', 'default_weight' => 3, ],
             ]
         );
+
+
+        // Security
+        $security = 
+        */
+
     }
 }

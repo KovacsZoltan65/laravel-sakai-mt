@@ -50,7 +50,6 @@ class DatabaseSeeder extends Seeder
 
             EmailsSeeder::class,
 
-            MenuItemSeeder::class,
         ]);
 
 
@@ -78,13 +77,16 @@ class DatabaseSeeder extends Seeder
             $this->call(DefaultTenantSeeder::class);
         }
 */
-        if( $tenant->domain === 'hq.localhost' ) {
+        if( $tenant->domain === 'hq.mt' ) {
             $this->call([
-                //
+                MenuItemSeeder::class,
+                //hqMenuSeeder::class,
             ]);
         } else {
             $this->call([
                 EmployeeSeeder::class,
+                MenuItemSeeder::class,
+                //tenantMenuSeeder::class,
 
                 // Fontos a sorrend, ne változtasd meg!!!
 

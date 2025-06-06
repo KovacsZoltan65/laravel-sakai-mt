@@ -20,12 +20,9 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
     });
     
     
-    Route::get(
-        '/', 
-        [App\Http\Controllers\hq\AdminController::class, 'index']
-    )->name('admin.index');
+    Route::get('/', fn() => redirect('dashboard') );
 
-    Route::get('', [App\Http\Controllers\Hq\AdminController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Hq\AdminController::class, 'index'])->name('dashboard');
 
     // Tovobbi admin útvonalak...
 });
