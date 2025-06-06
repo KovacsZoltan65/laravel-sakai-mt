@@ -7,7 +7,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 
-import AppMenu from "@/Components/Shared/AppMenu.vue";
+import AppMenu from "@/Components/AppMenu.vue";
 import AppResponsiveMenu from "@/Components/Shared/AppResponsiveMenu.vue";
 
 const showingNavigationDropdown = ref(false);

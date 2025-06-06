@@ -3,14 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
+use App\Models\MenuItemUsage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class MenuItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $menuItems = MenuItem::with('children')->whereNull('parent_id')->get();
+        $host = $request->getHost();
+        $type = str_contains($host, 'hq') ? 'hq' : 'tenant';
+
+        $menuItems = MenuItem::with(['children', 'usages'])
+            ->whereNull('parent_id')
+            ->orderBy('order_index')->get();
 
         return response()->json($menuItems);
     }

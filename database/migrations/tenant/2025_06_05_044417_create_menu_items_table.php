@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('url')->nullable()->comment('URL');
             $table->integer('default_weight')->default(0)->comment('Alapértelmezett súly');
             $table->unsignedBigInteger('parent_id')->nullable()->comment('Szülő menü azonosítója');
+            $table->integer('order_index')->default(0)->comment('Megjelenítési sorrend');
             $table->timestamps();
             
             $table->foreign('parent_id')->references('id')->on('menu_items')->cascadeOnDelete();

@@ -5,7 +5,6 @@ import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppTopbar from './AppTopbar.vue';
 
-
 const { layoutConfig, layoutState, isSidebarActive, resetMenu } = useLayout();
 
 const outsideClickListener = ref(null);
