@@ -23,3 +23,16 @@ php artisan config:cache
 php artisan route:clear       # Útvonal cache
 php artisan view:clear        # Nézet cache
 php artisan event:clear       # Esemény cache
+
+// ===========================================
+// ACS SYSTEMS
+// ===========================================
+php artisan make:model AcsSystem
+php artisan make:controller AcsSystemController
+php artisan make:migration CreateAcsSystemsTable
+php artisan make:seeder AcsSystemSeeder
+php artisan make:factory AcsSystemFactory
+php artisan make:request AcsSystemIndexRequest
+php artisan make:request AcsSystemStoreRequest
+php artisan make:request AcsSystemUpdateRequest
+php artisan make:request AcsSystemDeleteRequest
