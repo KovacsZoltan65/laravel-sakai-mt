@@ -22,7 +22,20 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
     
     Route::get('/', fn() => redirect('dashboard') );
 
-    Route::get('/dashboard', [App\Http\Controllers\Hq\AdminController::class, 'index'])->name('dashboard');
+    Route::get(
+        '/dashboard', 
+        [App\Http\Controllers\Hq\AdminController::class, 'index']
+    )->name('dashboard');
 
     // Tovobbi admin útvonalak...
+    
+    /**
+     * ========================================
+     * ACS SYSTEMS
+     * ========================================
+     */
+    Route::get(
+        '/acs_systems', 
+        [App\Http\Controllers\Tenants\AcsSystemController::class, 'index']
+    )->name('hq.acs_system.index');
 });
