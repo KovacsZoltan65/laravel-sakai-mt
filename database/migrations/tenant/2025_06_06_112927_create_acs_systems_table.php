@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('acs_systems', function (Blueprint $table) {
             $table->increments('id')->comment('Rekord azonosító');
 
-            $table->string('name', 255)->unique()->comment('ACS rendszer neve');
+            $table->string('name')->unique()->comment('ACS rendszer neve');
 
             $table->boolean('active')->default(1)->index()->comment('Aktív');
 

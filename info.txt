@@ -13,6 +13,8 @@ TENANT
 php artisan tenants:artisan "migrate --path=database/migrations/tenant --database=tenant --seed"
 php artisan tenants:artisan "migrate:fresh --path=database/migrations/tenant --database=tenant --seed"
 
+ HA NINCS sessions TÁBLA:
+ php artisan session:table
 
 cache törlés
 php artisan tenants:artisan "cache:clear"
