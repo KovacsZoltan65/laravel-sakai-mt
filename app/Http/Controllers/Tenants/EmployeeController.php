@@ -11,7 +11,6 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        dd('AA');
         return Inertia::render('Tenants/Employee/Index', [
             'title' => 'Tenant Dashboard'
         ]);
