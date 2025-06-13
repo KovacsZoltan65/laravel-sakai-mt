@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('label')->comment('Felirat');
             $table->string('icon')->default('')->comment('Ikon');
             $table->string('url')->nullable()->comment('URL');
+            $table->string('route_name')->nullable()->comment('Laravel route neve');
             $table->integer('default_weight')->default(0)->comment('Alapértelmezett súly');
             $table->unsignedBigInteger('parent_id')->nullable()->comment('Szülő menü azonosítója');
             $table->integer('order_index')->default(0)->comment('Megjelenítési sorrend');

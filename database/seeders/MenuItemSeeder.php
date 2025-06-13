@@ -77,6 +77,12 @@ class MenuItemSeeder extends Seeder
                 [ 'label' => 'companies', 'url' => '/companies', 'default_weight' => 1, ],
                 [ 'label' => 'subdomains', 'url' => '/subdomains', 'default_weight' => 2, ],
                 [ 'label' => 'entities', 'url' => '/entities', 'default_weight' => 3, ],
+                [
+                    'label' => 'employees', 
+                    //'url' => '/employees', 
+                    'route_name' => 'employees.index',
+                    'default_weight' => 4,
+                ],
             ]
         );
     }

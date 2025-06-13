@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('acs_systems', function (Blueprint $table) {
+            $table->engine('InnoDB');
+            $table->charset('utf8mb3');
+            $table->collation('utf8mb3_unicode_ci');
+            
             $table->increments('id')->comment('Rekord azonosító');
-
             $table->string('name', 255)->unique()->comment('ACS rendszer neve');
-
             $table->boolean('active')->default(1)->index()->comment('Aktív');
 
             $table->timestamps();

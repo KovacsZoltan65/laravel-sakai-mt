@@ -17,3 +17,20 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware(['tenant', 'auth'])->group(function() {
+    //Route::post(
+    //    '/emloyees/fetch', 
+    //    [\App\Http\Controllers\Tenants\EmployeeController::class, 'fetch']
+    //)->name('employees.fetch');
+});
+
+Route::domain('hq.mt')->middleware(['auth', 'verified'])->group(function() {
+    
+    /*
+    Route::get(
+        '/employees/fetch', 
+        [\App\Http\Controllers\Tenants\EmployeeController::class, 'fetch']
+    )->name('employees.fetch');
+    */
+});

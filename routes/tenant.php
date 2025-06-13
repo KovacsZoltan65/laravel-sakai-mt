@@ -17,6 +17,11 @@ Route::middleware(['tenant'])->middleware(['auth'])->group(function() {
         '/employees', 
         [App\Http\Controllers\Tenants\EmployeeController::class, 'index']
     )->name('employees.index');
+    
+    //Route::post(
+    //    '/emloyees/fetch', 
+    //    [\App\Http\Controllers\Tenants\EmployeeController::class, 'fetch']
+    //)->name('employees.fetch');
 
     // További bérlői útvonalak...
 

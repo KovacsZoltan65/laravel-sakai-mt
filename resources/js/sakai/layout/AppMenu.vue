@@ -9,7 +9,7 @@ onMounted(async () => {
     const response = await axios.get('/menu-items');
     console.log('response.data', response.data);
     model.value = transformMenuToSakaiModel(response.data);
-    console.log('model.value', model.value);
+    //console.log('model.value', model.value);
 });
 
 function transformMenuToSakaiModel(items) {
