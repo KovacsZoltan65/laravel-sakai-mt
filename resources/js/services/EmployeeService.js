@@ -10,7 +10,6 @@ class EmployeeService extends BaseService
 
     getEmployees(params = {})
     {
-        console.log('getEmployees', params);
         return this.get(`${this.url}/fetch`, { params });
     }
 

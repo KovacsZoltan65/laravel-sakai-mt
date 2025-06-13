@@ -22,12 +22,11 @@ const props = defineProps({
 // 👇 API hívás definíció
 const fetchEmployees = async (params) => {
     try {
-        console.log('fetchEmployees', params);
         const response = await EmployeeService.getEmployees(params);
 
-        //console.log('response', response);
+        console.log('response', response.data);
 
-        //return response.data;
+        return response.data;
     } catch( error ) {
         console.log(error);
     }

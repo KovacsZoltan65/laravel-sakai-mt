@@ -19,7 +19,6 @@ class EmployeeController extends Controller
 {
     public function index(Request $request): InertiaResponse
     {
-\Log::info('employee.index');
         return Inertia::render('Tenants/Employee/Index', [
             'title' => 'Employees',
             'filters' => $request->all(['search', 'field', 'order']),
@@ -37,9 +36,7 @@ class EmployeeController extends Controller
     }
     
     public function fetch(Request $request): JsonResponse
-    {
-\Log::info('employee.fetch');
-        /*
+    {   
         $_employees = Employee::query();
         
         if( $request->has(key: 'search') ) {
@@ -51,9 +48,8 @@ class EmployeeController extends Controller
         }
         
         $employees = $_employees->paginate(10, ['*'], 'page', $request->page ?? 1);
-        
+   
         return response()->json($employees);
-        */
     }
     
     public function getEmployee(Request $request): JsonResponse
