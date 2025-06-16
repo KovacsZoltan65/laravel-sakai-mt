@@ -18,4 +18,14 @@ class AdminController extends Controller
             'tenants' => 0,
         ]);
     }
+    
+    public function employees(Request $request)
+    {
+        //
+    }
+    
+    public function fetchEmployees(Request $request)
+    {
+        //
+    }
 }

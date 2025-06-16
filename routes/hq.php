@@ -31,6 +31,21 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
     
     /**
      * ========================================
+     * EMPLOYEES
+     * ========================================
+     */
+    Route::get(
+        '/employees', 
+        [App\Http\Controllers\Hq\EmployeeController::class, 'index']
+    )->name('employees.index');
+    
+    Route::post(
+        '/employees/fetch', 
+        [\App\Http\Controllers\Hq\EmployeeController::class, 'fetch']
+    )->name('employees.fetch');
+    
+    /**
+     * ========================================
      * ACS SYSTEMS
      * ========================================
      */

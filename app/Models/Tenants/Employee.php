@@ -9,6 +9,6 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $connection = 'tenant';
+    //protected $connection = 'tenant';
     protected $fillable   = ['name', 'position', 'email', 'active'];
 }

@@ -16,7 +16,7 @@ class TenantSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        //
+        /*
         Tenant::insertOrIgnore([
             'name'       => 'Hq', 'domain'     => 'hq.tenant', 'database' => 'hq',
             'username'   => 'hq', 'password'   => 'Pa$$w0rd',  'active'   => 1,
@@ -32,7 +32,7 @@ class TenantSeeder extends Seeder
             'username'   => 'company_02', 'password'   => 'Pa$$w0rd',          'active'   => 1,
             'created_at' => $now,         'updated_at' => $now,
         ]);
-        //
+        */
 
         //
         Tenant::insertOrIgnore([
