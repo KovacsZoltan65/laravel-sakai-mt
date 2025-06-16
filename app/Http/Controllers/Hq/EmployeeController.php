@@ -58,61 +58,27 @@ class EmployeeController extends Controller
         
         return response()->json(['employees' => $employees]);
     }
-    /*
-    public function getEmployee(Request $request): JsonResponse
-    {
-        try {
-            $employee = Employee::findOrFail($request->id);
-
-            return response()->json($employee, Response::HTTP_OK);
-        } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'getEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'getEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
-        } catch( QueryException $ex ) {
-            \Log::info(message: 'getEmployee QueryException: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'getEmployee Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch( Exception $ex ) {
-            \Log::info(message: 'getEmployee Exception: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'getEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public function getEmployeeByName(string $name): JsonResponse
-    {
-        try {
-            $employee = Company::where('name', '=', $name)->firstOrFail();
-
-            return response()->json($employee, Response::HTTP_OK);
-        } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'getEmployeeByName ModelNotFoundException: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'getEmployeeByName Employee not found'],  Response::HTTP_NOT_FOUND);
-        } catch( QueryException $ex ) {
-            \Log::info(message: 'getEmployeeByName QueryException: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'getEmployeeByName Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch( Exception $ex ) {
-            \Log::info(message: 'getEmployeeByName Exception: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'getEmployeeByName Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
+    
     public function storeEmployee(StoreEmployeeRequest $request): JsonResponse
     {
         try {
-            $employee = DB::transaction(function() use($request): Employee {
-                // 1. Employee létrehozása
-                $_employee = Employee::create($request->all());
+            $tenant_id = $request->get('tenant_id');
+            $tenant = Tenant::findOrFail($tenant_id);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
 
+            $employee = DB::transaction(function() use($request, $connectionName): Employee {
+                // 1. Employee létrehozása
+                $_employee = Employee::on($connectionName)->create($request->all());
+                
                 // 2. Kapcsolódó rekordok létrehozása (pl. alapértelmezett beállítások)
                 $this->createDefaultSettings($_employee);
 
                 // 3. Cache törlése, ha releváns
-
-
+                
                 return $_employee;
-            });
-
-            return response()->json($employee, Response::HTTP_CREATED);
-
+            });            
+            
+            return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'storeEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
             return response()->json(['error' => 'storeEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
@@ -124,30 +90,31 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'storeEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     public function updateEmployee(UpdateEmployeeRequest $request, int $id): JsonResponse
     {
         try {
-            $employee = DB::transaction(function() use($request, $id) {
+            $tenant_id = $request->get('tenant_id');
+            $tenant = Tenant::findOrFail($tenant_id);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
+            
+            $employee = DB::transaction(function() use($request, $id, $connectionName): Employee {
                 // 1. Módosítandó rekord zárolása és lekérése
-                $_employee = Entity::lockForUpdate()->findOrFail($id);
-
+                $_employee = Employee::on($connectionName)->lockForUpdate()->findOrFail($id);
                 // 2. Rekord frissítése
                 $_employee->update($request->all());
                 // 3. Model frissítése
-                $_employee.refresh();
-
+                $_employee->refresh();
                 // 4. Kapcsolódó rekordok frissítése (pl. alapértelmezett beállítások)
                 $this->updateDefaultSettings($_employee);
-
-
+                
                 // 5. Cache törlése, ha releváns
-
-
+                
                 return $_employee;
             });
-
-            return response()->json($employee, Response::HTTP_CREATED);
+            
+            return response()->json($employee, Response::HTTP_OK);
+            
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'updateEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
             return response()->json(['error' => 'updateEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
@@ -159,7 +126,7 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'updateEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     public function deleteEmployees(Request $request): JsonResponse
     {
         try {
@@ -167,13 +134,17 @@ class EmployeeController extends Controller
                 'ids' => 'required|array|min:1', // Kötelező, legalább 1 id kell
                 'ids.*' => 'integer|exists:employees,id', // Az id-k egész számok és létező cégek legyenek
             ]);
-
+            
             $ids = $validated['ids'];
-
-            $deletedCount = DB::transaction(function() use($ids) {
+            
+            $tenant_id = $request->get('tenant_id');
+            $tenant = Tenant::findOrFail($tenant_id);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
+            
+            $deletedCount = DB::transaction(function() use($connectionName, $ids): int {
                 // 1. Törlés - válaszd az egyik verziót:
                 // a) Observer nélküli, gyors SQL törlés:
-                $count = Employee::whereIn('id', $ids)->delete();
+                $count = Employee::on($connectionName)->lockForUpdate()->whereIn('id', $ids)->delete();
 
                 // b) Observer-kompatibilis, egyenkénti törlés:
                 //$_cities = City::whereIn('id', $ids)->lockForUpdate()->get();
@@ -182,13 +153,14 @@ class EmployeeController extends Controller
                 //        $deletedCount++;
                 //    }
                 //});
-
+                
                 // Cache törlése, ha szükséges
-
+                
                 return $count;
             });
-
+            
             return response()->json($deletedCount, Response::HTTP_OK);
+            
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'deleteEmployees ModelNotFoundException: ' . print_r(value: $ex, return: true));
             return response()->json(['error' => 'deleteEmployees Employee not found'],  Response::HTTP_NOT_FOUND);
@@ -200,19 +172,24 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'deleteEmployees Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-    public function deleteEmployee(DeleteEmployeeRequest $request): JsonResponse
+    
+    public function deleteEmployee(Request $request): JsonResponse
     {
         try {
-            $employee = DB::transaction(function() use($request): Company {
-                $_employee = Company::lockForUpdate()->findOrFail($request->id);
+            
+            $tenant_id = $request->get('tenant_id');
+            $tenant = Tenant::findOrFail($tenant_id);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
+            
+            $employee = DB::transaction(function() use($request, $connectionName) {
+                $_employee = Employee::lockForUpdate()->findOrFail($request->id);
                 $_employee->delete();
-
+                
                 // Cache törlése, ha szükséges
-
+                
                 return $_employee;
             });
-
+            
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'deleteEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
@@ -225,23 +202,26 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'deleteEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     public function restoreEmployee(Request $request): JsonResponse
     {
         try {
-            $employee = DB::transaction(function () use ($request): Company {
-                // Soft-deleted ország lekérése
-                $_employee = Company::withTrashed()->findOrFail($request->id);
-
+            $tenant_id = $request->get('tenant_id');
+            $tenant = Tenant::findOrFail($tenant_id);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
+            
+            $employee = DB::transaction(function() use($connectionName, $request) {
+                $_employee = Employee::on($connectionName)->lockForUpdate()->withTrashed()->findOrFail($request->id);
+                
                 // Visszaállítás
                 $_employee->restore();
-
+                
                 // Friss adat betöltése
                 $_employee->refresh();
-
+                
                 return $_employee;
             });
-
+            
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'restoreEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
@@ -254,13 +234,17 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'restoreEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     public function realDeleteEmployee(Request $request): JsonResponse
     {
         try {
-            $employee = DB::transaction(function()use($request): Company {
+            $tenant_id = $request->get('tenant_id');
+            $tenant = Tenant::findOrFail($tenant_id);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
+            
+            $employee = DB::transaction(function() use($connectionName, $request): Company {
                 // 1. Ország keresése
-                $_employee = Company::withTrashed()->lockForUpdate()->findOrFail($request->id);
+                $_employee = Employee::withTrashed()->on($connectionName)->lockForUpdate()->findOrFail($request->id);
                 // 2. Ország véglegesen törlése
                 $_employee->forceDelete();
 
@@ -289,5 +273,4 @@ class EmployeeController extends Controller
     {
         //
     }
-    */
 }

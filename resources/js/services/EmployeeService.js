@@ -15,7 +15,8 @@ class EmployeeService extends BaseService
 
     hq_getEmployees(params = {})
     {
-        return this.post(route('employees.fetch'), { params });
+        return this.post(`${this.url}/fetch`, params);
+        //return this.post(route('employees.fetch'), params);
     }
 
     getEmployee(payload)
