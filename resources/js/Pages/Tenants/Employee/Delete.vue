@@ -1,6 +1,9 @@
 <script setup>
 import EmployeeService from "@/services/Employee/EmployeeService.js";
 
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
 const props = defineProps({
     employee: Object,
     title: String,
@@ -12,10 +15,26 @@ const emit = defineEmits(['close', 'deleted']);
 const deleteEmployee = async () => {
     try {
         await EmployeeService.deleteEmployee(props.employee.id);
+
+        toast.add({
+            severity: 'success',
+            summary: 'Sikeres törlés',
+            life: 3000
+        });
+
         emit('deleted', props.employee.id);
         closeModal();
     } catch (e) {
         console.error("Törlés sikertelen", e);
+
+        toast.add({
+            severity: 'error',
+            summary: 'Hiba',
+            detail: e.message ?? 'Mentés sikertelen',
+            life: 5000
+        });
+    } finally {
+        //
     }
 };
 

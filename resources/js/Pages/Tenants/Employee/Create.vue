@@ -5,6 +5,9 @@ import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
 import EmployeeService from "@/services/Employee/EmployeeService.js";
 
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
 const props = defineProps({
     show: Boolean,
     title: String,
@@ -41,10 +44,23 @@ const save = async () => {
                 ...form.value,
             });
 
+            toast.add({
+                severity: 'success',
+                summary: 'Sikeres mentés',
+                life: 3000
+            });
+
             emit('saved', form.value);
             closeModal();
         } catch (e) {
             console.error('Mentés sikertelen', e);
+
+            toast.add({
+                severity: 'error',
+                summary: 'Hiba',
+                detail: e.message ?? 'Mentés sikertelen',
+                life: 5000
+            });
         } finally {
             isSaving.value = false;
         }

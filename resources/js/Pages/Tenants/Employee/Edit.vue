@@ -4,6 +4,9 @@ import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
 import EmployeeService from "@/services/Employee/EmployeeService.js";
 
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
 const props = defineProps({
     show: Boolean,
     title: String,
@@ -11,6 +14,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close', 'saved']);
+
+const isSaving = ref(false);
 
 // Űrlap adatok
 const form = ref({
@@ -48,15 +53,33 @@ watch(
 
 // Frissítés (update) művelet
 const updateEmployee = async () => {
+    isSaving.value = true;
+
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
             // A szerkesztett entitás azonosítóját props.employee.id használjuk
             await EmployeeService.updateEmployee(props.employee.id, form.value);
+
+            toast.add({
+                severity: 'success',
+                summary: 'Sikeres frissítés',
+                life: 3000
+            });
+
             emit('saved', form.value);
             closeModal();
         } catch(e) {
             console.error('Frissítés sikertelen', e);
+
+            toast.add({
+                severity: 'error',
+                summary: 'Hiba',
+                detail: e.message ?? 'Frissítés sikertelen',
+                life: 5000
+            });
+        } finally {
+            isSaving.value = false;
         }
     }
 };
