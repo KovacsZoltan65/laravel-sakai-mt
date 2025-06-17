@@ -22,8 +22,8 @@ class MenuItemSeeder extends Seeder
         $home = MenuItem::create(
             [
                 'label' => 'home',
-                //'url' => '/home',
-                'route_name' => 'dashboard',
+                'url' => null,
+                'route_name' => null,
                 'default_weight' => 1,
             ]
         );
@@ -31,8 +31,8 @@ class MenuItemSeeder extends Seeder
         $home->children()->create(
             [
                 'label' => 'dashboard',
-                'url' => '/dashboard',
-                'route_name' => '',
+                'url' => null,
+                'route_name' => 'dashboard',
                 'default_weight' => 1,
             ]
         );

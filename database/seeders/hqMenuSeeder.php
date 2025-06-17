@@ -20,13 +20,41 @@ class hqMenuSeeder extends Seeder
 
         // Főmenü - Home
         $home = MenuItem::create(
-            [ 'label' => 'home', 'url' => '/home', 'default_weight' => 1, ]
+            [
+                'label' => 'home', 
+                'url' => null,
+                'route_name' => null,
+                'default_weight' => 1,
+            ]
         );
 
+        // Főmenü - dashboard
         $home->children()->create(
-            [ 'label' => 'dashboard', 'url' => '/dashboard', 'default_weight' => 1, ]
+            [
+                'label' => 'dashboard', 
+                'url' => null, 
+                'route_name' => 'dashboard',
+                'default_weight' => 1,
+            ]
         );
-
+        
+        // Főmenü - Administration
+        $administration = MenuItem::create([
+            'label' => 'administration',
+            'url' => null,
+            'route_name' => null,
+            'default_weight' => 2,
+        ]);
+        
+        // Administration - Employees
+        $administration->children()->create([
+            'label' => 'employees',
+            'url' => null,
+            'route_name' => 'hq.employees.index',
+            'icon' => 'pi pi-th-large',
+            'default_weight' => 1,
+        ]);
+        /*
         // System
         $system = MenuItem::create(
             ['label' => 'System', 'url' => null, 'default_weight' => 1,]
@@ -39,6 +67,8 @@ class hqMenuSeeder extends Seeder
             ['label' => 'Regions', 'url' => '/regions', 'default_weight' => 2,],
             ['label' => 'Cities', 'url' => '/cities', 'default_weight' => 3,],
         ]);
+        */
+        
         /*
         // Főmenü - Administration
         $administration = MenuItem::create(

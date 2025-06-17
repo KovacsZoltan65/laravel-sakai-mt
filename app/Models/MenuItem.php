@@ -14,7 +14,7 @@ class MenuItem extends Model
 
     protected $table = 'menu_items';
 
-    protected $fillable = ['title', 'icon', 'url', 'default_weight', 'parent_id'];
+    protected $fillable = ['title', 'icon', 'url', 'route_name', 'default_weight', 'parent_id'];
 
     public function scopeActive(Builder $query): Builder
     {
