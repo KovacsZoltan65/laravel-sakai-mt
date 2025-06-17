@@ -11,7 +11,6 @@ import DeleteModal from "./Delete.vue";
 
 import { usePermissions } from "@/composables/usePermissions";
 import { useDataTableFetcher } from "@/composables/useDataTableFetcher";
-
 const { has } = usePermissions();
 
 const props = defineProps({
@@ -23,8 +22,6 @@ const props = defineProps({
 const fetchEmployees = async (params) => {
     try {
         const response = await EmployeeService.getEmployees(params);
-
-        console.log('response', response.data);
 
         return response.data;
     } catch( error ) {
@@ -64,6 +61,7 @@ onMounted(fetchData);
 
     <AppLayout>
         <div class="card">
+            <h1 class="text-2xl font-bold mb-4">Céges dolgozók kezelése</h1>
 
             <!-- CREATE MODAL -->
             <CreateModal
@@ -76,7 +74,7 @@ onMounted(fetchData);
             <!-- EDIT MODAL -->
             <EditModal
                 :show="data.editOpen"
-                :company="data.company"
+                :employee="data.employee"
                 :title="props.title"
                 @close="data.editOpen = false"
                 @saved="fetchData"
@@ -85,23 +83,27 @@ onMounted(fetchData);
             <!-- DELETE MODAL -->
             <DeleteModal
                 :show="data.deleteOpen"
-                :company="data.company"
+                :employee="data.employee"
                 :title="props.title"
                 @close="data.deleteOpen = false"
                 @deleted="fetchData" />
 
             <!-- CREATE BUTTON -->
             <Button
-                v-if="has('create company')"
+                v-if="has('create employee')"
                 icon="pi pi-plus"
                 label="Create"
                 @click="data.createOpen = true"
                 class="mr-2" />
 
             <!-- REFRESH BUTTON -->
+            <!--<Button
+                @click="fetchEmployees"
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />-->
             <Button
                 @click="fetchData"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
+                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+            />
 
             <!-- DATATABLE -->
             <DataTable v-if="employees" :value="employees.data" :rows="employees.per_page"
@@ -117,8 +119,8 @@ onMounted(fetchData);
                 <Column field="name" header="Name" />
                 <Column field="position" header="Position" />
                 <Column field="email" header="Email" />
-                <Column field="created_at" header="Created" />
-                <Column field="updated_at" header="Updated" />
+                <!--<Column field="created_at" header="Created" />
+                <Column field="updated_at" header="Updated" />-->
 
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
@@ -131,7 +133,7 @@ onMounted(fetchData);
                             class="mr-2"
                             @click="() => {
                                 data.editOpen = true;
-                                data.company = slotProps.data;
+                                data.employee = slotProps.data;
                             }" />
 
                         <!--  DELETE BUTTON -->
@@ -142,7 +144,7 @@ onMounted(fetchData);
                             severity="danger"
                             @click="() => {
                                 data.deleteOpen = true;
-                                data.company = slotProps.data;
+                                data.employee = slotProps.data;
                             }" />
 
                     </template>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DeleteEmployeeRequest;
 use App\Http\Requests\IndexEmployeeRequest;
 use App\Http\Requests\StoreEmployeeRequest;
+use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Tenants\Employee;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -98,7 +99,7 @@ class EmployeeController extends Controller
     public function updateEmployee(UpdateEmployeeRequest $request, int $id): JsonResponse
     {
         try {
-            $tenant_id = $request->get('tenant_id');
+            $tenant_id = $request->tenant_id;
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
             
@@ -177,16 +178,18 @@ class EmployeeController extends Controller
         }
     }
     
-    public function deleteEmployee(Request $request): JsonResponse
+    public function deleteEmployee(Request $request, int $id): JsonResponse
     {
+\Log::info('$tenant_id: ' . print_r($request->tenant_id, true));
+\Log::info('$id: ' . print_r($id, true));
         try {
             
-            $tenant_id = $request->get('tenant_id');
+            $tenant_id = $request->tenant_id;
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
             
-            $employee = DB::transaction(function() use($request, $connectionName) {
-                $_employee = Employee::lockForUpdate()->findOrFail($request->id);
+            $employee = DB::transaction(function() use($request, $connectionName, $id) {
+                $_employee = Employee::on($connectionName)->lockForUpdate()->findOrFail($id);
                 $_employee->delete();
                 
                 // Cache törlése, ha szükséges

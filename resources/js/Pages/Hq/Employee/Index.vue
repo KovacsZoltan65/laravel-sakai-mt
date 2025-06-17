@@ -2,12 +2,12 @@
 import { onMounted, reactive, watch, ref } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
 import AppLayout from "@/sakai/layout/AppLayout.vue";
+// Szolgáltatás
+import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 
 import CreateModal from "@/Pages/Hq/Employee/Create.vue";
 import EditModal from "@/Pages/Hq/Employee/Edit.vue";
 import DeleteModal from "@/Pages/Hq/Employee/Delete.vue";
-
-import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 
 import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
@@ -66,7 +66,7 @@ const data = reactive({
             <CreateModal
                 :show="data.createOpen"
                 :title="props.title"
-                :tenant-id="selectedTenant"
+                :tenantId="selectedTenant"
                 @close="data.createOpen = false"
                 @saved="fetchEmployees"
             />
@@ -74,7 +74,7 @@ const data = reactive({
                 :show="data.editOpen"
                 :employee="data.employee"
                 :title="props.title"
-                :tenant-id="selectedTenant"
+                :tenantId="selectedTenant"
                 @close="data.editOpen = false"
                 @saved="fetchEmployees"
             />
@@ -82,6 +82,7 @@ const data = reactive({
                 :show="data.deleteOpen"
                 :employee="data.employee"
                 :title="props.title"
+                :tenantId="selectedTenant"
                 @close="data.deleteOpen = false"
                 @deleted="fetchEmployees" />
 
@@ -147,7 +148,10 @@ const data = reactive({
                             icon="pi pi-pencil"
                             outlined rounded
                             class="mr-2"
-                            @click="() => { data.editOpen = true; data.employee = slotProps.data; }" />
+                            @click="() => {
+                                data.editOpen = true;
+                                data.employee = slotProps.data;
+                            }" />
                         <Button
                             v-if="has('delete employee')"
                             icon="pi pi-trash"

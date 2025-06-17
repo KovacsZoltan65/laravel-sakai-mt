@@ -49,7 +49,11 @@ function convertItem(item) {
 <template>
     <ul class="layout-menu">
         <template v-for="(group, i) in model" :key="i">
-            <AppMenuItem v-for="(item, j) in group.items" :key="j" :item="item" :index="j" />
+            <AppMenuItem
+                v-for="(item, j) in group.items"
+                :key="j"
+                :item="item"
+                :index="j" />
         </template>
     </ul>
 </template>

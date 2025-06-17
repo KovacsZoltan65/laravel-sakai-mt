@@ -10,32 +10,34 @@ class HqEmployeeService extends BaseService
 
     hq_getEmployees(params = {})
     {
-        return this.post(route('employees.fetch'), params);
+        return this.post(route('hq.employees.fetch'), params);
     }
 
     hq_storeEmployee(data) {
-        return this.post(route('employees.store'), data);
+        return this.post(route('hq.employees.store'), data);
     }
 
     hq_updateEmployee(id, data) {
-        return this.put(route('employees.update', { id }), data);
+        console.log(id, data);
+        return this.put(route('hq.employees.update', { id }), data);
     }
 
     hq_deleteEmployees(data) {
-        return this.delete(route('employees.delete.bulk'), data);
+        return this.delete(route('hq.employees.delete.bulk'), data);
     }
 
     hq_deleteEmployee(id, data = {}) {
-        //return this.delete(route('employees.delete', { id }), data);
-        return this.delete(route('employees.delete.bulk'), { data });
+        return this.delete(route('hq.employees.delete', { id }), {
+            data // itt kell, hogy a data kulcsban legyen
+        });
     }
 
     hq_restoreEmployee(id, data = {}) {
-        return this.put(route('employees.restore', { id }), data);
+        return this.put(route('hq.employees.restore', { id }), data);
     }
 
     hq_forceDeleteEmployee(id, data = {}) {
-        return this.delete(route('employees.force-delete', { id }), data);
+        return this.delete(route('hq.employees.force-delete', { id }), data);
     }
 }
 

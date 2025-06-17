@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateEmployeeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,10 @@ class UpdateEmployeeRequest extends FormRequest
         return [
             'name' => ['required','string','max:255'],
             'position' => ['required','string'],
-            'email' => ['required','string','email','max:255','unique:employees,email,' . $this->entity->id],
+            'email' => [
+                'required','string','email','max:255',
+                Rule::unique('employees', 'email')->ignore($this->route('id')),
+            ],
         ];
     }
 }

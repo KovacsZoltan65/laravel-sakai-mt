@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
-import EmployeeService from "@/services/Employee/EmployeeService";
+import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 
 const props = defineProps({
     show: Boolean,
@@ -29,7 +29,7 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, form);
 
-// Amikor a props.entity változik, töltsük be a form értékeit
+// Amikor a props.employee változik, töltsük be a form értékeit
 watch(
     () => props.employee,
     (newEmployee) => {
@@ -50,8 +50,14 @@ const updateEmployee = async () => {
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
-            // A szerkesztett entitás azonosítóját props.entity.id használjuk
-            await EmployeeService.updateEmployee(props.entity.id, form.value);
+            // A szerkesztett entitás azonosítóját props.employee.id használjuk
+            await EmployeeService.hq_updateEmployee(
+                props.employee.id,
+                {
+                    ...form.value,
+                    tenant_id: props.tenantId
+                }
+            );
             emit('saved', form.value);
             closeModal();
         } catch (e) {
@@ -71,7 +77,7 @@ const closeModal = () => {
 <template>
     <Dialog
         :visible="show" modal
-        header="Edit Entity"
+        header="Edit employee"
         @hide="closeModal"
         :style="{ width: '550px' }"
     >

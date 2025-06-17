@@ -20,19 +20,44 @@ class tenantMenuSeeder extends Seeder
 
         // Főmenü - Home
         $home = MenuItem::create(
-            [ 'label' => 'home', 'url' => '/home', 'default_weight' => 1, ]
+            [
+                'label' => 'home', 
+                'url' => null, 
+                'route_name' => null,
+                'default_weight' => 1,
+            ]
         );
 
+        // Főmenü - dashboard
         $home->children()->create(
-            [ 'label' => 'dashboard', 'url' => '/dashboard', 'default_weight' => 1, ]
+            [
+                'label' => 'dashboard',
+                'url' => null,
+                'route_name' => 'dashboard',
+                'default_weight' => 1,
+            ]
         );
 
-        /*
         // Főmenü - Administration
         $administration = MenuItem::create(
-            [ 'label' => 'administration', 'url' => null, 'default_weight' => 2, ]
+            [
+                'label' => 'administration', 
+                'url' => null, 
+                'route_name' => null,
+                'default_weight' => 2,
+            ]
         );
-
+        
+        // Administration - Employees
+        $administration->children()->create([
+            'label' => 'employees',
+            'url' => null,
+            'route_name' => 'tenant.employees.index',
+            'icon' => 'pi pi-th-large',
+            'default_weight' => 1,
+        ]);
+        
+        /*
         $administration->children()->createMany(
             [
                 [ 'label' => 'users', 'url' => '/users', 'default_weight' => 1, ],

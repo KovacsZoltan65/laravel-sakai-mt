@@ -1,18 +1,23 @@
 <script setup>
-import EmployeeService from '@/services/Employee/EmployeeService';
+import EmployeeService from '@/services/Employee/HqEmployeeService.js';
 
 const props = defineProps({
-    entity: Object,
     title: String,
-    show: Boolean
+    show: Boolean,
+    employee: Object,
+    tenantId: [Number, String],
 });
 
 const emit = defineEmits(['close', 'deleted']);
 
-const deleteEntity = async () => {
+const deleteEmployee = async () => {
     try {
-        await EntityService.deleteEntity(props.entity.id);
-        emit('deleted', props.entity.id);
+        await EmployeeService.hq_deleteEmployee(
+            props.employee.id, {
+                tenant_id: props.tenantId
+            }
+        );
+        emit('deleted', props.employee.id);
         closeModal();
     } catch (e) {
         console.error("Törlés sikertelen", e);
@@ -25,4 +30,31 @@ const closeModal = () => {
 };
 </script>
 
-<template></template>
+<template>
+    <Dialog
+        :visible="show" modal
+        header="Cég törlése"
+        @hide="closeModal"
+        :style="{ width: '30vw' }"
+    >
+        <div class="text-center my-5 text-lg">
+            Biztosan törölni szeretnéd a(z) <strong>{{ employee.name }}</strong> dolgozót?
+        </div>
+
+        <template #footer>
+            <Button
+                label="Mégse"
+                icon="pi pi-times"
+                @click="closeModal"
+                severity="secondary"
+                class="p-button-text"
+            />
+            <Button
+                label="Törlés"
+                icon="pi pi-trash"
+                @click="deleteEmployee"
+                severity="danger"
+            />
+        </template>
+    </Dialog>
+</template>
