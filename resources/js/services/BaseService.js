@@ -80,8 +80,16 @@ class BaseService {
         return this.apiClient.put(url, data, config);
     }
 
+    //delete(url, config = {}) {
+    //    return this.apiClient.delete(url, config);
+    //}
+
     delete(url, config = {}) {
-        return this.apiClient.delete(url, config);
+        // Axios DELETE workaround for body
+        return this.apiClient.delete(url, {
+            ...config,
+            data: config.data || {},
+        });
     }
 }
 

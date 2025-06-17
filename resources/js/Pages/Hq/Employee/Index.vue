@@ -7,7 +7,7 @@ import CreateModal from "@/Pages/Hq/Employee/Create.vue";
 import EditModal from "@/Pages/Hq/Employee/Edit.vue";
 import DeleteModal from "@/Pages/Hq/Employee/Delete.vue";
 
-import EmployeeService from "@/services/EmployeeService";
+import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 
 import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
@@ -137,8 +137,9 @@ const data = reactive({
                 <Column field="id" header="#" />
                 <Column field="name" header="Name" />
                 <Column field="email" header="Email" />
-                <Column field="created_at" header="Created" />
-                <Column field="updated_at" header="Updated" />
+                <Column field="position" header="Position" />
+                <!--<Column field="created_at" header="Created" />
+                <Column field="updated_at" header="Updated" />-->
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
                         <Button

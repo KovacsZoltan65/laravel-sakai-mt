@@ -9,7 +9,7 @@ import CreateModal from "@/Pages/Hq/Employee/Create.vue";
 import EditModal from "@/Pages/Hq/Employee/Edit.vue";
 import DeleteModal from "@/Pages/Hq/Employee/Delete.vue";
 
-import EmployeeService from "@/services/EmployeeService";
+import EmployeeService from "@/services/Employee/EmployeeService";
 
 import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';

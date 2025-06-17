@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
-import EmployeeService from "@/services/EmployeeService";
+import EmployeeService from "@/services/Employee/EmployeeService";
 
 const props = defineProps({
     show: Boolean,
@@ -17,12 +17,14 @@ const emit = defineEmits(['close', 'saved']);
 const form = ref({
     name: '',
     email: '',
+    position: '',
 });
 
 // Validációs szabályok
 const rules = computed(() => ({
     name: { required, minLength: minLength(3), maxLength: maxLength(255) },
     email: { required, email },
+    position: { required, minLength: minLength(3), maxLength: maxLength(255) },
 }));
 
 const v$ = useVuelidate(rules, form);
@@ -35,6 +37,7 @@ watch(
             form.value = {
                 name: newEmployee.name || '',
                 email: newEmployee.email || '',
+                position: newEmployee.position || '',
             };
             v$.value.$reset(); // Reseteljük a validációt, hogy ne legyenek előző hibák
         }
@@ -91,7 +94,7 @@ const closeModal = () => {
                     severity="secondary"
                     variant="simple"
                 >
-                    enter_company_name
+                    enter_employee_name
                 </Message>-->
                 <small class="text-red-500" v-if="v$.name.$error">
                     {{ v$.name.$errors[0].$message }}
@@ -115,10 +118,34 @@ const closeModal = () => {
                     severity="secondary"
                     variant="simple"
                 >
-                    enter_company_email
+                    enter_employee_email
                 </Message>-->
                 <small class="text-red-500" v-if="v$.email.$error">
                     {{ v$.email.$errors[0].$message }}
+                </small>
+            </div>
+
+            <!-- POSITION -->
+            <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel variant="on">
+                    <label for="position" class="block font-bold mb-3">
+                        Position
+                    </label>
+                    <InputText
+                        id="position"
+                        v-model="form.position"
+                        fluid
+                    />
+                </FloatLabel>
+                <!--<Message
+                    size="small"
+                    severity="secondary"
+                    variant="simple"
+                >
+                    enter_employee_position
+                </Message>-->
+                <small class="text-red-500" v-if="v$.position.$error">
+                    {{ v$.position.$errors[0].$message }}
                 </small>
             </div>
 

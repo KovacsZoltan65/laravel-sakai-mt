@@ -3,7 +3,7 @@ import { onMounted, reactive, watch } from "vue";
 import AppLayout from "@/sakai/layout/AppLayout.vue";
 import { Head } from "@inertiajs/vue3";
 
-import EmployeeService from "@/services/EmployeeService.js";
+import EmployeeService from "@/services/Employee/EmployeeService.js";
 
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";

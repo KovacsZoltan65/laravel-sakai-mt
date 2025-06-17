@@ -34,15 +34,16 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
      * EMPLOYEES
      * ========================================
      */
-    Route::get(
-        '/employees', 
-        [App\Http\Controllers\Hq\EmployeeController::class, 'index']
-    )->name('employees.index');
-    
-    Route::post(
-        '/employees/fetch', 
-        [\App\Http\Controllers\Hq\EmployeeController::class, 'fetch']
-    )->name('employees.fetch');
+    Route::prefix('employees')->name('employees.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Hq\EmployeeController::class, 'index'])->name('index');
+        Route::post('/fetch', [App\Http\Controllers\Hq\EmployeeController::class, 'fetch'])->name('fetch');
+        Route::post('/store', [App\Http\Controllers\Hq\EmployeeController::class, 'storeEmployee'])->name('store');
+        Route::put('/{id}/update', [App\Http\Controllers\Hq\EmployeeController::class, 'updateEmployee'])->name('update');
+        Route::delete('/delete', [App\Http\Controllers\Hq\EmployeeController::class, 'deleteEmployees'])->name('delete.bulk');
+        Route::delete('/{id}/delete', [App\Http\Controllers\Hq\EmployeeController::class, 'deleteEmployee'])->name('delete');
+        Route::put('/{id}/restore', [App\Http\Controllers\Hq\EmployeeController::class, 'restoreEmployee'])->name('restore');
+        Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\EmployeeController::class, 'realDeleteEmployee'])->name('force-delete');
+    });
     
     /**
      * ========================================

@@ -11,10 +11,6 @@ class CustomSwitchTenantDatabaseTask implements SwitchTenantTask
 {
     public function switchToTenant(Tenant $tenant): string
     {
-        logger()->info('$tenant name: ', [
-            $tenant->id, $tenant->name
-        ]);
-        
         $connectionName = 'tenant_' . $tenant->id;
         
         if( !Config::has("database.connections.{$connectionName}") ) {

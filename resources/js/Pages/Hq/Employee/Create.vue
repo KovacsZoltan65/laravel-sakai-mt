@@ -3,7 +3,8 @@ import { ref, computed } from "vue";
 
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
-import EmployeeService from "@/services/EmployeeService";
+//import EmployeeService from "@/services/Employee/EmployeeService";
+import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 
 
 const props = defineProps({
@@ -20,13 +21,15 @@ const isSaving = ref(false);
 const form = ref({
     name: '',
     email: '',
+    position: '',
     // ide jön minden egyéb mező
 });
 
 // Validációs szabályok
 const rules = computed(() => ({
     name: { required, minLength: minLength(3), maxLength: maxLength(255) },
-    email: { required, email }
+    email: { required, email },
+    position: { required, minLength: minLength(3), maxLength: maxLength(255) }
 }));
 
 const v$ = useVuelidate(rules, form);
@@ -38,7 +41,7 @@ const save = async () => {
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
-            await EmployeeService.createEntity({
+            await EmployeeService.hq_storeEmployee({
                 ...form.value,
                 tenant_id: props.tenantId
             });
@@ -101,6 +104,30 @@ const closeModal = () => {
                 </Message>-->
                 <small class="text-red-500" v-if="v$.email.$error">
                     {{ v$.email.$errors[0].$message }}
+                </small>
+            </div>
+
+            <!-- POSITION -->
+            <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel variant="on">
+                    <label for="position" class="block font-bold mb-3">
+                        position
+                    </label>
+                    <InputText
+                        id="position"
+                        v-model="form.position"
+                        fluid
+                    />
+                </FloatLabel>
+                <!--<Message
+                    size="small"
+                    severity="secondary"
+                    variant="simple"
+                >
+                    enter_position
+                </Message>-->
+                <small class="text-red-500" v-if="v$.position.$error">
+                    {{ v$.position.$errors[0].$message }}
                 </small>
             </div>
 

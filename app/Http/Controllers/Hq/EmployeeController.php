@@ -10,10 +10,14 @@ use App\Models\Tenants\Employee;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Exception;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use App\Models\Tenant;
+use Illuminate\Http\Request;
+use App\MultiTenancy\Tasks\CustomSwitchTenantDatabaseTask;
 
 class EmployeeController extends Controller
 {
@@ -80,14 +84,14 @@ class EmployeeController extends Controller
             
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'storeEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'storeEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'storeEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info(message: 'storeEmployee QueryException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'storeEmployee QueryException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'storeEmployee Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info(message: 'storeEmployee Exception: ' . print_r(value: $ex, return: true));
-            return response()->json(['error' => 'storeEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
+            \Log::info(message: 'storeEmployee Exception: ' . print_r($ex->getMessage(), true));
+            return response()->json(['error' => 'storeEmployee Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -116,13 +120,13 @@ class EmployeeController extends Controller
             return response()->json($employee, Response::HTTP_OK);
             
         } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'updateEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'updateEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'updateEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info(message: 'updateEmployee QueryException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'updateEmployee QueryException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'updateEmployee Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info(message: 'updateEmployee Exception: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'updateEmployee Exception: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'updateEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -162,13 +166,13 @@ class EmployeeController extends Controller
             return response()->json($deletedCount, Response::HTTP_OK);
             
         } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'deleteEmployees ModelNotFoundException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'deleteEmployees ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployees Employee not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info(message: 'deleteEmployees QueryException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'deleteEmployees QueryException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployees Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info(message: 'deleteEmployees Exception: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'deleteEmployees Exception: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployees Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -192,13 +196,13 @@ class EmployeeController extends Controller
             
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'deleteEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'deleteEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info(message: 'deleteEmployee QueryException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'deleteEmployee QueryException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployee Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info(message: 'deleteEmployee Exception: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'deleteEmployee Exception: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -224,13 +228,13 @@ class EmployeeController extends Controller
             
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'restoreEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'restoreEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'restoreEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info(message: 'restoreEmployee QueryException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'restoreEmployee QueryException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'restoreEmployee Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info(message: 'restoreEmployee Exception: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'restoreEmployee Exception: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'restoreEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -253,13 +257,13 @@ class EmployeeController extends Controller
 
             return response()->json($employee,  Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
-            \Log::info(message: 'realDeleteEmployee ModelNotFoundException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'realDeleteEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'realDeleteEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
         } catch( QueryException $ex ) {
-            \Log::info(message: 'realDeleteEmployee QueryException: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'realDeleteEmployee QueryException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'realDeleteEmployee Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch( Exception $ex ) {
-            \Log::info(message: 'realDeleteEmployee Exception: ' . print_r(value: $ex, return: true));
+            \Log::info(message: 'realDeleteEmployee Exception: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'realDeleteEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
