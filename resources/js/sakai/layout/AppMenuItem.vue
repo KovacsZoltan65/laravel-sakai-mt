@@ -1,9 +1,12 @@
 <script setup>
 import { useLayout } from '@/sakai/layout/composables/layout';
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import NavLink from "@/Components/NavLink.vue";
 
 const { layoutState, setActiveMenuItem, onMenuToggle } = useLayout();
+
+const page = usePage();
 
 const props = defineProps({
     item: {
@@ -60,6 +63,16 @@ const itemClick = (event, item) => {
 
     setActiveMenuItem(foundItemKey);
 };
+
+const isActive = computed(() => {
+    try {
+        const url = new URL(props.item.to, window.location.origin);
+        return page.url.startsWith(url.pathname);
+    } catch {
+        return false;
+    }
+});
+
 </script>
 
 <template>
@@ -89,7 +102,7 @@ const itemClick = (event, item) => {
             v-else-if="item.to && item.visible !== false"
             @click="itemClick($event, item)"
             :href="item.to"
-            :class="item.class"
+            :class="[item.class, { 'active-route2': isActive }]"
         >
             <i :class="item.icon" class="layout-menuitem-icon"></i>
             <span class="layout-menuitem-text">{{ item.label }}</span>
@@ -124,5 +137,9 @@ const itemClick = (event, item) => {
     .layout-menu-label-icon {
         font-size: 1rem;
     }
+}
+
+.layout-menu ul a.active-route2 {
+    color: var(--primary-color, #0d6efd);
 }
 </style>
