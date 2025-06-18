@@ -2,7 +2,6 @@
 import { ref, computed } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
-import AcsService from "@/services/AcsSystem/AcsSystemService.js";
 
 const props = defineProps({
     show: Boolean,
@@ -52,23 +51,11 @@ const closeModal = () => {
     <Dialog
         :visible="show"
         :style="{ width: '550px' }" modal
-        header="Create Acs System"
+        header="Create company"
         @hide="closeModal"
     >
 
-        <div class="flex flex-col gap-6" style="margin-top: 17px;">
-            <!-- NAME -->
-            <FloatLabel variant="on">
-                <label for="name" class="block font-bold mb-3">
-                    Name
-                </label>
-                <InputText
-                    id="name"
-                    v-model="form.name"
-                    fluid
-                />
-            </FloatLabel>
-        </div>
+        <div class="flex flex-col gap-6" style="margin-top: 17px;"></div>
 
         <div class="flex justify-end gap-2 mt-4">
             <Button label="Cancel" severity="secondary" @click="closeModal" />

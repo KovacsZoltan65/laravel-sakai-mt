@@ -22,6 +22,11 @@ use App\MultiTenancy\Tasks\CustomSwitchTenantDatabaseTask;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        //
+    }
+    
     public function index(Request $request): InertiaResponse
     {
         $tenants = \App\Models\Tenant::where('active', 1)
@@ -38,7 +43,6 @@ class EmployeeController extends Controller
     public function fetch(Request $request): JsonResponse
     {
         $tenant_id = $request->get('tenant_id');
-        
         $tenant = \App\Models\Tenant::findOrFail($tenant_id);
 
         $employees = null;
@@ -49,19 +53,21 @@ class EmployeeController extends Controller
             $_employees = Employee::on($connectionName);
 
             if( $request->has(key: 'search') ) {
-                $_employees->whereRaw("CONCAT(name,'',email)");
+                $_employees->whereRaw("CONCAT(name,'',email) LIKE '%{$request->search}%'");
             }
 
             if ($request->has('field') && $request->has('order')) {
-                $_employees = $_employees;
+                $_employees->orderBy($request->field, $request->order);
             }
 
             $employees = $_employees->paginate(10, ['*'], 'page', $request->page ?? 1);
+            
+            //return response()->json(['employees' => $employees]);
+            return response()->json($employees, Response::HTTP_OK);
+        
         } catch( \Exception $ex ) {
             \Log::info('error message: ' . print_r($ex->getMessage(), true));
         }
-        
-        return response()->json(['employees' => $employees]);
     }
     
     public function storeEmployee(StoreEmployeeRequest $request): JsonResponse

@@ -47,19 +47,19 @@ class AcsSystem extends Model
     //    return self::$logName;
     //}
 
-    public function scopeSearch(Builder $query, Request $request): Builder
-    {
-        return $query->when($request->search, function ($query) use ($request) {
-            $query->where(function ($query) use ($request) {
-                $query->where('name', 'like', "%{$request->search}%");
-            });
-        });
-    }
-
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('active', '=', 1);
-    }
+//    public function scopeSearch(Builder $query, Request $request): Builder
+//    {
+//        return $query->when($request->search, function ($query) use ($request) {
+//            $query->where(function ($query) use ($request) {
+//                $query->where('name', 'like', "%{$request->search}%");
+//            });
+//        });
+//    }
+//
+//    public function scopeActive(Builder $query): Builder
+//    {
+//        return $query->where('active', '=', 1);
+//    }
 
     //#[Override]
     //public function getActivitylogOptions(): LogOptions {

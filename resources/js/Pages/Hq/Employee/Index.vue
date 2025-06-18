@@ -98,9 +98,8 @@ const data = reactive({
 
             <Button
                 v-if="has('create employee')"
-                icon="pi pi-plus"
+                icon="pi pi-plus" class="mr-2"
                 label="Create" @click="data.createOpen = true"
-                class="mr-2"
                 :disabled="!selectedTenant"
             />
             <Button

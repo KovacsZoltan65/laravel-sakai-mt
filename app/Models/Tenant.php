@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Spatie\Multitenancy\Models\Tenant as BaseTenant;
-//use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Illuminate\Database\Eloquent\Builder;
 
 class Tenant extends BaseTenant
 {
@@ -19,5 +19,18 @@ class Tenant extends BaseTenant
     public function getDatabaseName(): string
     {
         return $this->database;
+    }
+    
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('active', '=', 1);
+    }
+    
+    public function scopeToSelect()
+    {
+        return $this->active()
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
     }
 }

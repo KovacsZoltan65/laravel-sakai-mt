@@ -106,9 +106,15 @@ onMounted(fetchData);
             />
 
             <!-- DATATABLE -->
-            <DataTable v-if="employees" :value="employees.data" :rows="employees.per_page"
-                :totalRecords="employees.total" :first="(employees.current_page - 1) * employees.per_page"
-                :loading="isLoading" lazy paginator dataKey="id" @page="onPageChange" tableStyle="min-width: 50rem">
+            <DataTable
+                v-if="employees"
+                :value="employees.data"
+                :rows="employees.per_page"
+                :totalRecords="employees.total"
+                :first="(employees.current_page - 1) * employees.per_page"
+                :loading="isLoading" lazy paginator dataKey="id"
+                @page="onPageChange"
+                tableStyle="min-width: 50rem">
 
                 <template #header></template>
 

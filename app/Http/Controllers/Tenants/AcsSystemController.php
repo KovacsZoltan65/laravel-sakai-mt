@@ -27,33 +27,41 @@ class AcsSystemController extends Controller
 
     public function index(Request $request): InertiaResponse
     {
-        return Inertia::render('Acs/Index', [
+        return Inertia::render('Tenants/AcsSystem/Index', [
             'title' => 'Acs Systems',
             'filters' => $request->all(['search', 'field', 'order']),
         ]);
     }
 
-    public function fetch(AcsSystemIndexRequest $request)
+    public function fetch(Request $request)
     {
-        $_acs_systems = AcsSystem::query();
+        try {
+            
+            $_acs_systems = AcsSystem::query();
 
-        if( $request->has(key: 'search') ) {
-            $_acs_systems->whereRaw("CONCAT(name)");
+            if( $request->has(key: 'search') ) {
+                $_acs_systems->whereRaw("CONCAT(name)");
+            }
+
+            if ($request->has('field') && $request->has('order')) {
+                $_acs_systems->orderBy($request->field, $request->order);
+            }
+
+            $acs_systems = $_acs_systems->paginate(10, ['*'], 'page', $request->page ?? 1);
+
+            return response()->json($acs_systems, Response::HTTP_OK);
+            
+        } catch( \Exception $ex ) {
+\Log::info('AcsSystemController fetch error: ' . print_r($ex->getMessage(), true));
         }
-
-        if ($request->has('field') && $request->has('order')) {
-            $_acs_systems->orderBy($request->field, $request->order);
-        }
-
-        $acs_systems = $_acs_systems->paginate(10, ['*'], 'page', $request->page ?? 1);
-
-        return response()->json($acs_systems, Response::HTTP_OK);
     }
 
     public function getAcsSystem(Request $request): JsonResponse
     {
         try {
             $acs = AcsSystem::findOrFail($request->id);
+            
+            return response()->json($acs, Response::HTTP_OK);
         } catch( ModelNotFoundException $e ) {
             return response()->json(['error' => 'getAcsSystem AcsSystem not found'], Response::HTTP_NOT_FOUND);
         } catch( QueryException $e ) {
