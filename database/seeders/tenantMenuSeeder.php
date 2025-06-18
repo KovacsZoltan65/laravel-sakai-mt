@@ -24,6 +24,7 @@ class tenantMenuSeeder extends Seeder
                 'label' => 'home', 
                 'url' => null, 
                 'route_name' => null,
+                'icon' => 'pi pi-home',
                 'default_weight' => 1,
             ]
         );
@@ -34,6 +35,7 @@ class tenantMenuSeeder extends Seeder
                 'label' => 'dashboard',
                 'url' => null,
                 'route_name' => 'dashboard',
+                'icon' => 'pi pi-th-large',
                 'default_weight' => 1,
             ]
         );
@@ -44,6 +46,7 @@ class tenantMenuSeeder extends Seeder
                 'label' => 'administration', 
                 'url' => null, 
                 'route_name' => null,
+                'icon' => 'pi pi-cog',
                 'default_weight' => 2,
             ]
         );
@@ -53,7 +56,8 @@ class tenantMenuSeeder extends Seeder
             'label' => 'employees',
             'url' => null,
             'route_name' => 'tenant.employees.index',
-            'icon' => 'pi pi-th-large',
+            'icon' => 'pi pi-users',
+            'can' => 'view employee',
             'default_weight' => 1,
         ]);
         
