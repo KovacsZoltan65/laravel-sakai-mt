@@ -52,13 +52,33 @@ class tenantMenuSeeder extends Seeder
         );
         
         // Administration - Employees
-        $administration->children()->create([
-            'label' => 'employees',
-            'url' => null,
-            'route_name' => 'tenant.employees.index',
-            'icon' => 'pi pi-users',
-            'can' => 'view employee',
-            'default_weight' => 1,
+//        $administration->children()->create([
+//            'label' => 'employees',
+//            'url' => null,
+//            'route_name' => 'hq.employees.index',
+//            'icon' => 'pi pi-users',
+//            'can' => 'view employee',
+//            'default_weight' => 1,
+//        ]);
+        
+        // Acs Systems
+        $administration->children()->createMany([
+            [
+                'label' => 'employees',
+                'url' => null,
+                'route_name' => 'tenant.employees.index',
+                'icon' => 'pi pi-users',
+                'can' => 'view employee',
+                'default_weight' => 1,
+            ],
+            [
+                'label' => 'ACS Systems',
+                'url' => null,
+                'route_name' => 'tenant.acs_systems.index',
+                'icon' => 'pi pi-id-card',
+                'can' => 'view acs_system',
+                'default_weight' => 1,
+            ]
         ]);
         
         /*

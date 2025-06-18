@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Tenants;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AcsSystems\AcsSystemStoreRequest;
-use App\Http\Requests\AcsSystems\AcsSystemUpdateRequest;
+use App\Http\Requests\AcsSystem\AcsSystem\StoreRequest;
+use App\Http\Requests\AcsSystem\AcsSystem\UpdateRequest;
 use DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\AcsSystems\AcsSystemIndexRequest;
+use App\Http\Requests\AcsSystem\AcsSystemIndexRequest;
 use App\Models\AcsSystem;
 use Illuminate\Http\Request;
 use Inertia\Inertia;

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->collation('utf8mb3_unicode_ci');
             
             $table->increments('id')->comment('Rekord azonosító');
+            $table->string('name')->index()->comment('Megnevezés');
             $table->boolean('active')->default(1)->index()->comment('Aktív');
 
             $table->timestamps();

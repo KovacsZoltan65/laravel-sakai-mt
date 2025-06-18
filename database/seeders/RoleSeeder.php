@@ -37,6 +37,11 @@ class RoleSeeder extends Seeder
             'create employee',
             'update employee',
             'delete employee',
+            
+            'view acs_system',
+            'create acs_system',
+            'update acs_system',
+            'delete acs_system',
         ]);
         
         // Admin
