@@ -79,14 +79,16 @@ class DatabaseSeeder extends Seeder
 */
         if( $tenant->domain === 'hq.mt' ) {
             $this->call([
-                MenuItemSeeder::class,
-                //hqMenuSeeder::class,
+                //MenuItemSeeder::class,
+                hqMenuSeeder::class,
             ]);
         } else {
             $this->call([
                 EmployeeSeeder::class,
-                MenuItemSeeder::class,
-                //tenantMenuSeeder::class,
+                //MenuItemSeeder::class,
+                tenantMenuSeeder::class,
+                
+                AcsSystemSeeder::class,
 
                 // Fontos a sorrend, ne változtasd meg!!!
 

@@ -1,34 +1,15 @@
-import BaseService from "./BaseService";
+import BaseService from "@/services/BaseService.js";
 
-class MenuService extends BaseService {
-    constructor() {
+class MenuService extends BaseService
+{
+    constructor()
+    {
         super();
+        this.url = "";
     }
 
-    url = '/menu-items';
-
-    getMenuItems() {
-        return this.get(this.url);
-    }
-
-    getMenuItem(id) {
-        return this.get(`${this.url}/${id}`);
-    }
-
-    createMenuItem(data) {
-        return this.post(this.url, data);
-    }
-
-    updateMenuItem(id, data) {
-        return this.put(`${this.url}/${id}`, data);
-    }
-
-    deleteMenuItem(id) {
-        return this.delete(`${this.url}/${id}`);
-    }
-
-    updateMenuUsage(id) {
-        return this.put(`${this.url}/${id}/usage`);
+    getMenu() {
+        return this.get('/menu-items');
     }
 }
 

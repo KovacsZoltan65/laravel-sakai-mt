@@ -25,6 +25,7 @@ php artisan config:cache
 php artisan route:clear       # Útvonal cache
 php artisan view:clear        # Nézet cache
 php artisan event:clear       # Esemény cache
+php artisan optimize:clear
 
 // ===========================================
 // ACS SYSTEMS

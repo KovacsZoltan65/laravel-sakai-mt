@@ -13,43 +13,56 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        // Szuper admin
         $superadmin = Role::create([
             'name'          => 'superadmin'
         ]);
         $superadmin->givePermissionTo([
-            'delete user',
-            'update user',
-            'read user',
+            'view user',
             'create user',
-            'delete role',
-            'update role',
-            'read role',
+            'update user',
+            'delete user',
+            
+            'view role',
             'create role',
-            'delete permission',
+            'update role',
+            'delete role',
+            
+            'view permission',
+            'create permission',
             'update permission',
-            'read permission',
-            'create permission'
+            'delete permission',
+            
+            'view employee',
+            'create employee',
+            'update employee',
+            'delete employee',
         ]);
+        
+        // Admin
         $admin = Role::create([
             'name'          => 'admin'
         ]);
         $admin->givePermissionTo([
             'delete user',
             'update user',
-            'read user',
+            'view user',
             'create user',
-            'read role',
-            'read permission',
+            'view role',
+            'view permission',
         ]);
+        
+        // Operator
         $operator = Role::create([
             'name'          => 'operator'
         ]);
         
         $operator->givePermissionTo([
-            'read user',
+            //'delete user',
+            'view user',
             'create user',
-            'read role',
-            'read permission',
+            'view role',
+            'view permission',
         ]);
     }
 }

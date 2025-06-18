@@ -20,7 +20,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('position');
             $table->string('email')->unique();
+            
+            $table->boolean('active')->default(1)->index()->comment('Aktív');
+            
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

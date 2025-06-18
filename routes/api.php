@@ -14,6 +14,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware(['auth:sanctum', 'tenant'])->get('/user', function (Request $request) {
     return $request->user();
+    
+    //Route::get('/employees/fetch', [EmployeeController::class, 'fetch'])->name('employees.fetch');
+    
 });
+/*
+Route::middleware(['tenant', 'auth'])->group(function() {
+    
+    Route::get(
+        '/employees/fetch', 
+        [\App\Http\Controllers\Tenants\EmployeeController::class, 'fetch']
+    )->name('employees.fetch');
+    
+});
+
+Route::domain('hq.mt')->middleware(['auth', 'verified'])->group(function() {
+    
+    
+    //Route::get(
+    //    '/employees/fetch', 
+    //    [\App\Http\Controllers\Tenants\EmployeeController::class, 'fetch']
+    //)->name('employees.fetch');
+    
+});
+*/
