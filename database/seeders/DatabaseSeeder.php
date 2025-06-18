@@ -87,6 +87,8 @@ class DatabaseSeeder extends Seeder
                 EmployeeSeeder::class,
                 //MenuItemSeeder::class,
                 tenantMenuSeeder::class,
+                
+                AcsSystemSeeder::class,
 
                 // Fontos a sorrend, ne változtasd meg!!!
 

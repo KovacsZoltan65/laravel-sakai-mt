@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+//use Spatie\Activitylog\Traits\LogsActivity;
+//use Spatie\Activitylog\LogOptions;
 use Override;
 
 class AcsSystem extends Model
 {
     use HasFactory, 
-        SoftDeletes, 
-        LogsActivity;
+        SoftDeletes; 
+    //use LogsActivity;
     protected $table = 'acs_systems';
     protected $fillable = ['name', 'active'];
     protected $casts = [
@@ -27,7 +27,7 @@ class AcsSystem extends Model
      * LOGOLÁS
      * ==============================================================
      */
-
+/*
     // Ha szeretnéd, hogy minden mezőt automatikusan naplózzon:
     protected static $logAttributes = ['*'];
     protected static $logOnlyDirty = true; // Csak a változásokat naplózza
@@ -37,15 +37,15 @@ class AcsSystem extends Model
         'updated',
         'deleted',
     ];
-
+*/
     /*
      * ==============================================================
      */
 
-    public static function getTag(): string
-    {
-        return self::$logName;
-    }
+    //public static function getTag(): string
+    //{
+    //    return self::$logName;
+    //}
 
     public function scopeSearch(Builder $query, Request $request): Builder
     {
@@ -61,10 +61,10 @@ class AcsSystem extends Model
         return $query->where('active', '=', 1);
     }
 
-    #[Override]
-    public function getActivitylogOptions(): LogOptions {
-        return LogOptions::defaults()
-            ->logFillable()
-            ->logAll();
-    }
+    //#[Override]
+    //public function getActivitylogOptions(): LogOptions {
+    //    return LogOptions::defaults()
+    //        ->logFillable()
+    //        ->logAll();
+    //}
 }
