@@ -180,8 +180,8 @@ class EmployeeController extends Controller
     
     public function deleteEmployee(Request $request, int $id): JsonResponse
     {
-\Log::info('$tenant_id: ' . print_r($request->tenant_id, true));
-\Log::info('$id: ' . print_r($id, true));
+//\Log::info('$tenant_id: ' . print_r($request->tenant_id, true));
+//\Log::info('$id: ' . print_r($id, true));
         try {
             
             $tenant_id = $request->tenant_id;
