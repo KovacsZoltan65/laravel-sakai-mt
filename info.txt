@@ -13,6 +13,11 @@ TENANT
 php artisan tenants:artisan "migrate --path=database/migrations/tenant --database=tenant --seed"
 php artisan tenants:artisan "migrate:fresh --path=database/migrations/tenant --database=tenant --seed"
 
+ HA NINCS sessions TÁBLA:
+ php artisan session:table
+
+route:
+php artisan route:list | findstr hq.tenants
 
 cache törlés
 php artisan tenants:artisan "cache:clear"

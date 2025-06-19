@@ -13,10 +13,13 @@ import { usePermissions } from '@/composables/usePermissions';
 import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 const { has } = usePermissions();
 
+import TenantSelect from "@/Components/Hq/TenantSelector.vue";
+
+const selectedCompanyId = ref(null);
+
 const props = defineProps({
     title: String,
-    filters: Object,
-    tenants: Array
+    filters: Object
 });
 
 const selectedTenant = ref('');
@@ -53,6 +56,12 @@ const data = reactive({
     employee: null
 });
 
+watch(selectedTenant, (newVal) => {
+    if( newVal ) {
+        fetchEmployees();
+    }
+});
+
 </script>
 
 <template>
@@ -86,7 +95,8 @@ const data = reactive({
                 @close="data.deleteOpen = false"
                 @deleted="fetchEmployees" />
 
-            <Select
+            <!-- RÉGI TENANT SELECTOR -->
+            <!--Select
                 v-model="selectedTenant"
                 @change="fetchEmployees"
                 :options="tenants"
@@ -94,6 +104,11 @@ const data = reactive({
                 optionValue="id"
                 placeholder="Válasst ..."
                 class="mr-2"
+            />-->
+            <!-- ÚJ TENANT SELECTOR -->
+            <TenantSelect
+                v-model="selectedTenant"
+                placeholder="Válassz..." class="mr-2"
             />
 
             <Button

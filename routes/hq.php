@@ -31,6 +31,17 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
 
     /**
      * ========================================
+     * TENANT SELECTOR
+     * ========================================
+     */
+    Route::domain('hq.mt')->prefix('/api/hq')
+        ->middleware(['auth'])
+        ->group(function () {
+        Route::get('/tenants', [App\Http\Controllers\Hq\TenantController::class, 'getTenantsToSelect'])->name('tenant.getTenants');
+    });
+
+    /**
+     * ========================================
      * EMPLOYEES
      * ========================================
      */
@@ -50,8 +61,15 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
      * ACS SYSTEMS
      * ========================================
      */
-    Route::get(
-        '/acs_systems',
-        [App\Http\Controllers\Tenants\AcsSystemController::class, 'index']
-    )->name('hq.acs_system.index');
+    Route::prefix('acs_systems')->name('hq.acs_systems.')->group(function() {
+        Route::get('/', [App\Http\Controllers\Hq\AcsSystemController::class, 'index'])->name('index');
+        Route::post('/fetch', [App\Http\Controllers\Hq\AcsSystemController::class, 'fetch'])->name('fetch');
+        Route::post('/store', [App\Http\Controllers\Hq\AcsSystemController::class, 'storeAcsSystem'])->name('store');
+        Route::put('/{id}/update', [App\Http\Controllers\Hq\AcsSystemController::class, 'updateAcsSystem'])->name('update');
+        Route::delete('/delete', [App\Http\Controllers\Hq\AcsSystemController::class, 'deleteAcsSystems'])->name('delete.bulk');
+        Route::delete('/{id}', [App\Http\Controllers\Hq\AcsSystemController::class, 'deleteAcsSystem'])->name('delete');
+        Route::put('/{id}/restore', [App\Http\Controllers\Hq\AcsSystemController::class, 'restoreAcsSystem'])->name('restore');
+        Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\AcsSystemController::class, 'realDeleteAcsSystem'])->name('force-delete');
+    });
+    //Route::get('/acs_systems', [App\Http\Controllers\Tenants\AcsSystemController::class, 'index'])->name('hq.acs_system.index');
 });

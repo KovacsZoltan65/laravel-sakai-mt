@@ -21,5 +21,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(125);
+
+        define('APP_ACTIVE', 1);
+        define('APP_INACTIVE', 0);
+
+        define('APP_TRUE', true);
+        define('APP_FALSE', false);
     }
 }

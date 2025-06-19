@@ -24,25 +24,23 @@ class EmployeeController extends Controller
 {
     public function index(Request $request): InertiaResponse
     {
-        $tenants = \App\Models\Tenant::where('active', 1)
-            ->where('name', '<>', 'Hq')
-            ->get(['id', 'name', 'database']);
+        //$tenants = \App\Models\Tenant::where('active', 1)->where('name', '<>', 'Hq')->get(['id', 'name', 'database']);
 
         return Inertia::render('Hq/Employee/Index', [
             'title' => 'Employees',
             'filters' => $request->all(['search', 'field', 'order']),
-            'tenants' => $tenants,
+            //'tenants' => $tenants,
         ]);
     }
 
     public function fetch(Request $request): JsonResponse
     {
         $tenant_id = $request->get('tenant_id');
-        
+
         $tenant = \App\Models\Tenant::findOrFail($tenant_id);
 
         $employees = null;
-        
+
         try {
             $connectionName = app(\App\MultiTenancy\Tasks\CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
 
@@ -60,10 +58,10 @@ class EmployeeController extends Controller
         } catch( \Exception $ex ) {
             \Log::info('error message: ' . print_r($ex->getMessage(), true));
         }
-        
+
         return response()->json(['employees' => $employees]);
     }
-    
+
     public function storeEmployee(StoreEmployeeRequest $request): JsonResponse
     {
         try {
@@ -74,15 +72,15 @@ class EmployeeController extends Controller
             $employee = DB::transaction(function() use($request, $connectionName): Employee {
                 // 1. Employee létrehozása
                 $_employee = Employee::on($connectionName)->create($request->all());
-                
+
                 // 2. Kapcsolódó rekordok létrehozása (pl. alapértelmezett beállítások)
                 $this->createDefaultSettings($_employee);
 
                 // 3. Cache törlése, ha releváns
-                
+
                 return $_employee;
-            });            
-            
+            });
+
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'storeEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
@@ -95,14 +93,14 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'storeEmployee Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function updateEmployee(UpdateEmployeeRequest $request, int $id): JsonResponse
     {
         try {
             $tenant_id = $request->tenant_id;
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
-            
+
             $employee = DB::transaction(function() use($request, $id, $connectionName): Employee {
                 // 1. Módosítandó rekord zárolása és lekérése
                 $_employee = Employee::on($connectionName)->lockForUpdate()->findOrFail($id);
@@ -112,14 +110,14 @@ class EmployeeController extends Controller
                 $_employee->refresh();
                 // 4. Kapcsolódó rekordok frissítése (pl. alapértelmezett beállítások)
                 $this->updateDefaultSettings($_employee);
-                
+
                 // 5. Cache törlése, ha releváns
-                
+
                 return $_employee;
             });
-            
+
             return response()->json($employee, Response::HTTP_OK);
-            
+
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'updateEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'updateEmployee Employee not found'],  Response::HTTP_NOT_FOUND);
@@ -131,7 +129,7 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'updateEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function deleteEmployees(Request $request): JsonResponse
     {
         try {
@@ -139,13 +137,13 @@ class EmployeeController extends Controller
                 'ids' => 'required|array|min:1', // Kötelező, legalább 1 id kell
                 'ids.*' => 'integer|exists:employees,id', // Az id-k egész számok és létező cégek legyenek
             ]);
-            
+
             $ids = $validated['ids'];
-            
+
             $tenant_id = $request->get('tenant_id');
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
-            
+
             $deletedCount = DB::transaction(function() use($connectionName, $ids): int {
                 // 1. Törlés - válaszd az egyik verziót:
                 // a) Observer nélküli, gyors SQL törlés:
@@ -158,14 +156,14 @@ class EmployeeController extends Controller
                 //        $deletedCount++;
                 //    }
                 //});
-                
+
                 // Cache törlése, ha szükséges
-                
+
                 return $count;
             });
-            
+
             return response()->json($deletedCount, Response::HTTP_OK);
-            
+
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'deleteEmployees ModelNotFoundException: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'deleteEmployees Employee not found'],  Response::HTTP_NOT_FOUND);
@@ -177,26 +175,26 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'deleteEmployees Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function deleteEmployee(Request $request, int $id): JsonResponse
     {
 //\Log::info('$tenant_id: ' . print_r($request->tenant_id, true));
 //\Log::info('$id: ' . print_r($id, true));
         try {
-            
+
             $tenant_id = $request->tenant_id;
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
-            
+
             $employee = DB::transaction(function() use($request, $connectionName, $id) {
                 $_employee = Employee::on($connectionName)->lockForUpdate()->findOrFail($id);
                 $_employee->delete();
-                
+
                 // Cache törlése, ha szükséges
-                
+
                 return $_employee;
             });
-            
+
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'deleteEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
@@ -209,26 +207,26 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'deleteEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function restoreEmployee(Request $request): JsonResponse
     {
         try {
             $tenant_id = $request->get('tenant_id');
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
-            
+
             $employee = DB::transaction(function() use($connectionName, $request) {
                 $_employee = Employee::on($connectionName)->lockForUpdate()->withTrashed()->findOrFail($request->id);
-                
+
                 // Visszaállítás
                 $_employee->restore();
-                
+
                 // Friss adat betöltése
                 $_employee->refresh();
-                
+
                 return $_employee;
             });
-            
+
             return response()->json($employee, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'restoreEmployee ModelNotFoundException: ' . print_r($ex->getMessage(), true));
@@ -241,14 +239,14 @@ class EmployeeController extends Controller
             return response()->json(['error' => 'restoreEmployee Internal server error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     public function realDeleteEmployee(Request $request): JsonResponse
     {
         try {
             $tenant_id = $request->get('tenant_id');
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
-            
+
             $employee = DB::transaction(function() use($connectionName, $request): Company {
                 // 1. Ország keresése
                 $_employee = Employee::withTrashed()->on($connectionName)->lockForUpdate()->findOrFail($request->id);

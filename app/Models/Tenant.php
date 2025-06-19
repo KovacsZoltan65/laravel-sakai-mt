@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\Multitenancy\Models\Tenant as BaseTenant;
 //use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
@@ -12,12 +13,20 @@ class Tenant extends BaseTenant
     protected $connection = 'landlord';
 
     protected $fillable = [
-        'name', 'domain', 'host', 'port', 
+        'name', 'domain', 'host', 'port',
         'database', 'username', 'password', 'active'
     ];
 
-    public function getDatabaseName(): string
+    public function scopeActive(Builder $query)
     {
-        return $this->database;
+        return $query->where( 'active', '=', APP_ACTIVE);
+    }
+
+    public static function toSelect(): array
+    {
+        return static::active()->where('name', '<>', 'Hq')
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get()->toArray();
     }
 }
