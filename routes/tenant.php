@@ -6,7 +6,7 @@ Route::middleware(['tenant', 'auth'])->group(function() {
 
     Route::get('/', fn() => redirect('dashboard') );
 
-    Route::get( '/dashboard', [\App\Http\Controllers\TenantController::class, 'index'] )->name('dashboard');
+    Route::get( '/dashboard', [App\Http\Controllers\Tenants\TenantController::class, 'index'] )->name('dashboard');
 
     /**
      * ========================================
@@ -28,6 +28,22 @@ Route::middleware(['tenant', 'auth'])->group(function() {
     //Route::get('/employees/fetch', [\App\Http\Controllers\Tenants\EmployeeController::class, 'fetch'])->name('employees.fetch');
 
     // További bérlői útvonalak...
+
+    /**
+     * ========================================
+     * COMPANIES
+     * ========================================
+     */
+    Route::prefix('companies')->name('tenant.companies.')->group(function() {
+        Route::get('/', [App\Http\Controllers\Tenants\CompanyController::class, 'index'])->name('index');
+        Route::post('/fetch', [App\Http\Controllers\Tenants\CompanyController::class, 'fetch'])->name('fetch');
+        Route::post('/store', [App\Http\Controllers\Tenants\CompanyController::class, 'storeEmployee'])->name('store');
+        Route::put('/{id}/update', [App\Http\Controllers\Tenants\CompanyController::class, 'updateEmployee'])->name('update');
+        Route::delete('/delete', [App\Http\Controllers\Tenants\CompanyController::class, 'deleteEmployees'])->name('delete.bulk');
+        Route::delete('/{id}', [App\Http\Controllers\Tenants\CompanyController::class, 'deleteEmployee'])->name('delete');
+        Route::put('/{id}/restore', [App\Http\Controllers\Tenants\CompanyController::class, 'restoreEmployee'])->name('restore');
+        Route::delete('/{id}/force-delete', [App\Http\Controllers\Tenants\CompanyController::class, 'realDeleteEmployee'])->name('force-delete');
+    });
 
     /**
      * ========================================

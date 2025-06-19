@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Hq;
+namespace App\Http\Controllers\Tenants;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
@@ -10,7 +10,7 @@ class TenantController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Hq/Dashboard', [
+        return Inertia::render('Tenants/Dashboard', [
             'title' => 'Tenant Dashboard'
         ]);
     }

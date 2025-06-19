@@ -33,6 +33,11 @@ class RoleSeeder extends Seeder
             'update permission',
             'delete permission',
             
+            'view company',
+            'create company',
+            'update company',
+            'delete company',
+            
             'view employee',
             'create employee',
             'update employee',

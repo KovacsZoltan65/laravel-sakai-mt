@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Hq;
 
 use App\Models\MenuItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,25 +21,27 @@ class hqMenuSeeder extends Seeder
         // Főmenü - Home
         $home = MenuItem::create(
             [
-                'label' => 'home', 
+                'label' => 'home',
                 'url' => null,
                 'route_name' => null,
                 'icon' => 'pi pi-home',
                 'default_weight' => 1,
+                'order_index' => 1,
             ]
         );
 
         // Főmenü - dashboard
         $home->children()->create(
             [
-                'label' => 'dashboard', 
-                'url' => null, 
+                'label' => 'dashboard',
+                'url' => null,
                 'route_name' => 'dashboard',
                 'icon' => 'pi pi-th-large',
                 'default_weight' => 1,
+                'order_index' => 1,
             ]
         );
-        
+
         // Főmenü - Administration
         $administration = MenuItem::create([
             'label' => 'administration',
@@ -47,17 +49,24 @@ class hqMenuSeeder extends Seeder
             'route_name' => null,
             'icon' => 'pi pi-cog',
             'default_weight' => 2,
+            'order_index' => 1,
         ]);
-        
+
         // Administration - Employees
-        $administration->children()->create([
-            'label' => 'employees',
-            'url' => null,
-            'route_name' => 'hq.employees.index',
-            'icon' => 'pi pi-users',
-            'can' => 'view employee',
-            'default_weight' => 1,
-        ]);
+//        $administration->children()->create([
+//            'label' => 'employees',
+//            'url' => null,
+//            'route_name' => 'hq.employees.index',
+//            'icon' => 'pi pi-users',
+//            'can' => 'view employee',
+//            'default_weight' => 1,
+//            'order_index' => 1,
+//        ]);
+
+
+
+
+        
         /*
         // System
         $system = MenuItem::create(
@@ -72,7 +81,7 @@ class hqMenuSeeder extends Seeder
             ['label' => 'Cities', 'url' => '/cities', 'default_weight' => 3,],
         ]);
         */
-        
+
         /*
         // Főmenü - Administration
         $administration = MenuItem::create(

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Tenant;
 
 use App\Models\MenuItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,11 +21,12 @@ class tenantMenuSeeder extends Seeder
         // Főmenü - Home
         $home = MenuItem::create(
             [
-                'label' => 'home', 
-                'url' => null, 
+                'label' => 'home',
+                'url' => null,
                 'route_name' => null,
                 'icon' => 'pi pi-home',
                 'default_weight' => 1,
+                'order_index' => 1,
             ]
         );
 
@@ -37,30 +38,33 @@ class tenantMenuSeeder extends Seeder
                 'route_name' => 'dashboard',
                 'icon' => 'pi pi-th-large',
                 'default_weight' => 1,
+                'order_index' => 0,
             ]
         );
 
         // Főmenü - Administration
         $administration = MenuItem::create(
             [
-                'label' => 'administration', 
-                'url' => null, 
+                'label' => 'administration',
+                'url' => null,
                 'route_name' => null,
                 'icon' => 'pi pi-cog',
-                'default_weight' => 2,
+                'default_weight' => 1,
+                'order_index' => 2,
             ]
         );
-        
+
         // Administration - Employees
-        $administration->children()->create([
-            'label' => 'employees',
-            'url' => null,
-            'route_name' => 'tenant.employees.index',
-            'icon' => 'pi pi-users',
-            'can' => 'view employee',
-            'default_weight' => 1,
-        ]);
-        
+//        $administration->children()->create([
+//            'label' => 'employees',
+//            'url' => null,
+//            'route_name' => 'tenant.employees.index',
+//            'icon' => 'pi pi-users',
+//            'can' => 'view employee',
+//            'default_weight' => 1,
+//            'order_index' => 1,
+//        ]);
+
         /*
         $administration->children()->createMany(
             [
@@ -110,7 +114,7 @@ class tenantMenuSeeder extends Seeder
 
 
         // Security
-        $security = 
+        $security =
         */
 
     }

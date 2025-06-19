@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hq;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AdminController extends Controller
@@ -18,12 +19,12 @@ class AdminController extends Controller
             'tenants' => 0,
         ]);
     }
-    
+
     public function employees(Request $request)
     {
         //
     }
-    
+
     public function fetchEmployees(Request $request)
     {
         //

@@ -12,7 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Exception;
+use \Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -37,12 +37,12 @@ class EmployeeController extends Controller
     {
         $tenant_id = $request->get('tenant_id');
 
-        $tenant = \App\Models\Tenant::findOrFail($tenant_id);
+        $tenant = Tenant::findOrFail($tenant_id);
 
         $employees = null;
 
         try {
-            $connectionName = app(\App\MultiTenancy\Tasks\CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
+            $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
 
             $_employees = Employee::on($connectionName);
 
@@ -51,11 +51,11 @@ class EmployeeController extends Controller
             }
 
             if ($request->has('field') && $request->has('order')) {
-                $_employees = $_employees;
+                $_employees->orderBy($request->get('field'), $request->get('order'));
             }
 
             $employees = $_employees->paginate(10, ['*'], 'page', $request->page ?? 1);
-        } catch( \Exception $ex ) {
+        } catch( Exception $ex ) {
             \Log::info('error message: ' . print_r($ex->getMessage(), true));
         }
 
@@ -247,7 +247,7 @@ class EmployeeController extends Controller
             $tenant = Tenant::findOrFail($tenant_id);
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
 
-            $employee = DB::transaction(function() use($connectionName, $request): Company {
+            $employee = DB::transaction(function() use($connectionName, $request): Employee {
                 // 1. Ország keresése
                 $_employee = Employee::withTrashed()->on($connectionName)->lockForUpdate()->findOrFail($request->id);
                 // 2. Ország véglegesen törlése

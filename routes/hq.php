@@ -22,10 +22,7 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
 
     Route::get('/', fn() => redirect('dashboard') );
 
-    Route::get(
-        '/dashboard',
-        [App\Http\Controllers\Hq\AdminController::class, 'index']
-    )->name('dashboard');
+    Route::get('/dashboard',[App\Http\Controllers\Hq\AdminController::class, 'index'])->name('dashboard');
 
     // Tovobbi admin útvonalak...
 
@@ -54,6 +51,22 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
         Route::delete('/{id}', [App\Http\Controllers\Hq\EmployeeController::class, 'deleteEmployee'])->name('delete');
         Route::put('/{id}/restore', [App\Http\Controllers\Hq\EmployeeController::class, 'restoreEmployee'])->name('restore');
         Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\EmployeeController::class, 'realDeleteEmployee'])->name('force-delete');
+    });
+
+    /**
+     * ========================================
+     * COMPANIES
+     * ========================================
+     */
+    Route::prefix('companies')->name('hq.companies.')->group(function() {
+        Route::get('/', [App\Http\Controllers\Hq\CompanyController::class, 'index'])->name('index');
+        Route::post('/fetch', [App\Http\Controllers\Hq\CompanyController::class, 'fetch'])->name('fetch');
+        Route::post('/store', [App\Http\Controllers\Hq\CompanyController::class, 'storeEmployee'])->name('store');
+        Route::put('/{id}/update', [App\Http\Controllers\Hq\CompanyController::class, 'updateEmployee'])->name('update');
+        Route::delete('/delete', [App\Http\Controllers\Hq\CompanyController::class, 'deleteEmployees'])->name('delete.bulk');
+        Route::delete('/{id}', [App\Http\Controllers\Hq\CompanyController::class, 'deleteEmployee'])->name('delete');
+        Route::put('/{id}/restore', [App\Http\Controllers\Hq\CompanyController::class, 'restoreEmployee'])->name('restore');
+        Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\CompanyController::class, 'realDeleteEmployee'])->name('force-delete');
     });
 
     /**

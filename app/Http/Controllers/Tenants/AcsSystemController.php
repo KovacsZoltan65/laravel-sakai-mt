@@ -33,7 +33,7 @@ class AcsSystemController extends Controller
         ]);
     }
 
-    public function fetch(AcsSystemIndexRequest $request)
+    public function fetch(Request $request)
     {
         $_acs_systems = AcsSystem::query();
 
@@ -54,6 +54,8 @@ class AcsSystemController extends Controller
     {
         try {
             $acs = AcsSystem::findOrFail($request->id);
+
+            return response()->json($acs, Response::HTTP_OK);
         } catch( ModelNotFoundException $e ) {
             return response()->json(['error' => 'getAcsSystem AcsSystem not found'], Response::HTTP_NOT_FOUND);
         } catch( QueryException $e ) {
@@ -67,7 +69,7 @@ class AcsSystemController extends Controller
     {
         try {
             $acs = AcsSystem::where('name', '=', $name)->firstOrFail();
-            
+
             return response()->json($acs, Response::HTTP_OK);
         } catch( ModelNotFoundException $e ) {
             return response()->json(['error' => 'getAcsSystemByName AcsSystem not found'], Response::HTTP_NOT_FOUND);
@@ -78,22 +80,22 @@ class AcsSystemController extends Controller
         }
     }
 
-    public function storeAcsSystem(AcsSystemStoreRequest $request): JsonResponse
+    public function storeAcsSystem(Request $request): JsonResponse
     {
         try {
             $acs = DB::transaction(function() use($request): AcsSystem {
                 // 1. Entitás létrehozása
                 $_acs = AcsSystem::create($request->all());
-                
+
                 // 2. Kapcsolódó rekordok létrehozása (pl. alapértelmezett beállítások)
                 $this->createDefaultSettings($_acs);
-                
+
                 // 3. Cache törlése, ha releváns
-                
-                
+
+
                 return $_acs;
             });
-            
+
             return response()->json($acs, Response::HTTP_CREATED);
         } catch( QueryException $ex ) {
             return response()->json(['error' => 'storeAcsSystem Database error'],  Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -102,7 +104,7 @@ class AcsSystemController extends Controller
         }
     }
 
-    public function updateAcsSystem(AcsSystemUpdateRequest $request, int $id): JsonResponse
+    public function updateAcsSystem(Request $request, int $id): JsonResponse
     {
         try {
             $acs = DB::Transaction(function($request, $id): AcsSystem {
@@ -110,16 +112,16 @@ class AcsSystemController extends Controller
                 $_acs = AcsSystem::lockForUpdate()->findOrFail($id);
                 $_acs->update($request->all());
                 $_acs->refresh();
-                
+
                 // 2. Kapcsolódó rekordok frissítése (pl. alapértelmezett beállítások)
                 $this->updateDefaultSettings($_acs);
-                
+
                 // 3. Cache törlése, ha releváns
-                
-                
+
+
                 return $_acs;
             });
-            
+
             return response()->json($acs, Response::HTTP_CREATED);
         } catch( ModelNotFoundException $ex ) {
             return response()->json(['error' => 'updateAcsSystem AcsSystem not found'],  Response::HTTP_NOT_FOUND);
@@ -141,7 +143,7 @@ class AcsSystemController extends Controller
 
                 return $_acs;
             });
-            
+
             return response()->json($acs, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             return response()->json(['error' => 'deleteAcsSystem Database error'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -156,7 +158,7 @@ class AcsSystemController extends Controller
     {
         try {
 
-            $acs = DB::transaction(function () use ($request): Company {
+            $acs = DB::transaction(function () use ($request): AcsSystem {
                 // Soft-deleted ország lekérése
                 $_acs = AcsSystem::withTrashed()->findOrFail($request->id);
 
@@ -209,12 +211,12 @@ class AcsSystemController extends Controller
         }
     }
 
-    private function createDefaultSettings(AcsSystem $entity): JsonResponse
+    private function createDefaultSettings(AcsSystem $entity): void
     {
         //
     }
 
-    private function updateDefaultSettings(AcsSystem $centity): JsonResponse
+    private function updateDefaultSettings(AcsSystem $centity): void
     {
         //
     }

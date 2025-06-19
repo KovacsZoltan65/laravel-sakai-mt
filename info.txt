@@ -42,3 +42,16 @@ php artisan make:request AcsSystemIndexRequest
 php artisan make:request AcsSystemStoreRequest
 php artisan make:request AcsSystemUpdateRequest
 php artisan make:request AcsSystemDeleteRequest
+
+// ===========================================
+// COMPANIES
+// ===========================================
+php artisan make:model Company
+php artisan make:controller CompanyController
+php artisan make:migration CreateCompaniesTable
+php artisan make:seeder CompanySeeder
+php artisan make:factory CompanyFactory
+php artisan make:request CompanyIndexRequest
+php artisan make:request CompanyStoreRequest
+php artisan make:request CompanyUpdateRequest
+php artisan make:request CompanyDeleteRequest

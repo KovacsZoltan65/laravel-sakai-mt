@@ -3,9 +3,19 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Tenants\Employee;
-use Illuminate\Database\Seeder;
+
+
 use App\Models\Tenant;
+
+use Database\Seeders\Hq\hqMenuSeeder;
+use Database\Seeders\Hq\hqEmployeesMenuSeeder;
+use Database\Seeders\Hq\hqCompaniesMenuSeeder;
+
+use Database\Seeders\Tenant\tenantMenuSeeder;
+use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
+use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
+
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -50,44 +60,32 @@ class DatabaseSeeder extends Seeder
 
             EmailsSeeder::class,
 
+            CompanySeeder::class,
+
         ]);
 
 
         // tenant specifikus seeder
         $tenant = Tenant::current(); // vagy app(Tenant::class)
-/*
-        if (!$tenant) {
-            $this->command->error('No tenant context available.');
-            return;
-        }
 
-        match ($tenant->domain) {
-            'company_01.localhost' => $this->call(Company01Seeder::class),
-            'company_02.localhost' => $this->call(Company02Seeder::class),
-            default => $this->call(DefaultTenantSeeder::class),
-        };
-
-        vagy:
-
-        if ($tenant->domain === 'company_01.localhost') {
-            $this->call(Company01Seeder::class);
-        } elseif ($tenant->domain === 'company_02.localhost') {
-            $this->call(Company02Seeder::class);
-        } else {
-            $this->call(DefaultTenantSeeder::class);
-        }
-*/
         if( $tenant->domain === 'hq.mt' ) {
             $this->call([
                 //MenuItemSeeder::class,
+                // Hq menü
                 hqMenuSeeder::class,
+                hqEmployeesMenuSeeder::class,
+                hqCompaniesMenuSeeder::class,
             ]);
         } else {
             $this->call([
                 EmployeeSeeder::class,
                 //MenuItemSeeder::class,
+
+                // Tenant menü
                 tenantMenuSeeder::class,
-                
+                tenantEmployeesMenuSeeder::class,
+                tenantCompaniesMenuSeeder::class,
+
                 AcsSystemSeeder::class,
 
                 // Fontos a sorrend, ne változtasd meg!!!
@@ -95,15 +93,5 @@ class DatabaseSeeder extends Seeder
                 // ------------------------------------
             ]);
         }
-/*
-        vagy:
-
-        match ($tenant->id) {
-            'tenant_abc' => $this->call(TenantAbcSeeder::class),
-            default => $this->call(DefaultTenantSeeder::class),
-        };
-
-        */
-
     }
 }
