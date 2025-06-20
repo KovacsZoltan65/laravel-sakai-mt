@@ -4,6 +4,7 @@ import { CONFIG } from "@/helpers/constants.js";
 
 class BaseService {
     constructor() {
+
         this.apiClient = axios.create({
             baseURL: CONFIG.BASE_URL,
             headers: {
@@ -66,6 +67,25 @@ class BaseService {
                 return Promise.reject(error);
             },
         );
+    }
+
+    handleError(error) {
+        const status = error?.response?.status;
+
+        if (status === 422) {
+            console.warn("Validációs hiba:", error.response.data.errors);
+            return Promise.reject(error.response.data.errors);
+        }
+
+        if (status === 401) {
+            console.warn("Nincs jogosultság (401).");
+        }
+
+        if (status === 500) {
+            console.error("Szerverhiba (500).");
+        }
+
+        return Promise.reject(error);
     }
 
     get(url, config = {}) {

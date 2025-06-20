@@ -29,13 +29,19 @@ const selectedTenant = ref('');
 const fetchEmployees = async () => {
     if (!selectedTenant.value) return;
 
-    //const response = await axios.post(route('employees.fetch'), {
-    //    tenant_id: selectedTenant.value
-    //});
-    const response = await EmployeeService.hq_getEmployees({
-        tenant_id: selectedTenant.value
-    })
-    employees.value = response.data.employees;
+    try {
+        const response = await EmployeeService.hq_getEmployees({
+            tenant_id: selectedTenant.value
+        });
+
+        employees.value = response.data.employees;
+    } catch(errors) {
+        // Validációs hibák (422) esetén errors egy objektum lesz
+        console.log('errors', errors);
+
+        // Opcionálisan toast, vagy hibamező frissítése:
+        // toast.add({ severity: 'error', summary: 'Hiba', detail: 'Nem sikerült lekérni az adatokat' });
+    }
 }
 
 // 👇 Hook használata

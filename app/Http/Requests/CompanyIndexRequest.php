@@ -11,7 +11,7 @@ class CompanyIndexRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class CompanyIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'field' => ['in:name,email,address,phone,created_at,updated_at'],
+            'order' => ['in:asc,desc'],
+            'perPage' => ['numeric'],
         ];
     }
 }

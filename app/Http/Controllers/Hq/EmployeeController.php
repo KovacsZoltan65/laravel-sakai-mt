@@ -36,10 +36,12 @@ class EmployeeController extends Controller
     public function fetch(Request $request): JsonResponse
     {
         $tenant_id = $request->get('tenant_id');
-
+        
         $tenant = Tenant::findOrFail($tenant_id);
 
         $employees = null;
+        
+        $page = $request->input('params.page', 1);
 
         try {
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
@@ -54,12 +56,12 @@ class EmployeeController extends Controller
                 $_employees->orderBy($request->get('field'), $request->get('order'));
             }
 
-            $employees = $_employees->paginate(10, ['*'], 'page', $request->page ?? 1);
+            $employees = $_employees->paginate(10, ['*'], 'page', $page);
+            
+            return response()->json(['employees' => $employees]);
         } catch( Exception $ex ) {
             \Log::info('error message: ' . print_r($ex->getMessage(), true));
         }
-
-        return response()->json(['employees' => $employees]);
     }
 
     public function storeEmployee(StoreEmployeeRequest $request): JsonResponse

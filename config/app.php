@@ -111,6 +111,14 @@ return [
 
     'faker_locale' => 'en_US',
 
+    'available_locales' => [
+        [ 'name' => "United States", 'code' => "US" ],
+        [ 'name' => "Magyarország", 'code' => "HU" ],
+        [ 'name' => "Great Britain", 'code' => "GB" ],
+    ],
+
+    'supported_locales' => ['en', 'hu'],
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key

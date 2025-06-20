@@ -1,35 +1,33 @@
-import BaseService from '../BaseService.js';
+import BaseService from "@/services/BaseService.js";
 
-class EmployeeService extends BaseService
+class CompanyService extends BaseService
 {
-    constructor()
-    {
+    constructor() {
         super();
-        this.url = "tenant.employees";
+        this.url = 'tenant.companies';
     }
 
-    getEmployees(params = {})
+    getCompanies(params = {})
     {
-        return this.post(route(`${this.url}.fetch`), { params });
+        return this.post(route(`${this.url}.fetch`), {params});
     }
 
-    storeEmployee(params)
+    storeCompany(params)
     {
-        return this.post(route(`${this.url}.store`), params);
+        return this.post(route(`${this.url}.store`), {params});
     }
 
-    updateEmployee(id, params)
+    updateCompany(id, params)
     {
-        //console.log('EmployeeService', id, params);
         return this.put(route(`${this.url}.update`, id), params);
     }
 
-    deleteEmployees(data)
+    deleteCompanies(data)
     {
         return this.delete(route(`${this.url}.delete.bulk`), data);
     }
 
-    deleteEmployee(id)
+    deleteCompany(id)
     {
         //return this.delete(route(`${this.url}.delete`, id));
         return this.apiClient.post(
@@ -39,15 +37,15 @@ class EmployeeService extends BaseService
         );
     }
 
-    restoreEmployee(id)
+    restoreCompany(id)
     {
         return this.put(route(`${this.url}.restore`, id));
     }
 
-    forceDeleteEmployee(id)
+    forceDeleteCompany(id)
     {
         return this.delete(route(`${this.url}.force-delete`, id));
     }
 }
 
-export default new EmployeeService();
+export default new CompanyService();

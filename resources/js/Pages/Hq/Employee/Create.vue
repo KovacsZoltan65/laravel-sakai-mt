@@ -14,6 +14,7 @@ const props = defineProps({
 const emit = defineEmits(["close", "saved"]);
 
 const isSaving = ref(false);
+const formErrors = ref({});
 
 // Form adatok
 const form = ref({

@@ -40,6 +40,8 @@ class EmployeeController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
+        $page = $request->input('params.page', 1);
+
         $employees = null;
 
         try {
@@ -53,7 +55,7 @@ class EmployeeController extends Controller
                 $_employees->orderBy($request->get('field'), $request->get('order'));
             }
 
-            $employees = $_employees->paginate(10, ['*'], 'page', $request->page ?? 1);
+            $employees = $_employees->paginate(10, ['*'], 'page', $page);
 
         } catch( Exception $ex ) {
             \Log::info('$ex message: ' . print_r($ex->getMessage(), true));

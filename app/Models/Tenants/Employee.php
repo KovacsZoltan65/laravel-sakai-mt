@@ -12,5 +12,7 @@ class Employee extends Model
         SoftDeletes;
 
     //protected $connection = 'tenant';
+    protected $table = "employees";
+    
     protected $fillable   = ['name', 'position', 'email', 'active'];
 }

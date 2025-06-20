@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
-import EmployeeService from "@/services/Employee/EmployeeService.js";
+import CompanyService from "@/services/Company/CompanyService.js";
 
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
@@ -10,40 +10,42 @@ const toast = useToast();
 const props = defineProps({
     show: Boolean,
     title: String,
-    employee: Object,
+    company: Object,
+});
+
+// Form adatok
+const form = ref({
+    name: '',
+    email: '',
+    address: '',
+    phone: '',
+    // ide jön minden egyéb mező
 });
 
 const emit = defineEmits(['close', 'saved']);
 
 const isSaving = ref(false);
 
-// Űrlap adatok
-const form = ref({
-    id: null,
-    name: '',
-    email: '',
-    position: '',
-});
-
-// Validációs szabályok
 const rules = computed(() => ({
     name: { required, minLength: minLength(3), maxLength: maxLength(255) },
     email: { required, email },
-    position: { required, minLength: minLength(3), maxLength: maxLength(255) },
+    address: { required, minLength: minLength(3), maxLength: maxLength(255) },
+    phone: { required }
 }));
 
 const v$ = useVuelidate(rules, form);
 
 // Amikor a props.employee változik, töltsük be a form értékeit
 watch(
-    () => props.employee,
-    (newEmployee) => {
-        if (newEmployee) {
+    () => props.company,
+    (newCompany) => {
+        if (newCompany) {
             form.value = {
-                id: newEmployee.id,
-                name: newEmployee.name || '',
-                email: newEmployee.email || '',
-                position: newEmployee.position || '',
+                id: newCompany.id,
+                name: newCompany.name || '',
+                email: newCompany.email || '',
+                address: newCompany.address || '',
+                phone: newCompany.phone || '',
             };
             v$.value.$reset(); // Reseteljük a validációt, hogy ne legyenek előző hibák
         }
@@ -51,15 +53,14 @@ watch(
     { immediate: true }
 );
 
-// Frissítés (update) művelet
-const updateEmployee = async () => {
+const updateCompany = async () => {
     isSaving.value = true;
 
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
             // A szerkesztett entitás azonosítóját props.employee.id használjuk
-            await EmployeeService.updateEmployee(props.employee.id, form.value);
+            await CompanyService.updateCompany(props.company.id, form.value);
 
             toast.add({
                 severity: 'success',
@@ -69,7 +70,7 @@ const updateEmployee = async () => {
 
             emit('saved', form.value);
             closeModal();
-        } catch(e) {
+        } catch (e) {
             console.error('Frissítés sikertelen', e);
 
             toast.add({
@@ -94,36 +95,23 @@ const closeModal = () => {
 
 <template>
     <Dialog
-        :visible="show" modal
-        header="Edit employee"
+        :visible="show"
+        :style="{ width: '550px' }" modal
+        header="Create Employee"
         @hide="closeModal"
-        :style="{ width: '550px' }"
     >
         <div class="flex flex-col gap-6" style="margin-top: 17px;">
-
             <!-- NAME -->
-            <div class="flex flex-col grow basis-0 gap-2">
-                <FloatLabel variant="on">
-                    <label for="name" class="block font-bold mb-3">
-                        Name
-                    </label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        fluid
-                    />
-                </FloatLabel>
-                <!--<Message
-                    size="small"
-                    severity="secondary"
-                    variant="simple"
-                >
-                    enter_employee_name
-                </Message>-->
-                <small class="text-red-500" v-if="v$.name.$error">
-                    {{ v$.name.$errors[0].$message }}
-                </small>
-            </div>
+            <FloatLabel variant="on">
+                <label for="name" class="block font-bold mb-3">
+                    Name
+                </label>
+                <InputText
+                    id="name"
+                    v-model="form.name"
+                    fluid
+                />
+            </FloatLabel>
 
             <!-- EMAIL -->
             <div class="flex flex-col grow basis-0 gap-2">
@@ -142,22 +130,22 @@ const closeModal = () => {
                     severity="secondary"
                     variant="simple"
                 >
-                    enter_employee_email
+                    enter_company_email
                 </Message>-->
                 <small class="text-red-500" v-if="v$.email.$error">
                     {{ v$.email.$errors[0].$message }}
                 </small>
             </div>
 
-            <!-- POSITION -->
+            <!-- PHONE -->
             <div class="flex flex-col grow basis-0 gap-2">
                 <FloatLabel variant="on">
-                    <label for="position" class="block font-bold mb-3">
-                        Position
+                    <label for="phone" class="block font-bold mb-3">
+                        phone
                     </label>
                     <InputText
-                        id="position"
-                        v-model="form.position"
+                        id="phone"
+                        v-model="form.phone"
                         fluid
                     />
                 </FloatLabel>
@@ -166,19 +154,43 @@ const closeModal = () => {
                     severity="secondary"
                     variant="simple"
                 >
-                    enter_employee_position
+                    enter_phone
                 </Message>-->
-                <small class="text-red-500" v-if="v$.position.$error">
-                    {{ v$.position.$errors[0].$message }}
+                <small class="text-red-500" v-if="v$.phone.$error">
+                    {{ v$.phone.$errors[0].$message }}
                 </small>
             </div>
 
-            <!-- Gombok -->
+            <!-- ADDRESS -->
+            <div class="flex flex-col grow basis-0 gap-2">
+                <FloatLabel variant="on">
+                    <label for="address" class="block font-bold mb-3">
+                        address
+                    </label>
+                    <InputText
+                        id="address"
+                        v-model="form.address"
+                        fluid
+                    />
+                </FloatLabel>
+                <!--<Message
+                    size="small"
+                    severity="secondary"
+                    variant="simple"
+                >
+                    enter_address
+                </Message>-->
+                <small class="text-red-500" v-if="v$.address.$error">
+                    {{ v$.address.$errors[0].$message }}
+                </small>
+            </div>
+
             <div class="flex justify-end gap-2 mt-4">
                 <Button label="Cancel" severity="secondary" @click="closeModal" />
-                <Button label="Update" icon="pi pi-check" @click="updateEmployee" />
+                <Button label="Update" icon="pi pi-check" @click="updateCompany" />
             </div>
 
         </div>
+
     </Dialog>
 </template>

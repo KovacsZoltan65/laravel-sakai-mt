@@ -5,39 +5,48 @@ class HqEmployeeService extends BaseService
     constructor()
     {
         super();
-        this.url = "/employees";
+        this.url = "hq.employees";
     }
 
     hq_getEmployees(params = {})
     {
-        return this.post(route('hq.employees.fetch'), params);
+        return this.post(route('hq.employees.fetch', params));
     }
 
-    hq_storeEmployee(data) {
-        return this.post(route('hq.employees.store'), data);
+    hq_storeEmployee(data)
+    {
+        return this.post(route(`${this.url}.store`), data);
     }
 
-    hq_updateEmployee(id, data) {
+    hq_updateEmployee(id, data)
+    {
         console.log(id, data);
-        return this.put(route('hq.employees.update', { id }), data);
+        return this.put(route(`${this.url}.update`, { id }), data);
     }
 
-    hq_deleteEmployees(data) {
-        return this.delete(route('hq.employees.delete.bulk'), data);
+    hq_deleteEmployees(data)
+    {
+        return this.delete(route(`${this.url}.delete.bulk'`), data);
     }
 
-    hq_deleteEmployee(id, data = {}) {
-        return this.delete(route('hq.employees.delete', { id }), {
-            data // itt kell, hogy a data kulcsban legyen
-        });
+    hq_deleteEmployee(id, data = {})
+    {
+        //return this.delete(route(`${this.url}.delete`, { id }), {data});
+        return this.apiClient.post(
+            route(`${this.url}.delete`, { id }),
+            data,
+            { headers: { 'X-HTTP-Method-Override': 'DELETE' } }
+        );
     }
 
-    hq_restoreEmployee(id, data = {}) {
-        return this.put(route('hq.employees.restore', { id }), data);
+    hq_restoreEmployee(id, data = {})
+    {
+        return this.put(route(`${this.url}.restore`, { id }), data);
     }
 
-    hq_forceDeleteEmployee(id, data = {}) {
-        return this.delete(route('hq.employees.force-delete', { id }), data);
+    hq_forceDeleteEmployee(id, data = {})
+    {
+        return this.delete(route(`${this.url}.force-delete`, { id }), data);
     }
 }
 
