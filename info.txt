@@ -31,6 +31,27 @@ php artisan event:clear       # Esemény cache
 php artisan optimize:clear
 
 // ===========================================
+// @import probléma
+// ===========================================
+npm install -g sass-migrator
+minta utasítás: sass-migrator module --migrate-deps your-entrypoint.scss
+
+// ===========================================
+// CORS policy beállítás
+// ===========================================
+vite.config módosírása:
+export default defineConfig({
+    server: {
+        cors: true, // Engedélyezi a CORS-t
+        host: '127.0.0.1', // IPv4-re állítás
+        port: 5173
+    },
+    plugins: [
+        ...
+
+sass-migrator module --migrate-deps C:\wamp64\www\laravel-sakai-mt\resources\js\sakai\assets\styles.scss
+
+// ===========================================
 // ACS SYSTEMS
 // ===========================================
 php artisan make:model AcsSystem
