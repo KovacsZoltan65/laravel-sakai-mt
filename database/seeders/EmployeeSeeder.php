@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Tenant;
 use App\Models\Tenants\Employee;
-use Carbon\Carbon;
+//use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -19,9 +19,12 @@ class EmployeeSeeder extends Seeder
         Employee::truncate();
         Schema::enableForeignKeyConstraints();
 
-        $now = Carbon::now();
-
         $tenant = Tenant::current();
+        if( $tenant->name !== 'Hq' ) {
+            Employee::factory()->count(1500)->create();
+        }
+        /*
+        $now = Carbon::now();
 
         if( $tenant->name === 'Company 01' ) {
             Employee::insert([
@@ -36,5 +39,6 @@ class EmployeeSeeder extends Seeder
                 ['name' => 'Sue Doe','position' => 'CTO','email' => '2F4R7@example.com','created_at' => $now,    'updated_at' => $now,],
             ]);
         }
+        */
     }
 }

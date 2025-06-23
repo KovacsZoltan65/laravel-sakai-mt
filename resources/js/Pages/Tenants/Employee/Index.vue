@@ -2,6 +2,7 @@
 import { onMounted, reactive, watch } from "vue";
 import AppLayout from "@/sakai/layout/AppLayout.vue";
 import { Head } from "@inertiajs/vue3";
+import { Inertia } from '@inertiajs/inertia';
 
 import EmployeeService from "@/services/Employee/EmployeeService.js";
 
@@ -118,7 +119,18 @@ onMounted(fetchData);
                 @page="onPageChange"
                 tableStyle="min-width: 50rem">
 
-                <template #header></template>
+                <template #header>
+                    <div class="flex justify-between">
+                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+                        <div class="font-semibold text-xl mb-1">employees_title</div>
+                        <div class="flex justify-end">
+                            <IconField>
+                                <InputIcon><i class="pi pi-search" /></InputIcon>
+                                <InputText v-model="params.search" placeholder="Keyword Search" />
+                            </IconField>
+                        </div>
+                    </div>
+                </template>
 
                 <template #empty>No data found.</template>
 

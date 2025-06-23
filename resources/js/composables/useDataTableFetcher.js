@@ -10,7 +10,8 @@ export function useDataTableFetcher(initialParams, fetchCallback, watchKeys = ['
         search: initialParams.search ?? '',
         field: initialParams.field ?? '',
         order: initialParams.order ?? '',
-        page: 1
+        page: 1,
+        tenant_id: 0,
     });
 
     const fetchData = async () => {
@@ -21,6 +22,7 @@ export function useDataTableFetcher(initialParams, fetchCallback, watchKeys = ['
             search: params.search,
             field: params.field,
             order: params.order,
+            tenant_is: params.tenant_id
         });
 
         try {

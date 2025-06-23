@@ -40,6 +40,7 @@ class EmployeeController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
+\Log::info('$request: ' . print_r($request->all(), true));
         $page = $request->input('params.page', 1);
 
         $employees = null;
