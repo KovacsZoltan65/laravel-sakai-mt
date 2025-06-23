@@ -35,15 +35,14 @@ class EmployeeController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
-\Log::info('$request: ' . print_r($request->all(), true));
         $tenant_id = $request->get('tenant_id');
 
         $tenant = Tenant::findOrFail($tenant_id);
 
         //$employees = null;
 
-        $page = $request->input('params.page', 1);
-\Log::info('$page: ' . print_r($page, true));
+        $page = $request->input('page', 1);
+
         try {
             $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant);
 
@@ -59,10 +58,14 @@ class EmployeeController extends Controller
 
             $employees = $_employees->paginate(10, ['*'], 'page', $page);
 
-            return response()->json(['employees' => $employees], Response::HTTP_OK);
+            return response()->json([
+                'employees' => $employees
+            ], Response::HTTP_OK);
         } catch( Exception $ex ) {
             \Log::info('error message: ' . print_r($ex->getMessage(), true));
-            return response()->json(['EmployeeController error' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json([
+                'EmployeeController error' => $ex->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

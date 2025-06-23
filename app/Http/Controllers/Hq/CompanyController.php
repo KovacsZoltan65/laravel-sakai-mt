@@ -21,7 +21,7 @@ class CompanyController extends Controller
 
     public function index(Request $request)
     {
-        return Inertia::render('Hq/Companies/Index', [
+        return Inertia::render('Hq/Company/Index', [
             'title' => 'Companies',
             'filters' => $request->all(['search', 'field', 'order']),
         ]);

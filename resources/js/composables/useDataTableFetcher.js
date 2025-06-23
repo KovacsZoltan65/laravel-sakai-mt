@@ -11,7 +11,6 @@ export function useDataTableFetcher(initialParams, fetchCallback, watchKeys = ['
         field: initialParams.field ?? '',
         order: initialParams.order ?? '',
         page: 1,
-        tenant_id: 0,
     });
 
     const fetchData = async () => {
@@ -22,12 +21,12 @@ export function useDataTableFetcher(initialParams, fetchCallback, watchKeys = ['
             search: params.search,
             field: params.field,
             order: params.order,
-            tenant_is: params.tenant_id
         });
 
         try {
             const response = await fetchCallback(query);
             data.value = response;
+            //data.value = response?.employees ?? response;
         } catch (error) {
             console.error('Hiba a lekérés során', error);
         } finally {
@@ -46,6 +45,7 @@ export function useDataTableFetcher(initialParams, fetchCallback, watchKeys = ['
 
     const onPageChange = (event) => {
         params.page = event.page + 1;
+
         fetchData();
     };
 

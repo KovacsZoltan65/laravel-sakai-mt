@@ -10,7 +10,7 @@ class HqEmployeeService extends BaseService
 
     hq_getEmployees(params = {})
     {
-        return this.post(route('hq.employees.fetch', params));
+        return this.post(route('hq.employees.fetch'), params);
     }
 
     hq_storeEmployee(data)
@@ -20,7 +20,6 @@ class HqEmployeeService extends BaseService
 
     hq_updateEmployee(id, data)
     {
-        console.log(id, data);
         return this.put(route(`${this.url}.update`, { id }), data);
     }
 

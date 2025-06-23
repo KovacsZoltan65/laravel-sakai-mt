@@ -3,11 +3,11 @@
     import { Head, usePage } from "@inertiajs/vue3";
     import AppLayout from "@/sakai/layout/AppLayout.vue";
     // Szolgáltatás
-    import EmployeeService from "@/services/Employee/HqEmployeeService.js";
+    import CompanyService from "@/services/Company/HqCompanyService.js";
 
-    import CreateModal from "@/Pages/Hq/Employee/Create.vue";
-    import EditModal from "@/Pages/Hq/Employee/Edit.vue";
-    import DeleteModal from "@/Pages/Hq/Employee/Delete.vue";
+    import CreateModal from "@/Pages/Hq/Company/Create.vue";
+    import EditModal from "@/Pages/Hq/Company/Edit.vue";
+    import DeleteModal from "@/Pages/Hq/Company/Delete.vue";
 
     import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 
@@ -24,46 +24,46 @@
     });
 
     const selectedTenant = ref('');
-    //const employees = ref([]);
+    //const companies = ref([]);
 
     // 👇 API hívás definíció
-    const fetchEmployees = async (params) => {
+    const fetchCompanies = async (params) => {
         if (!selectedTenant.value) return;
 
-        //const response = await axios.post(route('employees.fetch'), {
+        //const response = await axios.post(route('companies.fetch'), {
         //    tenant_id: selectedTenant.value
         //});
 
-        const response = await EmployeeService.hq_getEmployees({
+        const response = await CompanyService.hq_getCompanies({
             ...params,
             tenant_id: selectedTenant.value
         });
 
-        employees.value = response.data.employees;
-        return response.data.employees; // 💥 EZ KELL
+        companies.value = response.data.companies;
+        return response.data.companies; // 💥 EZ KELL
     }
 
     // 👇 Hook használata
     const {
-        data: employees = {},
+        data: companies = {},
         params,
         isLoading,
         fetchData,
         onPageChange,
         clearSearch
-    } = useDataTableFetcher(props.filters, fetchEmployees);
+    } = useDataTableFetcher(props.filters, fetchCompanies);
 
     // 👇 Modálvezérlés külön
     const data = reactive({
         createOpen: false,
         editOpen: false,
         deleteOpen: false,
-        employee: null
+        company: null
     });
 
     watch(selectedTenant, (newVal) => {
         if( newVal ) {
-            fetchEmployees();
+            fetchCompanies();
         }
     });
 
@@ -83,23 +83,23 @@
                 :title="props.title"
                 :tenantId="selectedTenant"
                 @close="data.createOpen = false"
-                @saved="fetchEmployees"
+                @saved="fetchCompanies"
             />
             <EditModal
                 :show="data.editOpen"
-                :employee="data.employee"
+                :company="data.company"
                 :title="props.title"
                 :tenantId="selectedTenant"
                 @close="data.editOpen = false"
-                @saved="fetchEmployees"
+                @saved="fetchCompanies"
             />
             <DeleteModal
                 :show="data.deleteOpen"
-                :employee="data.employee"
+                :company="data.company"
                 :title="props.title"
                 :tenantId="selectedTenant"
                 @close="data.deleteOpen = false"
-                @deleted="fetchEmployees" />
+                @deleted="fetchCompanies" />
 
             <TenantSelect
                 v-model="selectedTenant"
@@ -107,7 +107,7 @@
             />
 
             <Button
-                v-if="has('create employee')"
+                v-if="has('create company')"
                 icon="pi pi-plus"
                 label="Create" @click="data.createOpen = true"
                 class="mr-2"
@@ -115,17 +115,17 @@
             />
 
             <Button
-                @click="fetchEmployees"
+                @click="fetchCompanies"
                 :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
                 :disabled="!selectedTenant"
             />
 
             <DataTable
-                v-if="employees"
-                :value="employees.data"
-                :rows="employees.per_page"
-                :totalRecords="employees.total"
-                :first="(employees.current_page - 1) * employees.per_page"
+                v-if="companies"
+                :value="companies.data"
+                :rows="companies.per_page"
+                :totalRecords="companies.total"
+                :first="(companies.current_page - 1) * companies.per_page"
                 :loading="isLoading" lazy paginator
                 dataKey="id"
                 @page="onPageChange"
@@ -134,7 +134,7 @@
                 <template #header>
                     <div class="flex justify-between">
                         <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
-                        <div class="font-semibold text-xl mb-1">employees_title</div>
+                        <div class="font-semibold text-xl mb-1">companies_title</div>
                         <div class="flex justify-end">
                             <IconField>
                                 <InputIcon><i class="pi pi-search" /></InputIcon>
@@ -156,20 +156,20 @@
                 <Column :exportable="false" style="min-width: 12rem">
                     <template #body="slotProps">
                         <Button
-                            v-if="has('update employee')"
+                            v-if="has('update company')"
                             icon="pi pi-pencil"
                             outlined rounded
                             class="mr-2"
                             @click="() => {
                                 data.editOpen = true;
-                                data.employee = slotProps.data;
+                                data.company = slotProps.data;
                             }" />
                         <Button
-                            v-if="has('delete employee')"
+                            v-if="has('delete company')"
                             icon="pi pi-trash"
                             outlined rounded
                             severity="danger"
-                            @click="() => { data.deleteOpen = true; data.employee = slotProps.data; }" />
+                            @click="() => { data.deleteOpen = true; data.company = slotProps.data; }" />
                     </template>
                 </Column>
 
