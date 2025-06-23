@@ -8,10 +8,11 @@ use App\Http\Requests\IndexEmployeeRequest;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Tenants\Employee;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -40,7 +41,6 @@ class EmployeeController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
-\Log::info('$request: ' . print_r($request->all(), true));
         $page = $request->input('params.page', 1);
 
         $employees = null;
