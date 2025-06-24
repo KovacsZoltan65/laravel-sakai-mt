@@ -1,6 +1,6 @@
 <script setup>
-    import { onMounted, reactive, watch, ref } from "vue";
-    import { Head, usePage } from "@inertiajs/vue3";
+    import { onMounted, reactive, watch, ref, computed } from "vue";
+    import { Head } from "@inertiajs/vue3";
     import AppLayout from "@/sakai/layout/AppLayout.vue";
     // Szolgáltatás
     import EmployeeService from "@/services/Employee/HqEmployeeService.js";
@@ -12,10 +12,12 @@
     import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 
     import TenantSelect from "@/Components/Selectors/TenantSelector.vue";
+    import CompanySelect from "@/Components/Selectors/CompanySelector.vue";
 
     import { usePermissions } from '@/composables/usePermissions';
     const { has } = usePermissions();
 
+    const selectedTenantId = ref(null);
     const selectedCompanyId = ref(null);
 
     const props = defineProps({
@@ -24,11 +26,12 @@
     });
 
     const selectedTenant = ref('');
+    const selectedCompany = ref('');
     //const employees = ref([]);
 
     // 👇 API hívás definíció
     const fetchEmployees = async (params) => {
-        if (!selectedTenant.value) return;
+        if (!selectedTenant.value || !selectedCompany.value) return;
 
         //const response = await axios.post(route('employees.fetch'), {
         //    tenant_id: selectedTenant.value
@@ -36,7 +39,8 @@
 
         const response = await EmployeeService.hq_getEmployees({
             ...params,
-            tenant_id: selectedTenant.value
+            tenant_id: selectedTenant.value,
+            company_id: selectedCompany.value
         });
 
         employees.value = response.data.employees;
@@ -61,12 +65,20 @@
         employee: null
     });
 
-    watch(selectedTenant, (newVal) => {
-        if( newVal ) {
+    watch(selectedTenant, () => {
+        selectedCompany.value = null;
+        employees.value = null; // vagy null, ha úgy kezeled
+    });
+
+    watch([selectedTenant, selectedCompany], ([tenant, comapny]) => {
+        if( tenant && comapny ) {
             fetchEmployees();
         }
     });
 
+    const canInteract = computed(() => {
+        return !!selectedTenant.value && !!selectedCompany.value;
+    });
 </script>
 
 <template>
@@ -82,17 +94,23 @@
                 :show="data.createOpen"
                 :title="props.title"
                 :tenantId="selectedTenant"
+                :companyId="selectedCompany"
                 @close="data.createOpen = false"
                 @saved="fetchEmployees"
             />
+
+            <!-- EDIT MODAL -->
             <EditModal
                 :show="data.editOpen"
                 :employee="data.employee"
                 :title="props.title"
                 :tenantId="selectedTenant"
+                :companyId="selectedCompany"
                 @close="data.editOpen = false"
                 @saved="fetchEmployees"
             />
+
+            <!-- DELETE MODAL -->
             <DeleteModal
                 :show="data.deleteOpen"
                 :employee="data.employee"
@@ -103,22 +121,30 @@
             />
 
             <div class="flex flex-wrap items-center gap-2 mb-3">
+                <!-- PÉLDÁNY VÁLASZTÓ -->
                 <TenantSelect
                     v-model="selectedTenant"
                     placeholder="Válassz..."
+                />
+
+                <!-- CÉG VÁLASZTÓ -->
+                <CompanySelect
+                    v-model="selectedCompany"
+                    :tenantId="selectedTenant"
+                    placeholder="Válassz céget..."
                 />
 
                 <Button
                     v-if="has('create employee')"
                     icon="pi pi-plus"
                     label="Create" @click="data.createOpen = true"
-                    :disabled="!selectedTenant"
+                    :disabled="!canInteract"
                 />
 
                 <Button
                     @click="fetchEmployees"
                     :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-                    :disabled="!selectedTenant"
+                    :disabled="!canInteract"
                 />
             </div>
 

@@ -48,6 +48,10 @@ class EmployeeController extends Controller
 
             $_employees = Employee::on($connectionName);
 
+            if( $request->has('company_id') ) {
+                $_employees->where('company_id', '=', $request->get('company_id'));
+            }
+
             if( $request->has(key: 'search') ) {
                 $_employees->whereRaw("CONCAT(name,'',email)");
             }

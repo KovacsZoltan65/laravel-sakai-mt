@@ -9,9 +9,14 @@ const props = defineProps({
     title: String,
     employee: Object, // A szerkesztendő entitás adatai
     tenantId: [Number, String],
+    companyId: [String, Number]
 });
 
 const emit = defineEmits(['close', 'saved']);
+
+const isSaving = ref(false);
+const formErrors = ref({});
+const nameInputRef = ref();
 
 // Űrlap adatok
 const form = ref({
@@ -47,6 +52,8 @@ watch(
 
 // Frissítés (update) művelet
 const updateEmployee = async () => {
+    isSaving.value = true;
+
     v$.value.$touch();
     if (!v$.value.$invalid) {
         try {
@@ -55,20 +62,32 @@ const updateEmployee = async () => {
                 props.employee.id,
                 {
                     ...form.value,
-                    tenant_id: props.tenantId
+                    tenant_id: props.tenantId,
+                    company_id: props.companyId
                 }
             );
             emit('saved', form.value);
             closeModal();
         } catch (e) {
             console.error('Frissítés sikertelen', e);
+        } finally {
+            isSaving.value = false;
         }
+    } else {
+        isSaving.value = false;
     }
 };
 
 // Modál bezárása: reseteljük a validációs állapotot, majd emitáljuk a close eseményt
 const closeModal = () => {
     v$.value.$reset();
+
+    form.value = {
+        name: '',
+        email: '',
+        position: ''
+    };
+
     emit('close');
 };
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
@@ -8,13 +8,15 @@ import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 const props = defineProps({
     show: Boolean,
     title: String,
-    tenantId: [Number, String],
+    tenantId: [String, Number],
+    companyId: [String, Number]
 });
 
 const emit = defineEmits(["close", "saved"]);
 
 const isSaving = ref(false);
 const formErrors = ref({});
+const nameInputRef = ref();
 
 // Form adatok
 const form = ref({
@@ -42,13 +44,18 @@ const save = async () => {
         try {
             await EmployeeService.hq_storeEmployee({
                 ...form.value,
-                tenant_id: props.tenantId
+                tenant_id: props.tenantId,
+                company_id: props.companyId
             });
 
             emit('saved', form.value);
             closeModal();
         } catch (e) {
-            console.error('Mentés sikertelen', e);
+            if (e.response && e.response.data && e.response.data.errors) {
+                formErrors.value = e.response.data.errors;
+            } else {
+                console.error('Mentés sikertelen', e);
+            }
         } finally {
             isSaving.value = false;
         }
@@ -57,6 +64,13 @@ const save = async () => {
 
 const closeModal = () => {
     v$.value.$reset(); // 👈 hibák törlése
+
+    form.value = {
+        name: '',
+        email: '',
+        position: ''
+    };
+
     emit('close');
 };
 
@@ -70,18 +84,23 @@ const closeModal = () => {
         @hide="closeModal"
     >
         <div class="flex flex-col gap-6" style="margin-top: 17px;">
-            <!-- NAME -->
-            <FloatLabel variant="on">
-                <label for="name" class="block font-bold mb-3">
-                    Name
-                </label>
-                <InputText
-                    id="name"
-                    v-model="form.name"
-                    fluid
-                />
-            </FloatLabel>
-
+            <div>
+                <!-- NAME -->
+                <FloatLabel variant="on">
+                    <label for="name" class="block font-bold mb-3">
+                        Name
+                    </label>
+                    <InputText
+                        ref="nameInputRef"
+                        id="name"
+                        v-model="form.name"
+                        fluid
+                    />
+                </FloatLabel>
+                <small class="text-red-500" v-if="v$.name.$error">
+                    {{ v$.name.$errors[0].$message }}
+                </small>
+            </div>
             <!-- EMAIL -->
             <div class="flex flex-col grow basis-0 gap-2">
                 <FloatLabel variant="on">
@@ -131,8 +150,19 @@ const closeModal = () => {
             </div>
 
             <div class="flex justify-end gap-2 mt-4">
-                <Button label="Cancel" severity="secondary" @click="closeModal" />
-                <Button label="Save" icon="pi pi-check" @click="save" />
+                <Button
+                    label="Cancel"
+                    severity="secondary"
+                    @click="closeModal"
+                />
+
+                <Button
+                    label="Save"
+                    icon="pi pi-check"
+                    :loading="isSaving"
+                    :disabled="isSaving"
+                    @click="save"
+                />
             </div>
 
         </div>

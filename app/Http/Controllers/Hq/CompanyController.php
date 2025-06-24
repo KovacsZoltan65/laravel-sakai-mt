@@ -55,11 +55,15 @@ class CompanyController extends Controller
             return response()->json(['CompanyController error' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    public function getCompaniesToSelect()
+
+    public function getCompaniesToSelect(Request $request)
     {
-        $companies = Company::ToSelect();
-        
+        $tenant_id = $request->validate([
+            'tenant_id' => 'required|integer|exists:landlord.tenants,id',
+        ])['tenant_id'];
+
+        $companies = Company::ToSelect($tenant_id);
+
         return $companies;
     }
 }

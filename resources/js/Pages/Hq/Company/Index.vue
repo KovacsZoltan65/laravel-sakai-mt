@@ -103,11 +103,14 @@
             />
 
             <div class="flex flex-wrap items-center gap-2 mb-3">
+
+                <!-- TENANT SELECTOR -->
                 <TenantSelect
                     v-model="selectedTenant"
                     placeholder="Válassz..."
                 />
 
+                <!-- CREATE BUTTON -->
                 <Button
                     v-if="has('create company')"
                     icon="pi pi-plus"
@@ -116,6 +119,7 @@
                     :disabled="!selectedTenant"
                 />
 
+                <!-- REFRESH BUTTON -->
                 <Button
                     @click="fetchCompanies"
                     :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
