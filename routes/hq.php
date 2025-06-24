@@ -28,13 +28,18 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
 
     /**
      * ========================================
-     * TENANT SELECTOR
+     * SELECTOROK
      * ========================================
      */
     Route::domain('hq.mt')->prefix('/api/hq')
         ->middleware(['auth'])
         ->group(function () {
+            
+        // Példány választó
         Route::get('/tenants', [App\Http\Controllers\Hq\TenantController::class, 'getTenantsToSelect'])->name('tenant.getTenants');
+        
+        // Cég választó
+        Route::get('/companies', [\App\Http\Controllers\Hq\CompanyController::class, 'getCompaniesToSelect'])->name('companies.getCompanies');
     });
 
     /**

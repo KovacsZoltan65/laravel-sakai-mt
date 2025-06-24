@@ -16,10 +16,10 @@ return new class extends Migration
             $table->charset('utf8mb3');
             $table->collation('utf8mb3_unicode_ci');
             
-            $table->id();
-            $table->string('name');
-            $table->string('position');
-            $table->string('email')->unique();
+            $table->id()->comment('Rekord azonosító');
+            $table->string('name')->comment('Név');
+            $table->string('position')->comment('Pozíció');
+            $table->string('email')->unique()->comment('Email cím');
             
             $table->boolean('active')->default(1)->index()->comment('Aktív');
             

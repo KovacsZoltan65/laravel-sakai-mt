@@ -12,10 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('menu_item_usages', function (Blueprint $table) {
+            $table->engine('InnoDB');
+            $table->charset('utf8mb3');
+            $table->collation('utf8mb3_unicode_ci');
+                    
             $table->id()->comment('Rekord azonosító');
             $table->unsignedBigInteger('menu_item_id')->comment('Menü azonosító');
             $table->unsignedBigInteger('user_id')->nullable()->comment('Felhasználó id');
-            $table->integer('usage_count')->default(0)->comment('Használat számáló'); // Használat számláló
+            $table->integer('usage_count')->default(0)->comment('Használat számáló');
             $table->timestamps();
 
             $table->foreign('menu_item_id')->references('id')->on('menu_items')->cascadeOnDelete();

@@ -55,4 +55,11 @@ class CompanyController extends Controller
             return response()->json(['CompanyController error' => $ex->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
+    public function getCompaniesToSelect()
+    {
+        $companies = Company::ToSelect();
+        
+        return $companies;
+    }
 }

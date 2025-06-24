@@ -16,14 +16,14 @@ return new class extends Migration
             $table->charset('utf8mb3');
             $table->collation('utf8mb3_unicode_ci');
 
-            $table->id();
-            $table->string('name')->collation('utf8mb3_unicode_ci');
-            $table->string('domain')->collation('utf8mb3_unicode_ci')->unique();
-            $table->string('host', 125)->collation('utf8mb3_unicode_ci')->default('localhost')->comment('Adatbázis szerver címe');
+            $table->id()->comment('Rekord azonosító');
+            $table->string('name')->comment('Példány neve');
+            $table->string('domain')->unique()->comment('Domain név');
+            $table->string('host', 125)->default('localhost')->comment('Adatbázis szerver');
             $table->integer('port')->default(3306)->comment('Adatbázis port');
-            $table->string('database')->collation('utf8mb3_unicode_ci')->unique();
-            $table->string('username')->collation('utf8mb3_unicode_ci')->comment('Adatbázis felhasználó');
-            $table->string('password')->collation('utf8mb3_unicode_ci');
+            $table->string('database')->unique()->comment('Adatbázis név');
+            $table->string('username')->comment('Adatbázis felhasználó');
+            $table->string('password')->comment('Adatbázis jelszó');
             $table->boolean('active')->default(1)->index()->comment('Aktív');
 
             $table->timestamps();

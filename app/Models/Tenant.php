@@ -17,14 +17,15 @@ class Tenant extends BaseTenant
         'database', 'username', 'password', 'active'
     ];
 
-    public function scopeActive(Builder $query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where( 'active', '=', APP_ACTIVE);
     }
 
     public static function toSelect(): array
     {
-        return static::active()->where('name', '<>', 'Hq')
+        return static::active()
+            ->where('name', '<>', 'Hq')
             ->select(['id', 'name'])
             ->orderBy('name', 'asc')
             ->get()->toArray();

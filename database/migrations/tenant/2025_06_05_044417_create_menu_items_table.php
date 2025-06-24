@@ -12,6 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('menu_items', function (Blueprint $table) {
+            $table->engine('InnoDB');
+            $table->charset('utf8mb3');
+            $table->collation('utf8mb3_unicode_ci');
+            
             $table->id()->comment('Rekord azonosító');
             $table->string('label')->comment('Felirat');
             $table->string('icon')->default('')->comment('Ikon');
