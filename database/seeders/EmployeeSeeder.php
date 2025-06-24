@@ -21,7 +21,18 @@ class EmployeeSeeder extends Seeder
 
         $tenant = Tenant::current();
         if( $tenant->name !== 'Hq' ) {
-            Employee::factory()->count(1500)->create();
+            $count = 1500;
+            $this->command->warn("Creating {$count} employees...");
+            $this->command->getOutput()->progressStart($count);
+            
+            Employee::factory()
+                ->count(1500)->create()
+                ->each(
+                    fn () => $this->command->getOutput()->progressAdvance()
+                );
+            
+            $this->command->getOutput()->progressFinish();
+            $this->command->info("{$count} employees created.");
         }
         /*
         $now = Carbon::now();

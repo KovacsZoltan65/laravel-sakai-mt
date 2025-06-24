@@ -2,10 +2,12 @@
 
 namespace App\Models\Tenants;
 
+use App\Models\Company;
+use Database\Factories\EmployeeFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 class Employee extends Model
 {
@@ -15,10 +17,15 @@ class Employee extends Model
     //protected $connection = 'tenant';
     protected $table = "employees";
 
-    protected $fillable   = ['name', 'position', 'email', 'active'];
+    protected $fillable   = ['name', 'position', 'email', 'company_id', 'active'];
 
     protected static function newFactory(): Factory
     {
-        return \Database\Factories\EmployeeFactory::new();
+        return EmployeeFactory::new();
+    }
+    
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

@@ -50,7 +50,6 @@ class DatabaseSeeder extends Seeder
         // run tenant specific seeders
 
         $this->call([
-            EmployeeSeeder::class,
 
             // Fontos a sorrend, ne változtasd meg!!!
             PermissionSeeder::class,
@@ -60,7 +59,9 @@ class DatabaseSeeder extends Seeder
 
             EmailsSeeder::class,
 
+            // A kapcsolat miatt fontos a sorrend
             CompanySeeder::class,
+            EmployeeSeeder::class,
 
         ]);
 

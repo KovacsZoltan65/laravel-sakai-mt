@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Tenants\Employee;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -33,6 +34,11 @@ class Company extends Model
             ->select(['id', 'name'])
             ->orderBy('name', 'asc')
             ->get()->toArray();
+    }
+    
+    public function entities()
+    {
+        return $this->hasMany(Employee::class);
     }
     
     public function getCreatedAtAttribute()

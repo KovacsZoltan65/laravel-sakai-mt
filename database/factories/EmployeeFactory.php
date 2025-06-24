@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use App\Models\Tenants\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,6 +21,7 @@ class EmployeeFactory extends Factory
             'position' => $this->faker->jobTitle,
             'email' => $this->faker->unique()->safeEmail,
             'active' => $this->faker->boolean(90),
+            'company_id' => Company::inRandomOrder()->first()->id,
         ];
     }
 }

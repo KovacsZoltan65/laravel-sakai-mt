@@ -18,25 +18,29 @@ class CompanySeeder extends Seeder
         Company::truncate();
         Schema::enableForeignKeyConstraints();
         
-        $count = 20;
+        $tenant = \App\Models\Tenant::current();
         
-        $this->command->warn("Creating {$count} companies...");
-        $this->command->getOutput()->progressStart($count);
-        
-        for ($i = 0; $i < $count; $i++) {
-            $company = Company::factory()->create();
+        if( $tenant->name !== 'Hq' ) {
+            $count = 20;
 
-            // Haladás jelzése
-            $this->command->getOutput()->progressAdvance();
+            $this->command->warn("Creating {$count} companies...");
+            $this->command->getOutput()->progressStart($count);
+
+            for ($i = 0; $i < $count; $i++) {
+                $company = Company::factory()->create();
+
+                // Haladás jelzése
+                $this->command->getOutput()->progressAdvance();
+            }
+
+            $this->command->getOutput()->progressFinish();
+            $this->command->info("{$count} companies created.");
+
+            // Logolás letiltása (ha Spatie Activitylog van használatban)
+            //activity()->disableLogging();
+
+            // Logolás engedélyezése (ha Spatie Activitylog van használatban)
+            //activity()->enableLogging();
         }
-        
-        $this->command->getOutput()->progressFinish();
-        $this->command->info("{$count} companies created.");
-        
-        // Logolás letiltása (ha Spatie Activitylog van használatban)
-        //activity()->disableLogging();
-        
-        // Logolás engedélyezése (ha Spatie Activitylog van használatban)
-        //activity()->enableLogging();
     }
 }

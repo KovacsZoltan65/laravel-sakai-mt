@@ -11,7 +11,7 @@
 
     import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 
-    import TenantSelect from "@/Components/Hq/Selectors/TenantSelector.vue";
+    import TenantSelect from "@/Components/Selectors/TenantSelector.vue";
 
     import { usePermissions } from '@/composables/usePermissions';
     const { has } = usePermissions();
@@ -99,26 +99,28 @@
                 :title="props.title"
                 :tenantId="selectedTenant"
                 @close="data.deleteOpen = false"
-                @deleted="fetchEmployees" />
-
-            <TenantSelect
-                v-model="selectedTenant"
-                placeholder="Válassz..." class="mr-2"
+                @deleted="fetchEmployees"
             />
 
-            <Button
-                v-if="has('create employee')"
-                icon="pi pi-plus"
-                label="Create" @click="data.createOpen = true"
-                class="mr-2"
-                :disabled="!selectedTenant"
-            />
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <TenantSelect
+                    v-model="selectedTenant"
+                    placeholder="Válassz..."
+                />
 
-            <Button
-                @click="fetchEmployees"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-                :disabled="!selectedTenant"
-            />
+                <Button
+                    v-if="has('create employee')"
+                    icon="pi pi-plus"
+                    label="Create" @click="data.createOpen = true"
+                    :disabled="!selectedTenant"
+                />
+
+                <Button
+                    @click="fetchEmployees"
+                    :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+                    :disabled="!selectedTenant"
+                />
+            </div>
 
             <DataTable
                 v-if="employees"

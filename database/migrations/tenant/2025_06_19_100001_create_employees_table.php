@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('name')->comment('Név');
             $table->string('position')->comment('Pozíció');
             $table->string('email')->unique()->comment('Email cím');
+
+            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             
             $table->boolean('active')->default(1)->index()->comment('Aktív');
             

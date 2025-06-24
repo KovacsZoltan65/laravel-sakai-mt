@@ -11,7 +11,7 @@
 
     import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 
-    import TenantSelect from "@/Components/Hq/Selectors/TenantSelector.vue";
+    import TenantSelect from "@/Components/Selectors/TenantSelector.vue";
 
     import { usePermissions } from '@/composables/usePermissions';
     const { has } = usePermissions();
@@ -75,7 +75,7 @@
 
     <AppLayout>
         <div class="card">
-            <h1 class="text-2xl font-bold mb-4">Céges dolgozók kezelése</h1>
+            <h1 class="text-2xl font-bold mb-4">Cégek kezelése</h1>
 
             <!--  CREATE MODAL -->
             <CreateModal
@@ -99,26 +99,29 @@
                 :title="props.title"
                 :tenantId="selectedTenant"
                 @close="data.deleteOpen = false"
-                @deleted="fetchCompanies" />
-
-            <TenantSelect
-                v-model="selectedTenant"
-                placeholder="Válassz..." class="mr-2"
+                @deleted="fetchCompanies"
             />
 
-            <Button
-                v-if="has('create company')"
-                icon="pi pi-plus"
-                label="Create" @click="data.createOpen = true"
-                class="mr-2"
-                :disabled="!selectedTenant"
-            />
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <TenantSelect
+                    v-model="selectedTenant"
+                    placeholder="Válassz..."
+                />
 
-            <Button
-                @click="fetchCompanies"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-                :disabled="!selectedTenant"
-            />
+                <Button
+                    v-if="has('create company')"
+                    icon="pi pi-plus"
+                    label="Create" @click="data.createOpen = true"
+                    class="mr-2"
+                    :disabled="!selectedTenant"
+                />
+
+                <Button
+                    @click="fetchCompanies"
+                    :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+                    :disabled="!selectedTenant"
+                />
+            </div>
 
             <DataTable
                 v-if="companies"
@@ -133,8 +136,18 @@
 
                 <template #header>
                     <div class="flex justify-between">
-                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+
+                        <!-- FILTER CLEAR -->
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            label="Clear" outlined
+                            @click="clearSearch" />
+
+                        <!-- TITLE -->
                         <div class="font-semibold text-xl mb-1">companies_title</div>
+
+                        <!-- SEARCH -->
                         <div class="flex justify-end">
                             <IconField>
                                 <InputIcon><i class="pi pi-search" /></InputIcon>
