@@ -11,8 +11,8 @@
 
     import { useDataTableFetcher } from '@/composables/useDataTableFetcher';
 
-    import TenantSelect from "@/Components/Selectors/TenantSelector.vue";
-    import CompanySelect from "@/Components/Selectors/CompanySelector.vue";
+    import TenantSelect from "@/Components/Selectors/Hq/TenantSelector.vue";
+    import CompanySelect from "@/Components/Selectors/Hq/CompanySelector.vue";
 
     import { usePermissions } from '@/composables/usePermissions';
     const { has } = usePermissions();

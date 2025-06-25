@@ -21,6 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        
+        \App\Http\Middleware\EnsureCompanySelected::class,
     ];
 
     /**
@@ -91,6 +93,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'needsTenant' => \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
         'ensureValidTenantSession' => \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
+        'ensure.company.selected' => \App\Http\Middleware\EnsureCompanySelected::class,
     ];
 
 

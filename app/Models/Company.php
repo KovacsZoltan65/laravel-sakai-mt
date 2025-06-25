@@ -29,12 +29,10 @@ class Company extends Model
 
     public static function toSelect(int $tenant_id)
     {
-//\Log::info('toSelect');
         $tenant = Tenant::findOrFail($tenant_id);
 
-//\Log::info('$tenant: ' . print_r($tenant, true));
         $connectionName = app(CustomSwitchTenantDatabaseTask::class)->switchToTenant($tenant, true);
-//\Log::info('$connectionName: ' . print_r($connectionName, true));
+
         return static::on($connectionName)->active()
             ->select(['id', 'name'])
             ->orderBy('name', 'asc')

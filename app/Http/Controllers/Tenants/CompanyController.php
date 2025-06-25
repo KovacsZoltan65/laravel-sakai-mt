@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenants;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyIndexRequest;
 use App\Models\Company;
+use App\Models\Tenant;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,6 +19,15 @@ class CompanyController extends Controller
         //
     }
 
+    public function getCompaniesToSelect(Request $request)
+    {
+\Log::info('CompanyController@getCompaniesToSelect');
+\Log::info( print_r(Tenant::current()?->id, true) );
+        $companies = Company::toSelect(Tenant::current()?->id);
+\Lof::info('getCompaniesToSelect $companies: ' . print_r($companies, true));
+        return $companies;
+    }
+    
     public function index(Request $request)
     {
         return Inertia::render('Tenants/Companies/Index', [
@@ -50,5 +60,28 @@ class CompanyController extends Controller
         } catch( Exception $ex ) {
             \Log::info('getMessage: ' . print_r($ex->getMessage(), true));
         }
+    }
+
+    public function showSelector()
+    {
+\Log::info('CompanyController@showSelector');
+        //$companies = auth()->user()->companies; // vagy más kapcsolódó logika
+        $companies = Company::toSelect(Tenant::current()?->id);
+//\Log::info('CompanyController@showSelector $companies: ' . print_r($companies, true));
+        return Inertia::render(
+            'Tenants/Companies/CompanySelector', 
+            compact('companies')
+        );
+    }
+
+    public function storeSelection(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required|exists:companies,id',
+        ]);
+
+        session(['selected_company_id' => $request->company_id]);
+
+        return redirect()->intended('/dashboard');
     }
 }

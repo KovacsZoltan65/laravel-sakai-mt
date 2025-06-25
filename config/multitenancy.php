@@ -119,4 +119,6 @@ return [
     'tenant_identification' => [
         \Spatie\Multitenancy\TenantFinder\DomainTenantFinder::class,
     ],
+    
+    'hq_domain' => env('HQ_DOMAIN', 'hq.mt'),
 ];
