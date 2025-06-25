@@ -49,6 +49,7 @@ const data = reactive({
 });
 
 watch(() => ({ ...params }), (newParams) => {
+    console.log(params);
     Inertia.replace(route('employees.index', newParams), { preserveScroll: true, preserveState: true });
 }, { deep: true });
 
@@ -65,46 +66,16 @@ onMounted(fetchData);
             <h1 class="text-2xl font-bold mb-4">Céges dolgozók kezelése</h1>
 
             <!-- CREATE MODAL -->
-            <CreateModal
-                :show="data.createOpen"
-                :title="props.title"
-                @close="data.createOpen = false"
-                @saved="fetchData"
-            />
-
+            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false" @saved="fetchData" />
             <!-- EDIT MODAL -->
-            <EditModal
-                :show="data.editOpen"
-                :employee="data.employee"
-                :title="props.title"
-                @close="data.editOpen = false"
-                @saved="fetchData"
-            />
-
+            <EditModal :show="data.editOpen" :employee="data.employee" :title="props.title" @close="data.editOpen = false" @saved="fetchData" />
             <!-- DELETE MODAL -->
-            <DeleteModal
-                :show="data.deleteOpen"
-                :employee="data.employee"
-                :title="props.title"
-                @close="data.deleteOpen = false"
-                @deleted="fetchData" />
+            <DeleteModal :show="data.deleteOpen" :employee="data.employee" :title="props.title" @close="data.deleteOpen = false" @deleted="fetchData" />
 
             <!-- CREATE BUTTON -->
-            <Button
-                v-if="has('create employee')"
-                icon="pi pi-plus"
-                label="Create"
-                @click="data.createOpen = true"
-                class="mr-2" />
-
+            <Button v-if="has('create employee')" icon="pi pi-plus" label="Create" @click="data.createOpen = true" class="mr-2" />
             <!-- REFRESH BUTTON -->
-            <!--<Button
-                @click="fetchEmployees"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />-->
-            <Button
-                @click="fetchData"
-                :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-            />
+            <Button @click="fetchData" :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
 
             <!-- DATATABLE -->
             <DataTable
@@ -121,8 +92,14 @@ onMounted(fetchData);
 
                 <template #header>
                     <div class="flex justify-between">
+
+                        <!-- TÖRLÉS -->
                         <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+
+                        <!-- FELIRAT -->
                         <div class="font-semibold text-xl mb-1">employees_title</div>
+
+                        <!-- KERESÉS -->
                         <div class="flex justify-end">
                             <IconField>
                                 <InputIcon><i class="pi pi-search" /></InputIcon>

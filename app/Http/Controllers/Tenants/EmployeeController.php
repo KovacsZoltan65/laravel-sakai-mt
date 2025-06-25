@@ -41,7 +41,10 @@ class EmployeeController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
-        $page = $request->input('params.page', 1);
+//\Log::info( print_r($request->all(), true) );
+
+        //$page = $params['params'] ?? 1;
+        $page = $request->input('page', 1);
 
         $employees = null;
 
@@ -56,8 +59,14 @@ class EmployeeController extends Controller
                 $_employees->orderBy($request->get('field'), $request->get('order'));
             }
 
+//DB::enableQueryLog();
+            
             $employees = $_employees->paginate(10, ['*'], 'page', $page);
-
+            
+//$queryLog = DB::getQueryLog();
+//\Log::info('Employees lekérdezés: '. print_r($queryLog, true));
+//DB::disableQueryLog();
+            
         } catch( Exception $ex ) {
             \Log::info('$ex message: ' . print_r($ex->getMessage(), true));
         }

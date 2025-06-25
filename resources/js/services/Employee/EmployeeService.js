@@ -10,7 +10,7 @@ class EmployeeService extends BaseService
 
     getEmployees(params = {})
     {
-        return this.post(route(`${this.url}.fetch`), { params });
+        return this.post(route(`${this.url}.fetch`), params);
     }
 
     storeEmployee(params)
