@@ -35,6 +35,7 @@ class EmployeeController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
+//\Log::info('$request: ' . print_r($request->all(), true));
         $tenant_id = $request->get('tenant_id');
 
         $tenant = Tenant::findOrFail($tenant_id);
@@ -53,15 +54,22 @@ class EmployeeController extends Controller
             }
 
             if( $request->has(key: 'search') ) {
-                $_employees->whereRaw("CONCAT(name,'',email)");
+                $_employees->whereRaw("CONCAT(name,'',email) LIKE '%{$request->get('search')}%'");
             }
 
             if ($request->has('field') && $request->has('order')) {
                 $_employees->orderBy($request->get('field'), $request->get('order'));
             }
 
+//DB::connection($connectionName)->enableQueryLog();
+            
             $employees = $_employees->paginate(10, ['*'], 'page', $page);
 
+            $queryLog = DB::connection($connectionName)->getQueryLog();
+//\Log::info('Employees lekérdezés: '. print_r($queryLog, true));
+            
+//DB::connection($connectionName)->disableQueryLog();
+            
             return response()->json([
                 'employees' => $employees
             ], Response::HTTP_OK);

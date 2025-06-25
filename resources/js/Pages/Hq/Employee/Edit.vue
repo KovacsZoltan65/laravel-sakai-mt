@@ -4,6 +4,9 @@ import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength, email } from "@vuelidate/validators";
 import EmployeeService from "@/services/Employee/HqEmployeeService.js";
 
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
+
 const props = defineProps({
     show: Boolean,
     title: String,
@@ -67,6 +70,14 @@ const updateEmployee = async () => {
                 }
             );
             emit('saved', form.value);
+
+            toast.add({
+                severity: 'success',
+                summary: 'Szerkesztés sikeres',
+                detail: `${form.value.name} frissítve`,
+                life: 3000
+            });
+
             closeModal();
         } catch (e) {
             console.error('Frissítés sikertelen', e);

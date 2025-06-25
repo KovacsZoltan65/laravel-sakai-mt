@@ -96,7 +96,7 @@
                 :tenantId="selectedTenant"
                 :companyId="selectedCompany"
                 @close="data.createOpen = false"
-                @saved="fetchEmployees"
+                @saved="fetchData"
             />
 
             <!-- EDIT MODAL -->
@@ -107,7 +107,7 @@
                 :tenantId="selectedTenant"
                 :companyId="selectedCompany"
                 @close="data.editOpen = false"
-                @saved="fetchEmployees"
+                @saved="fetchData"
             />
 
             <!-- DELETE MODAL -->
@@ -117,7 +117,7 @@
                 :title="props.title"
                 :tenantId="selectedTenant"
                 @close="data.deleteOpen = false"
-                @deleted="fetchEmployees"
+                @deleted="fetchData"
             />
 
             <div class="flex flex-wrap items-center gap-2 mb-3">
@@ -160,14 +160,33 @@
                 tableStyle="min-width: 50rem">
 
                 <template #header>
-                    <div class="flex justify-between">
-                        <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearSearch" />
+                    <div class="flex justify-between items-center gap-2">
+                        <Button
+                            type="button"
+                            icon="pi pi-filter-slash"
+                            label="Clear"
+                            outlined
+                            @click="clearSearch"
+                        />
                         <div class="font-semibold text-xl mb-1">employees_title</div>
-                        <div class="flex justify-end">
-                            <IconField>
+
+                        <!-- KERESŐMEZŐ TÖRLÉSSEL -->
+                        <div class="flex items-center relative">
+                            <IconField class="w-full">
                                 <InputIcon><i class="pi pi-search" /></InputIcon>
-                                <InputText v-model="params.search" placeholder="Keyword Search" />
+                                <InputText
+                                    v-model="params.search"
+                                    placeholder="Keresés"
+                                    class="pr-8"
+                                />
                             </IconField>
+
+                            <!-- Clear ikon jobbra, ha van szöveg -->
+                            <i
+                                v-if="params.search"
+                                class="pi pi-times text-gray-500 absolute right-2 cursor-pointer"
+                                @click="params.search = ''"
+                            />
                         </div>
                     </div>
                 </template>
