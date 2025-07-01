@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::domain('hq.mt')->middleware(['auth'])->group(function() {
+Route::domain('hq.mt')->middleware(['auth', 'check.tenant.lock'])->group(function() {
 
 
     Route::middleware(['auth', 'verified'])->group(function () {

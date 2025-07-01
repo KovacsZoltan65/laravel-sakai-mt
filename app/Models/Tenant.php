@@ -14,7 +14,7 @@ class Tenant extends BaseTenant
 
     protected $fillable = [
         'name', 'domain', 'host', 'port',
-        'database', 'username', 'password', 'active'
+        'database', 'username', 'password', 'active', 'locked'
     ];
 
     public function scopeActive(Builder $query): Builder

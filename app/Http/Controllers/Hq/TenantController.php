@@ -104,11 +104,26 @@ class TenantController extends Controller
                 // 1. Módosítandó rekord lekérése és zárolása
                 $_tenant = Tenant::lockForUpdate()->findOrFail($id);
                 
+                // 🔒 Eredeti értékek mentése
+                $original = $_tenant->only(['database', 'username', 'password', 'host']);
+                
                 // 2. Rekord frissítése
                 $_tenant->update($request->all());
                 
                 // 3. Model frissítése
                 $_tenant->refresh();
+                
+                // 🔁 Ha változott valami fontos, alkalmazzuk a MySQL-ben is
+                $changed = array_filter([
+                    'database' => $original['database'] !== $_tenant->database,
+                    'username' => $original['username'] !== $_tenant->username,
+                    'password' => $original['password'] !== $_tenant->password,
+                    'host'     => $original['host']     !== $_tenant->host,
+                ]);
+                
+                if (!empty($changed)) {
+                    $this->applyMysqlChanges($_tenant, $original);
+                }
                 
                 // 4. Kapcsolódó rekordok frissítése (pl. alapértelmezett beállítások)
                 $this->updateDefaultSettings($_tenant);
@@ -186,6 +201,40 @@ class TenantController extends Controller
         return $tenants;
     }
 
+    private function applyMysqlChanges(Tenant $tenant, array $original): void
+    {
+        $newDb = $tenant->database;
+        $newUser = $tenant->username;
+        $newPass = $tenant->password;
+        $newHost = $tenant->host;
+        
+        $oldDb = $original['database'];
+        $oldUser = $original['username'];
+        $oldPass = $original['password'];
+        $oldHost = $original['host'];
+        
+        $db = DB::connection('landlord');
+        
+        // 1️⃣ Ha változott az adatbázisnév
+        if ($oldDb !== $newDb) {
+            $db->statement("RENAME DATABASE `$oldDb` TO `$newDb`");
+        }
+        
+        // 2️⃣ Ha változott a felhasználónév vagy host
+        if ($oldUser !== $newUser || $oldHost !== $newHost) {
+            $db->statement("DROP USER IF EXISTS '$oldUser'@'$oldHost'");
+            $db->statement("CREATE USER '$newUser'@'$newHost' IDENTIFIED WITH sha256_password BY '$newPass'");
+        } elseif ($oldPass !== $newPass) {
+            $db->statement("ALTER USER '$newUser'@'$newHost' IDENTIFIED WITH sha256_password BY '$newPass'");
+        }
+        
+        // 3️⃣ Jogosultság beállítása
+        $db->statement("GRANT ALL PRIVILEGES ON `$newDb`.* TO '$newUser'@'$newHost'");
+        $db->statement("FLUSH PRIVILEGES");
+        
+        \Log::info("✅ MySQL jogok és módosítások alkalmazva tenant: {$tenant->name}");
+    }
+    
     private function runTenantSetupViaArtisan(Request $request): void
     {
         Artisan::call('tenant:setup', [

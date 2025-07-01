@@ -48,6 +48,7 @@ class Kernel extends HttpKernel
 
             \App\Http\Middleware\InitializeTenantConnection::class,
             \App\Http\Middleware\InitializeTenantByDomain::class,
+            \App\Http\Middleware\CheckTenantLock::class,
 
             \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
         ],

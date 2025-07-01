@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['tenant', 'auth'])->group(function() {
+Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
 
     // 🔄 Alapértelmezett redirect a dashboardra
     Route::get('/', fn() => redirect('dashboard'));

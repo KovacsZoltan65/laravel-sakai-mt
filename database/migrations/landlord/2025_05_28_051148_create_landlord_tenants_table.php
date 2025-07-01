@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('username')->comment('Adatbázis felhasználó');
             $table->string('password')->comment('Adatbázis jelszó');
             $table->boolean('active')->default(1)->index()->comment('Aktív');
+            $table->tinyInteger('locaked')->default(0)->comment('Zárolás');
 
             $table->timestamps();
         });
