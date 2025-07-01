@@ -32,7 +32,7 @@ class hqCompaniesMenuSeeder extends Seeder
             'url' => null,
             'route_name' => 'hq.companies.index',
             'default_weight' => 1,
-            'order_index' => 2,
+            'order_index' => 3,
         ];
 
         if ($companies) {

@@ -8,6 +8,7 @@ namespace Database\Seeders;
 use App\Models\Tenant;
 
 use Database\Seeders\Hq\hqMenuSeeder;
+use Database\Seeders\Hq\hqTenantsMenuSeeder;
 use Database\Seeders\Hq\hqEmployeesMenuSeeder;
 use Database\Seeders\Hq\hqCompaniesMenuSeeder;
 
@@ -15,6 +16,7 @@ use Database\Seeders\Tenant\tenantMenuSeeder;
 use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
 
+use Database\Seeders\Tenant\tenantTenantsMenuSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -74,6 +76,7 @@ class DatabaseSeeder extends Seeder
                 //MenuItemSeeder::class,
                 // Hq menü
                 hqMenuSeeder::class,
+                hqTenantsMenuSeeder::class,
                 hqEmployeesMenuSeeder::class,
                 hqCompaniesMenuSeeder::class,
             ]);

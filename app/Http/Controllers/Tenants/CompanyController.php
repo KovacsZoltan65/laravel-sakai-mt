@@ -21,10 +21,8 @@ class CompanyController extends Controller
 
     public function getCompaniesToSelect(Request $request)
     {
-\Log::info('CompanyController@getCompaniesToSelect');
-\Log::info( print_r(Tenant::current()?->id, true) );
         $companies = Company::toSelect(Tenant::current()?->id);
-\Lof::info('getCompaniesToSelect $companies: ' . print_r($companies, true));
+
         return $companies;
     }
     
@@ -64,7 +62,7 @@ class CompanyController extends Controller
 
     public function showSelector()
     {
-\Log::info('CompanyController@showSelector');
+//\Log::info('CompanyController@showSelector');
         //$companies = auth()->user()->companies; // vagy más kapcsolódó logika
         $companies = Company::toSelect(Tenant::current()?->id);
 //\Log::info('CompanyController@showSelector $companies: ' . print_r($companies, true));

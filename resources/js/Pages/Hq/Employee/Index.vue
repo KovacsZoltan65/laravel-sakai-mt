@@ -90,38 +90,25 @@
             <h1 class="text-2xl font-bold mb-4">Céges dolgozók kezelése</h1>
 
             <!--  CREATE MODAL -->
-            <CreateModal :show="data.createOpen" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="data.createOpen = false" @saved="fetchData" />
+            <CreateModal :show="data.createOpen" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="props.createOpen = false" @saved="fetchData" />
             <!-- EDIT MODAL -->
-            <EditModal :show="data.editOpen" :employee="data.employee" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="data.editOpen = false" @saved="fetchData" />
+            <EditModal :show="data.editOpen" :employee="data.employee" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="props.editOpen = false" @saved="fetchData" />
             <!-- DELETE MODAL -->
-            <DeleteModal :show="data.deleteOpen" :employee="data.employee" :title="props.title" :tenantId="selectedTenant" @close="data.deleteOpen = false" @deleted="fetchData" />
+            <DeleteModal :show="data.deleteOpen" :employee="data.employee" :title="props.title" :tenantId="selectedTenant" @close="props.deleteOpen = false" @deleted="fetchData" />
 
             <div class="flex flex-wrap items-center gap-2 mb-3">
                 <!-- PÉLDÁNY VÁLASZTÓ -->
-                <TenantSelect
-                    v-model="selectedTenant"
-                    placeholder="Válassz..."
-                />
+                <TenantSelect v-model="selectedTenant" placeholder="Válassz..." />
 
                 <!-- CÉG VÁLASZTÓ -->
-                <CompanySelect
-                    v-model="selectedCompany"
-                    :tenantId="selectedTenant"
-                    placeholder="Válassz céget..."
-                />
+                <CompanySelect v-model="selectedCompany" :tenantId="selectedTenant" placeholder="Válassz céget..." />
 
-                <Button
-                    v-if="has('create employee')"
-                    icon="pi pi-plus"
-                    label="Create" @click="data.createOpen = true"
-                    :disabled="!canInteract"
-                />
+                <!-- CREATE BUTTON -->
+                <Button v-if="has('create employee')" icon="pi pi-plus" label="Create" @click="data.createOpen = true" :disabled="!canInteract" />
 
-                <Button
-                    @click="fetchEmployees"
-                    :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
-                    :disabled="!canInteract"
-                />
+                <!-- REFRESH BUTTON -->
+                <Button @click="fetchEmployees" :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" :disabled="!canInteract" />
+
             </div>
 
             <DataTable

@@ -34,13 +34,28 @@ Route::domain('hq.mt')->middleware(['auth'])->group(function() {
     Route::domain('hq.mt')->prefix('/api/hq')
         ->middleware(['auth'])
         ->group(function () {
-            
+
         // Példány választó
         Route::get('/tenants', [App\Http\Controllers\Hq\TenantController::class, 'getTenantsToSelect'])->name('tenant.getTenants');
-        
+
         // Cég választó
         Route::get('/companies', [\App\Http\Controllers\Hq\CompanyController::class, 'getCompaniesToSelect'])->name('companies.getCompanies');
     });
+
+    /**
+     * ==============================================
+     * TENANTS
+     * ==============================================
+     */
+     Route::prefix('tenants')->name('hq.tenants.')->group(function() {
+        Route::get('/', [App\Http\Controllers\Hq\TenantController::class, 'index'])->name('index');
+        Route::post('/fetch', [App\Http\Controllers\Hq\TenantController::class, 'fetch'])->name('fetch');
+        Route::post('/', [App\Http\Controllers\Hq\TenantController::class, 'storeTenant'])->name('store');
+        Route::put('/{id}', [App\Http\Controllers\Hq\TenantController::class, 'updateTenant'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Hq\TenantController::class, 'deleteTenant'])->name('delete');
+        Route::put('/{id}/restore', [App\Http\Controllers\Hq\TenantController::class, 'restoreTenant'])->name('restore');
+        Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\TenantController::class, 'realDeleteTenant'])->name('force-delete');
+     });
 
     /**
      * ========================================

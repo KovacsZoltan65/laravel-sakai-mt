@@ -21,6 +21,11 @@ class Tenant extends BaseTenant
     {
         return $query->where( 'active', '=', APP_ACTIVE);
     }
+    
+    public function scopeWithoutHq(Builder $query): Builder
+    {
+        return $query->where('name', '<>', 'Hq');
+    }
 
     public static function toSelect(): array
     {

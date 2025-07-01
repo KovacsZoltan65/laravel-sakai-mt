@@ -27,15 +27,20 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'create permission']);
         Permission::create(['name' => 'update permission']);
         Permission::create(['name' => 'delete permission']);
-        
+
         Permission::create(['name' => 'view company']);
         Permission::create(['name' => 'create company']);
         Permission::create(['name' => 'update company']);
         Permission::create(['name' => 'delete company']);
-        
+
         Permission::create(['name' => 'view employee']);
         Permission::create(['name' => 'create employee']);
         Permission::create(['name' => 'update employee']);
         Permission::create(['name' => 'delete employee']);
+
+        Permission::create(['name' => 'view tenant']);
+        Permission::create(['name' => 'create tenant']);
+        Permission::create(['name' => 'update tenant']);
+        Permission::create(['name' => 'delete tenant']);
     }
 }

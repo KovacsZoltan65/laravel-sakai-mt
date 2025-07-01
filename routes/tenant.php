@@ -14,9 +14,9 @@ Route::middleware(['tenant', 'auth'])->group(function() {
      */
     Route::get('/select-company', [App\Http\Controllers\Tenants\CompanyController::class, 'showSelector'])->name('company.selector');
     Route::post(
-        '/select-company', 
+        '/select-company',
         [
-            App\Http\Controllers\Tenants\CompanyController::class, 
+            App\Http\Controllers\Tenants\CompanyController::class,
             'storeSelection'
         ]
     )->name('company.selector.save');
@@ -29,12 +29,16 @@ Route::middleware(['tenant', 'auth'])->group(function() {
     Route::middleware(['ensure.company.selected'])->group(function () {
 
         /**
+         * ==============================================
          * DASHBOARD
+         * ==============================================
          */
-        Route::get('/dashboard', [App\Http\Controllers\Tenants\TenantController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\Tenants\TenantController::class, 'dashboard'])->name('dashboard');
 
         /**
+         * ==============================================
          * EMPLOYEES
+         * ==============================================
          */
         Route::prefix('employees')->name('tenant.employees.')->group(function () {
             Route::get('/', [App\Http\Controllers\Tenants\EmployeeController::class, 'index'])->name('index');
@@ -47,7 +51,9 @@ Route::middleware(['tenant', 'auth'])->group(function() {
         });
 
         /**
+         * ==============================================
          * COMPANIES
+         * ==============================================
          */
         Route::prefix('companies')->name('tenant.companies.')->group(function () {
             Route::get('/', [App\Http\Controllers\Tenants\CompanyController::class, 'index'])->name('index');
@@ -61,7 +67,9 @@ Route::middleware(['tenant', 'auth'])->group(function() {
         });
 
         /**
+         * ==============================================
          * ACS SYSTEMS
+         * ==============================================
          */
         Route::get('/acs_systems', [App\Http\Controllers\Tenants\AcsSystemController::class, 'index'])->name('acs_system.index');
     });

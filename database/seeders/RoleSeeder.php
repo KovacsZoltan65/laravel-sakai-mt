@@ -22,28 +22,33 @@ class RoleSeeder extends Seeder
             'create user',
             'update user',
             'delete user',
-            
+
             'view role',
             'create role',
             'update role',
             'delete role',
-            
+
             'view permission',
             'create permission',
             'update permission',
             'delete permission',
-            
+
             'view company',
             'create company',
             'update company',
             'delete company',
-            
+
             'view employee',
             'create employee',
             'update employee',
             'delete employee',
+
+            'view tenant',
+            'create tenant',
+            'update tenant',
+            'delete tenant',
         ]);
-        
+
         // Admin
         $admin = Role::create([
             'name'          => 'admin'
@@ -56,12 +61,12 @@ class RoleSeeder extends Seeder
             'view role',
             'view permission',
         ]);
-        
+
         // Operator
         $operator = Role::create([
             'name'          => 'operator'
         ]);
-        
+
         $operator->givePermissionTo([
             //'delete user',
             'view user',
