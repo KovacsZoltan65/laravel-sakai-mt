@@ -5,17 +5,19 @@
  * HASZNÁLAT
  * ============================================
  * 
- * | Paraméter  | Kötelező | Típus  | Példa érték            | Magyarázat                                                                                                                                |
- * | ---------- | -------- | ------ | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
- * | `name`     | ✅ Igen   | string | `"Company 04"`         | A tenant megjelenített neve (pl. cég neve). Ez kerül a `name` mezőbe a `tenants` táblában.                                                |
- * | `domain`   | ✅ Igen   | string | `company04.local`      | A tenant domainje (pl. helyi vagy éles domain, pl. `tenant01.example.com`).                                                               |
- * | `database` | ✅ Igen   | string | `company_mt_04`        | A MySQL adatbázis neve, amely létrejön a tenantnak.                                                                                       |
- * | `username` | ✅ Igen   | string | `tenant_user_04`       | A MySQL felhasználó neve, amely a tenant adatbázisához kap jogokat.                                                                       |
- * | `password` | ✅ Igen   | string | `Pa$$w0rd`             | A MySQL felhasználó jelszava.                                                                                                             |
- * | `--host`   | ❌ Nem    | string | `localhost` vagy `%`   | A MySQL host. `localhost` = csak lokális elérés, `%` = bármilyen IP (pl. Docker vagy másik szerver esetén). Alapértelmezett: `localhost`. |
- * | `--active` | ❌ Nem    | 0 / 1  | `1`                    | Aktív legyen-e a tenant. `1` = aktív, `0` = inaktív. Ez megy az `active` mezőbe. Alapértelmezett: `1`.                                    |
- * | `--seeder` | ❌ Nem    | string | `TenantDatabaseSeeder` | Melyik seeder osztály fusson le a migráció után. Alapértelmezett: `DatabaseSeeder`.                                                       |
- * 
+ * | Paraméter       | Kötelező | Típus     | Példa érték           | Magyarázat                                                                                                                                |
+ * |-----------------|----------|---------- |-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+ * | `name`           | ✅ Igen   | string   | "Company 04"         | A tenant megjelenített neve (pl. cég neve). Ez kerül a `name` mezőbe a `tenants` táblában.                                                |
+ * | `domain`         | ✅ Igen   | string   | company04.local      | A tenant domainje (pl. helyi vagy éles domain, pl. `tenant01.example.com`).                                                               |
+ * | `database`       | ✅ Igen   | string   | company_mt_04        | A MySQL adatbázis neve, amely létrejön a tenantnak.                                                                                       |
+ * | `username`       | ✅ Igen   | string   | tenant_user_04       | A MySQL felhasználó neve, amely a tenant adatbázisához kap jogokat.                                                                       |
+ * | `password`       | ✅ Igen   | string   | Pa$$w0rd             | A MySQL felhasználó jelszava.                                                                                                             |
+ * | `--host`         | ❌ Nem    | string   | localhost vagy `%`   | A MySQL host. `localhost` = csak lokális elérés, `%` = bármilyen IP. Alapértelmezett: `localhost`.                                       |
+ * | `--active`       | ❌ Nem    | 0 / 1    | 1                    | Aktív legyen-e a tenant. `1` = aktív, `0` = inaktív. Alapértelmezett: `1`.                                                               |
+ * | `--seeder`       | ❌ Nem    | string   | TenantDatabaseSeeder | Melyik seeder osztály fusson le a migráció után. Alapértelmezett: `DatabaseSeeder`.                                                       |
+ * | `--no-migrate`   | ❌ Nem    | kapcsoló |                      | Ha megadod, **nem** fut le a migráció (csak DB/user/rekord jön létre).                                                                   |
+ * | `--no-seed`      | ❌ Nem    | kapcsoló |                      | Ha megadod, **nem** fut le a seeder.                                                                                                     |
+
  * php artisan tenant:setup "Company 04" company04.local company_mt_04 tenant_user_04 Pa$$w0rd --host=% --active=1 --seeder=TenantDatabaseSeeder
  */
 
@@ -41,7 +43,9 @@ class SetupTenant extends Command
         {password : A MySQL felhasználó jelszava}
         {--host=localhost : MySQL hoszt (alapértelmezés: localhost)}
         {--active=1 : Aktív legyen-e a tenant (1/0)}
-        {--seeder=DatabaseSeeder : Futó seeder osztály}';
+        {--seeder=DatabaseSeeder : Futó seeder osztály}
+        {--no-migrate : Ne fusson le a migráció}
+        {--no-seed : Ne fusson le a seeder}';
 
     /**
      * The console command description.
@@ -63,6 +67,8 @@ class SetupTenant extends Command
         $host = $this->option('host');
         $active = (bool) $this->option('active');
         $seederClass = $this->option('seeder');
+        $skipMigration = $this->option('no-migrate');
+        $skipSeed = $this->option('no-seed');
         
         // 1️⃣ Rekord létrehozása
         $tenant = Tenant::create([
@@ -92,21 +98,29 @@ class SetupTenant extends Command
         // 3️⃣ Tenant adatbázis inicializálás
         $tenant->makeCurrent();
         
-        $this->info("📦 Migráció futtatása...");
-        Artisan::call('migrate', [
-            '--database' => 'tenant',
-            '--path' => 'database/migrations/tenant',
-            '--force' => true,
-        ]);
-        $this->line(Artisan::output());
+        if( !$skipMigration ) {
+            $this->info("📦 Migráció futtatása...");
+            Artisan::call('migrate', [
+                '--database' => 'tenant',
+                '--path' => 'database/migrations/tenant',
+                '--force' => true,
+            ]);
+            $this->line(Artisan::output());
+        } else {
+            $this->warn("⏭ Migráció kihagyva (--no-migrate)");
+        }
         
-        $this->info("🌱 Seeder futtatása: {$seederClass}");
-        Artisan::call('db:seed', [
-            '--database' => 'tenant',
-            '--class' => $seederClass,
-            '--force' => true,
-        ]);
-        $this->line(Artisan::output());
+        if( !$skipSeed ) {
+            $this->info("🌱 Seeder futtatása: {$seederClass}");
+            Artisan::call('db:seed', [
+                '--database' => 'tenant',
+                '--class' => $seederClass,
+                '--force' => true,
+            ]);
+            $this->line(Artisan::output());
+        } else {
+            $this->warn("⏭ Seeder kihagyva (--no-seed)");
+        }
         
         $tenant->forgetCurrent();
 
