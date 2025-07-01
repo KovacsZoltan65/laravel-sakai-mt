@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Hq;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
+use App\Models\Tenants\Employee;
+use DB;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
-
-use \Exception;
-use \DB;
+use function response;
 
 class TenantController extends Controller
 {
@@ -59,6 +62,14 @@ class TenantController extends Controller
     public function storeTenant(Request $request)
     {
         try {
+            $this->runTenantSetupViaArtisan($request);
+        } catch( \Throwable $ex ) {
+            \Log::error('storeTenant hiba: ' . $ex->getMessage());
+            return response()->json(['error' => 'Hiba a tenant létrehozás során'], 500);
+        }
+        
+        /*
+        try {
             $newTenant = DB::transaction(function() use($request) {
                 // 1. Tenant létrehozása
                 $_tenant = Tenant::create($request->all());
@@ -82,6 +93,7 @@ class TenantController extends Controller
             \Log::info(message: 'storeTenant Exception: ' . print_r($ex->getMessage(), true));
             return response()->json(['error' => 'storeTenant Internal server error'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+        */
     }
 
     public function updateTenant(Request $request, int $id)
@@ -174,8 +186,25 @@ class TenantController extends Controller
         return $tenants;
     }
 
+    private function runTenantSetupViaArtisan(Request $request): void
+    {
+        Artisan::call('tenant:setup', [
+            'name' => $request->input('name'),
+            'domain' => $request->input('domain'),
+            'database' => $request->input('database'),
+            'username' => $request->input('username'),
+            'password' => $request->input('password'),
+            '--host' => $request->input('host', 'localhost'),
+            '--active' => $request->input('active', 1),
+            '--seeder' => 'DatabaseSeeder', // vagy tenant-specifikus
+        ]);
+
+        \Log::info("Artisan setup parancs futott: \n" . Artisan::output());
+    }
+    
     private function createDefaultSettings(Tenant $tenant): void
     {
+        /*
         $username = $tenant->username;
         $password = $tenant->password;
         $database = $tenant->database;
@@ -207,6 +236,7 @@ class TenantController extends Controller
         $query_5 = "GRANT ALL PRIVILEGES ON `$database`.* TO '$username'@'$host'";
 \Log::info($query_5);
         DB::connection('landlord')->statement($query_5);
+        */
         /*
         // 6. FLUSH PRIVILEGES (biztonság kedvéért)
         DB::connection('landlord')->statement("FLUSH PRIVILEGES");
