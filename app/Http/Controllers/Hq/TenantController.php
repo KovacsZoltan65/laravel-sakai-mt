@@ -56,6 +56,7 @@ class TenantController extends Controller
 
         } catch( Exception $ex ) {
             \Log::info('TenantController fetch $ex message: ' . print_r($ex->getMessage(), true));
+            return response()->json(['error' => 'Hiba a tenant lekérése során'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -67,7 +68,7 @@ class TenantController extends Controller
             \Log::error('storeTenant hiba: ' . $ex->getMessage());
             return response()->json(['error' => 'Hiba a tenant létrehozás során'], 500);
         }
-        
+
         /*
         try {
             $newTenant = DB::transaction(function() use($request) {
@@ -103,16 +104,16 @@ class TenantController extends Controller
                 $_tenant = Tenant::lockForUpdate()->findOrFail($id);
                 // 1. Módosítandó rekord lekérése és zárolása
                 $_tenant = Tenant::lockForUpdate()->findOrFail($id);
-                
+
                 // 🔒 Eredeti értékek mentése
                 $original = $_tenant->only(['database', 'username', 'password', 'host']);
-                
+
                 // 2. Rekord frissítése
                 $_tenant->update($request->all());
-                
+
                 // 3. Model frissítése
                 $_tenant->refresh();
-                
+
                 // 🔁 Ha változott valami fontos, alkalmazzuk a MySQL-ben is
                 $changed = array_filter([
                     'database' => $original['database'] !== $_tenant->database,
@@ -120,19 +121,19 @@ class TenantController extends Controller
                     'password' => $original['password'] !== $_tenant->password,
                     'host'     => $original['host']     !== $_tenant->host,
                 ]);
-                
+
                 if (!empty($changed)) {
                     $this->applyMysqlChanges($_tenant, $original);
                 }
-                
+
                 // 4. Kapcsolódó rekordok frissítése (pl. alapértelmezett beállítások)
                 $this->updateDefaultSettings($_tenant);
-                
+
                 // 5. Cache törlése, ha releváns
-                
+
                 return $_tenant;
             });
-            
+
             return response()->json($updatedTenant, Response::HTTP_OK);
         } catch( ModelNotFoundException $ex ) {
             \Log::info(message: 'updateTenant ModelNotFoundException: ' . print_r($ex->getMessage(), true));
@@ -207,19 +208,19 @@ class TenantController extends Controller
         $newUser = $tenant->username;
         $newPass = $tenant->password;
         $newHost = $tenant->host;
-        
+
         $oldDb = $original['database'];
         $oldUser = $original['username'];
         $oldPass = $original['password'];
         $oldHost = $original['host'];
-        
+
         $db = DB::connection('landlord');
-        
+
         // 1️⃣ Ha változott az adatbázisnév
         if ($oldDb !== $newDb) {
             $db->statement("RENAME DATABASE `$oldDb` TO `$newDb`");
         }
-        
+
         // 2️⃣ Ha változott a felhasználónév vagy host
         if ($oldUser !== $newUser || $oldHost !== $newHost) {
             $db->statement("DROP USER IF EXISTS '$oldUser'@'$oldHost'");
@@ -227,14 +228,14 @@ class TenantController extends Controller
         } elseif ($oldPass !== $newPass) {
             $db->statement("ALTER USER '$newUser'@'$newHost' IDENTIFIED WITH sha256_password BY '$newPass'");
         }
-        
+
         // 3️⃣ Jogosultság beállítása
         $db->statement("GRANT ALL PRIVILEGES ON `$newDb`.* TO '$newUser'@'$newHost'");
         $db->statement("FLUSH PRIVILEGES");
-        
+
         \Log::info("✅ MySQL jogok és módosítások alkalmazva tenant: {$tenant->name}");
     }
-    
+
     private function runTenantSetupViaArtisan(Request $request): void
     {
         Artisan::call('tenant:setup', [
@@ -250,7 +251,7 @@ class TenantController extends Controller
 
         \Log::info("Artisan setup parancs futott: \n" . Artisan::output());
     }
-    
+
     private function createDefaultSettings(Tenant $tenant): void
     {
         /*
@@ -259,28 +260,28 @@ class TenantController extends Controller
         $database = $tenant->database;
         //$host = 'localhost'; // vagy '%' ha távoli hozzáférés is kell
         $host = $tenant->host;
-    
+
         // 1. CREATE USER
         $query_1 = "CREATE USER IF NOT EXISTS '$username'@'$host' IDENTIFIED WITH sha256_password BY '$password'";
 \Log::info($query_1);
         DB::connection('landlord')->statement($query_1);
 
-        
+
         // 2. GRANT USAGE
         $query_2 = "GRANT USAGE ON *.* TO '$username'@'$host'";
 \Log::info($query_2);
         DB::connection('landlord')->statement($query_2);
-        
+
         // 3. ALTER USER LIMITS
         $query_3 = "ALTER USER '$username'@'$host' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0";
 \Log::info($query_3);
         DB::connection('landlord')->statement($query_3);
-        
+
         // 4. CREATE DATABASE
         $query_4 = "CREATE DATABASE IF NOT EXISTS `$database` CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci";
 \Log::info($query_4);
         DB::connection('landlord')->statement($query_4);
-        
+
         // 5. GRANT PRIVILEGES ON NEW DATABASE
         $query_5 = "GRANT ALL PRIVILEGES ON `$database`.* TO '$username'@'$host'";
 \Log::info($query_5);
@@ -289,7 +290,7 @@ class TenantController extends Controller
         /*
         // 6. FLUSH PRIVILEGES (biztonság kedvéért)
         DB::connection('landlord')->statement("FLUSH PRIVILEGES");
-        
+
         // 7. ELLENŐRZÉS: adatbázis létezik?
         $dbExists = DB::connection('landlord')->selectOne("
             SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?
@@ -297,7 +298,7 @@ class TenantController extends Controller
         if (!$dbExists) {
             throw new \Exception("Az adatbázis nem jött létre: `$database`");
         }
-        
+
         // 8. ELLENŐRZÉS: felhasználó létezik?
         $userExists = DB::connection('landlord')->selectOne("
             SELECT User FROM mysql.user WHERE User = ? AND Host = ?", [$username, $host]
@@ -305,7 +306,7 @@ class TenantController extends Controller
         if (!$userExists) {
             throw new \Exception("A MySQL felhasználó nem jött létre: `$username@$host`");
         }
-        
+
         // 9. Opcionális: jogosultság ellenőrzése
         // Megnézhetjük, van-e jogosultság, pl. SHOW GRANTS FOR...
         $grants = DB::connection('landlord')->select("SHOW GRANTS FOR '$username'@'$host'");
