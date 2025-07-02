@@ -47,6 +47,11 @@ class RoleSeeder extends Seeder
             'create tenant',
             'update tenant',
             'delete tenant',
+            
+            'view hierarchy',
+            'create hierarchy',
+            'update hierarchy',
+            'delete hierarchy',
         ]);
 
         // Admin

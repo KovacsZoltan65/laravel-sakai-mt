@@ -11,12 +11,14 @@ use Database\Seeders\Hq\hqMenuSeeder;
 use Database\Seeders\Hq\hqTenantsMenuSeeder;
 use Database\Seeders\Hq\hqEmployeesMenuSeeder;
 use Database\Seeders\Hq\hqCompaniesMenuSeeder;
+use Database\Seeders\Hq\hqHierarchyMenuSeeder;
 
 use Database\Seeders\Tenant\tenantMenuSeeder;
 use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
-
 use Database\Seeders\Tenant\tenantTenantsMenuSeeder;
+use Database\Seeders\Tenant\tenantHierarchyMenuSeeder;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -64,6 +66,7 @@ class DatabaseSeeder extends Seeder
             // A kapcsolat miatt fontos a sorrend
             CompanySeeder::class,
             EmployeeSeeder::class,
+            HierarchySeeder::class,
 
         ]);
 
@@ -79,16 +82,19 @@ class DatabaseSeeder extends Seeder
                 hqTenantsMenuSeeder::class,
                 hqEmployeesMenuSeeder::class,
                 hqCompaniesMenuSeeder::class,
+                hqHierarchyMenuSeeder::class,
+                
             ]);
         } else {
             $this->call([
-                EmployeeSeeder::class,
+                //EmployeeSeeder::class,
                 //MenuItemSeeder::class,
 
                 // Tenant menü
                 tenantMenuSeeder::class,
                 tenantEmployeesMenuSeeder::class,
                 tenantCompaniesMenuSeeder::class,
+                tenantHierarchyMenuSeeder::class,
 
                 AcsSystemSeeder::class,
 

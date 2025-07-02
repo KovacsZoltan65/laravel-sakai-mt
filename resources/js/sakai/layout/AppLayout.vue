@@ -64,3 +64,23 @@ const isOutsideClicked = (event) => {
     </div>
     <Toast />
 </template>
+
+<style>
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.layout-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.layout-main {
+  flex: 1;
+  overflow: hidden;
+}
+</style>

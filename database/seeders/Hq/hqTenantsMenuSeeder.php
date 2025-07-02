@@ -9,10 +9,8 @@ class hqTenantsMenuSeeder extends Seeder
 {
     public function run(): void
     {
-\Log::info('tenantTenantsMenuSeeder');
         $administration = MenuItem::where('label', 'Administration')->first();
         if( $administration ) {
-\Log::info('tenantTenantsMenuSeeder');
             // Administration - Tenants
             $administration->children()->create([
                 'label' => 'tenants',

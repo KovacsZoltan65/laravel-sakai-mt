@@ -95,6 +95,7 @@ class Kernel extends HttpKernel
         'needsTenant' => \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
         'ensureValidTenantSession' => \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
         'ensure.company.selected' => \App\Http\Middleware\EnsureCompanySelected::class,
+        'check.tenant.lock' => \App\Http\Middleware\CheckTenantLock::class,
     ];
 
 

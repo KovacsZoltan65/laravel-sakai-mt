@@ -104,5 +104,14 @@ Route::domain('hq.mt')->middleware(['auth', 'check.tenant.lock'])->group(functio
         Route::put('/{id}/restore', [App\Http\Controllers\Hq\AcsSystemController::class, 'restoreAcsSystem'])->name('restore');
         Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\AcsSystemController::class, 'realDeleteAcsSystem'])->name('force-delete');
     });
-    //Route::get('/acs_systems', [App\Http\Controllers\Tenants\AcsSystemController::class, 'index'])->name('hq.acs_system.index');
+    
+    /**
+     * ==============================================
+     * HIERARCHY
+     * ==============================================
+     */
+    Route::prefix('hierarchy')->name('hq.hierarchy')->group(function() {
+        Route::get('/', [\App\Http\Controllers\Hq\HierarchyController::class, 'index'])->name('index');
+    });
+    Route::get('/hierarchy/{employee}', [\App\Http\Controllers\Hq\HierarchyController::class, 'children'])->name('children');
 });

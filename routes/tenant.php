@@ -72,5 +72,18 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          * ==============================================
          */
         Route::get('/acs_systems', [App\Http\Controllers\Tenants\AcsSystemController::class, 'index'])->name('acs_system.index');
+        
+        /**
+         * ==============================================
+         * HIERARCHY
+         * ==============================================
+         */
+        Route::prefix('hierarchy')->name('tenant.hierarchy.')->group(function() {
+            Route::get('/', [App\Http\Controllers\Tenants\HierarchyController::class, 'index'])->name('index');
+            Route::get(
+                '/children/{employee}', 
+                [App\Http\Controllers\Tenants\HierarchyController::class, 'children'
+            ])->name('children');
+        });
     });
 });
