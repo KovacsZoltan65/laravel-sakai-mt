@@ -40,7 +40,7 @@ class Employee extends Model
         );
     }
     
-    public function children(): BelogsToMany
+    public function children(): BelongsToMany
     {
         return $this->belongsToMany(
             self::class,

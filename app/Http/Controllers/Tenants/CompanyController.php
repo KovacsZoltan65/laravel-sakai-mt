@@ -62,10 +62,9 @@ class CompanyController extends Controller
 
     public function showSelector()
     {
-//\Log::info('CompanyController@showSelector');
         //$companies = auth()->user()->companies; // vagy más kapcsolódó logika
         $companies = Company::toSelect(Tenant::current()?->id);
-//\Log::info('CompanyController@showSelector $companies: ' . print_r($companies, true));
+
         return Inertia::render(
             'Tenants/Companies/CompanySelector', 
             compact('companies')
@@ -74,6 +73,7 @@ class CompanyController extends Controller
 
     public function storeSelection(Request $request)
     {
+\Log::info('storeSelection_ ' . print_r($request->all(), true));
         $request->validate([
             'company_id' => 'required|exists:companies,id',
         ]);

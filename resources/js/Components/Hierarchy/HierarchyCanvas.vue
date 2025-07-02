@@ -1,21 +1,6 @@
-<template>
-    <div ref="containerWrapper" class="relative w-full h-full bg-gray-100 overflow-hidden">
-        <!-- Cytoscape canvas -->
-        <div ref="container" class="absolute inset-0 z-0"></div>
-
-        <!-- + ikonok DOM overlay-ként -->
-        <div v-for="node in nodesWithChildren" :key="node.id()" class="absolute z-10" :style="getPlusPosition(node)">
-            <button
-                class="w-5 h-5 text-xs bg-blue-600 text-white rounded-full shadow flex items-center justify-center hover:bg-blue-700"
-                @click="onExpand(node)">
-                +
-            </button>
-        </div>
-    </div>
-</template>
-
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import cytoscape from 'cytoscape'
 
 const container = ref(null)
@@ -23,30 +8,41 @@ const containerWrapper = ref(null)
 const cy = ref(null)
 const nodesWithChildren = ref([])
 
-const dummyGraph = {
-    nodes: [
-        { data: { id: '1', label: 'CEO', hasChildren: true } },
-        { data: { id: '2', label: 'CTO', hasChildren: true } },
-        { data: { id: '3', label: 'Dev Lead', hasChildren: false } },
-        { data: { id: '4', label: 'CFO', hasChildren: false } },
-        { data: { id: '5', label: 'HR', hasChildren: false } }
-    ],
-    edges: [
-        { data: { source: '1', target: '2' } },
-        { data: { source: '2', target: '3' } },
-        { data: { source: '1', target: '4' } },
-        { data: { source: '1', target: '5' } }
-    ]
-}
+// Kiinduló node (CEO vagy bárki)
+const ROOT_ID = '1'
 
-const employees = {};
+onMounted(async () => {
 
-const hierarchy = {};
+    const res = await axios.get('/hierarchy/root');
 
-onMounted(() => {
+    const baseNode = {
+        data: {
+            id: res.data.employee.id,
+            label: res.data.employee.label,
+            hasChildren: true,
+            expanded: true
+        }
+    };
+
+    const childNodes = res.data.children.map(child => ({
+        data: {
+            id: child.id,
+            label: child.label,
+            hasChildren: child.hasChildren,
+            expanded: false
+        }
+    }));
+
+    const edges = res.data.children.map(child => ({
+        data: {
+            source: res.data.employee.id,
+            target: child.id
+        }
+    }));
+
     cy.value = cytoscape({
         container: container.value,
-        elements: [...dummyGraph.nodes, ...dummyGraph.edges],
+        elements: [baseNode, ...childNodes, ...edges],
         layout: {
             name: 'breadthfirst',
             directed: true,
@@ -82,23 +78,18 @@ onMounted(() => {
         ]
     })
 
-    // Frissítsük a + gombokat, miután elrendezte a gráfot
-    cy.value.ready(() => {
-        updatePlusButtons()
-    })
-
-    // Ha átméretezed az ablakot vagy zoomolsz: újrapozícionálás
-    cy.value.on('render zoom pan', () => {
-        updatePlusButtons()
-    })
+    cy.value.ready(() => updatePlusButtons())
+    cy.value.on('render zoom pan', updatePlusButtons)
 })
 
-// Szűrés: csak azok a node-ok, akiknek van gyerekük
+// + gombos node-ok újrapozicionálása
 function updatePlusButtons() {
-    nodesWithChildren.value = cy.value.nodes().filter(n => n.data('hasChildren'))
+    nodesWithChildren.value = cy.value.nodes().filter(n =>
+        n.data('hasChildren') && !n.data('expanded')
+    )
 }
 
-// + ikon pozíciója
+// + ikon elhelyezése
 function getPlusPosition(node) {
     const pos = node.renderedPosition()
     return {
@@ -107,8 +98,59 @@ function getPlusPosition(node) {
     }
 }
 
-// Dummy kibontás
-function onExpand(node) {
-    alert(`"${node.data('label')}" csomópont bővítése (itt lehet API-t hívni)`)
+// API-ból gyerekek betöltése
+async function onExpand(node) {
+    if (node.data('expanded')) return
+
+    try {
+        const res = await axios.get(`/api/hierarchy/children/${node.id()}`)
+
+        const newNodes = res.data.children.map(child => ({
+            data: {
+                id: child.id,
+                label: child.label,
+                hasChildren: child.hasChildren,
+                expanded: false
+            }
+        }))
+
+        const newEdges = res.data.children.map(child => ({
+            data: {
+                source: node.id(),
+                target: child.id
+            }
+        }))
+
+        cy.value.add([...newNodes, ...newEdges])
+        node.data('expanded', true)
+
+        cy.value.layout({
+            name: 'breadthfirst',
+            directed: true,
+            padding: 10,
+            spacingFactor: 1.4,
+            animate: true
+        }).run()
+
+        updatePlusButtons()
+    } catch (err) {
+        console.error('API hiba a bővítés során:', err)
+    }
 }
 </script>
+
+<template>
+    <div ref="containerWrapper" class="relative w-full h-full bg-gray-100 overflow-hidden">
+        <!-- Cytoscape -->
+        <div ref="container" class="absolute inset-0 z-0"></div>
+
+        <!-- DOM overlay + ikonok -->
+        <div v-for="node in nodesWithChildren" :key="node.id()" class="absolute z-10" :style="getPlusPosition(node)">
+            <button
+                class="w-5 h-5 text-xs bg-blue-600 text-white rounded-full shadow flex items-center justify-center hover:bg-blue-700"
+                @click="onExpand(node)">
+                +
+            </button>
+        </div>
+    </div>
+</template>

@@ -80,10 +80,8 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          */
         Route::prefix('hierarchy')->name('tenant.hierarchy.')->group(function() {
             Route::get('/', [App\Http\Controllers\Tenants\HierarchyController::class, 'index'])->name('index');
-            Route::get(
-                '/children/{employee}', 
-                [App\Http\Controllers\Tenants\HierarchyController::class, 'children'
-            ])->name('children');
+            Route::get('/root', [App\Http\Controllers\Tenants\HierarchyController::class, 'root'])->name('root');
+            Route::get('/children/{employee}', [App\Http\Controllers\Tenants\HierarchyController::class, 'children'])->name('children');
         });
     });
 });

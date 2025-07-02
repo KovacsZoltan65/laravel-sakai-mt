@@ -15,52 +15,49 @@ class HierarchySeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
-        // A tábla csonkítása előtt tiltsa le az idegen kulcsokra vonatkozó korlátozásokat
-        Schema::disableForeignKeyConstraints();
-        Hierarchy::truncate();
-        // Idegenkulcs-korlátozások engedélyezése a tábla csonkítása után
-        Schema::enableForeignKeyConstraints();
+{
+    Schema::disableForeignKeyConstraints();
+    Hierarchy::truncate();
+    Schema::enableForeignKeyConstraints();
 
-        // A seedeléshez a jelenlegi tenantet használjuk
-        // @var Tenant $tenant
-        $tenant = Tenant::current();
-        
-        if ($tenant->name !== 'Hq') {
-            
-            // Csak a tenant cégéhez tartozó dolgozók
-            $companyId = $employees->first()?->company_id ?? null;
-            if (!$companyId) return;
+    $tenant = Tenant::current();
 
-            // Véletlenszer en kiválasztunk egy céget, aminek a dolgozóihoz tartozó hierarchiát
-            // szeretnénk létrehozni
+    if ($tenant->name !== 'Hq') {
+        // Minden distinct cégre
+        $companyIds = Employee::select('company_id')->distinct()->pluck('company_id');
+
+        foreach ($companyIds as $companyId) {
             $employees = Employee::where('company_id', $companyId)
                 ->inRandomOrder()
                 ->get();
 
-            // Ha kevesebb mint 20 dolgozó van, akkor nincs értelme seedelni
             if ($employees->count() < 20) {
-                // A seedeléshez legalább 20 dolgozónak kell lennie
-                return;
+                // Túl kevés dolgozó → skip
+                continue;
             }
 
-            // A hierarchia csúcsán álló vezérigazgató (CEO)
+            // CEO
             $ceo = $employees->shift();
 
-            // A CEO alatt álló felsővezetők
+            DB::table('hierarchy')->insert([
+                'parent_id' => null,
+                'child_id' => $ceo->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Top menedzserek
             $topManagers = $employees->splice(0, 5);
 
-            // A felsővezetők alatt álló középszinten dolgozó vezetők
+            // Középvezetők
             $middleManagerCount = rand(10, 20);
             $middleManagers = $employees->splice(0, $middleManagerCount);
 
-            // A hierarchia alján dolgozók
+            // Maradék dolgozók
             $staff = $employees;
 
-            // A CEO alatt álló felsővezetők
-            // A felsővezetők alatt álló dolgozók
+            // CEO → Top
             foreach ($topManagers as $manager) {
-                // A felsővezetőket a CEO alá rendeljük
                 DB::table('hierarchy')->insert([
                     'parent_id' => $ceo->id,
                     'child_id' => $manager->id,
@@ -69,13 +66,9 @@ class HierarchySeeder extends Seeder
                 ]);
             }
 
-            // A felsővezetők alatt álló középszinten dolgozó vezetőket
-            // a felsővezetők alá rendeljük
+            // Top → Middle
             foreach ($middleManagers as $index => $manager) {
-                // A középszinten dolgozó vezetőknek a felsővezetőket kell
-                // a szülőjeként megadni
                 $top = $topManagers[$index % $topManagers->count()];
-                // A hierarchia beillesztése a DB-be
                 DB::table('hierarchy')->insert([
                     'parent_id' => $top->id,
                     'child_id' => $manager->id,
@@ -84,14 +77,9 @@ class HierarchySeeder extends Seeder
                 ]);
             }
 
-            // A hierarchia alján dolgozók
-            // Minden dolgozónak egy vezetőt kell rendelni
-            // A vezetőket a felsővezetők alá rendeljük
+            // Middle → Staff
             foreach ($staff as $employee) {
-                // Véletlenszer en választunk ki egy vezetőt
-                // a középszinten dolgozó vezetők közül
                 $middle = $middleManagers->random();
-                // A hierarchia beillesztése a DB-be
                 DB::table('hierarchy')->insert([
                     'parent_id' => $middle->id,
                     'child_id' => $employee->id,
@@ -101,4 +89,6 @@ class HierarchySeeder extends Seeder
             }
         }
     }
+}
+
 }

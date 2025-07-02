@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('hierarchy', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->constrained('employees')->onDelete('cascade');
+            $table->foreignId('parent_id')->nullable()->constrained('employees')->onDelete('cascade');
             $table->foreignId('child_id')->constrained('employees')->onDelete('cascade');
             $table->timestamps();
         });
