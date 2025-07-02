@@ -29,8 +29,6 @@ class HierarchyController extends Controller
             ->where('employees.company_id', $companyId)
             ->value('employees.id');
         
-\Log::info('$ceoId: ' . print_r($ceoId, true));
-        
         if (! $ceoId) {
             return response()->json(['error' => 'No CEO found'], 404);
         }

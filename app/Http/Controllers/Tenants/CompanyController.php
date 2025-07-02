@@ -73,7 +73,6 @@ class CompanyController extends Controller
 
     public function storeSelection(Request $request)
     {
-\Log::info('storeSelection_ ' . print_r($request->all(), true));
         $request->validate([
             'company_id' => 'required|exists:companies,id',
         ]);

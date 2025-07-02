@@ -1,48 +1,73 @@
+<template>
+    <div class="w-full h-full bg-gray-100 relative">
+        <button
+            v-if="historyStack.length > 0"
+            @click="goBack"
+            class="absolute z-10 top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded shadow"
+        >
+            ← Vissza
+        </button>
+        <div ref="container" class="w-full h-full"></div>
+    </div>
+</template>
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import cytoscape from 'cytoscape'
 
 const container = ref(null)
-const containerWrapper = ref(null)
 const cy = ref(null)
-const nodesWithChildren = ref([])
+const historyStack = ref([])
 
-// Kiinduló node (CEO vagy bárki)
-const ROOT_ID = '1'
+const currentNodeId = ref(null)
 
-onMounted(async () => {
+onMounted(() => {
+    fetchRoot()
+})
 
-    const res = await axios.get('/hierarchy/root');
+async function fetchRoot() {
+    try {
+        const response = await axios.get('/hierarchy/root')
+        renderGraph(response.data.employee, response.data.children)
+    } catch (error) {
+        console.error('Root lekérés hiba:', error)
+    }
+}
 
-    const baseNode = {
-        data: {
-            id: res.data.employee.id,
-            label: res.data.employee.label,
-            hasChildren: true,
-            expanded: true
-        }
-    };
+async function fetchChildren(employeeId) {
+    try {
+        const response = await axios.get(`/hierarchy/children/${employeeId}`)
+        renderGraph(response.data.employee, response.data.children)
+    } catch (error) {
+        console.error('Children lekérés hiba:', error)
+    }
+}
 
-    const childNodes = res.data.children.map(child => ({
-        data: {
-            id: child.id,
-            label: child.label,
-            hasChildren: child.hasChildren,
-            expanded: false
-        }
-    }));
+function renderGraph(root, children) {
+    if (cy.value) {
+        cy.value.destroy()
+    }
 
-    const edges = res.data.children.map(child => ({
-        data: {
-            source: res.data.employee.id,
-            target: child.id
-        }
-    }));
+    const elements = [
+        { data: { id: root.id, label: root.label, hasChildren: true } },
+        ...children.map((child) => ({
+            data: {
+                id: child.id,
+                label: child.label,
+                hasChildren: child.hasChildren
+            }
+        })),
+        ...children.map((child) => ({
+            data: { source: root.id, target: child.id }
+        }))
+    ]
+
+    currentNodeId.value = root.id
 
     cy.value = cytoscape({
         container: container.value,
-        elements: [baseNode, ...childNodes, ...edges],
+        elements,
         layout: {
             name: 'breadthfirst',
             directed: true,
@@ -56,13 +81,13 @@ onMounted(async () => {
                 style: {
                     label: 'data(label)',
                     'text-valign': 'center',
-                    'color': '#fff',
+                    color: '#fff',
                     'font-size': 14,
                     'background-color': '#3b82f6',
                     'text-outline-color': '#3b82f6',
                     'text-outline-width': 2,
-                    'width': 60,
-                    'height': 60,
+                    width: 60,
+                    height: 60,
                     'font-weight': 'bold'
                 }
             },
@@ -74,83 +99,32 @@ onMounted(async () => {
                     'target-arrow-color': '#60a5fa',
                     'target-arrow-shape': 'triangle'
                 }
+            },
+            {
+                selector: 'node[hasChildren = 1]',
+                style: {
+                    'overlay-opacity': 0,
+                    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="8" r="8" fill="%23007bff"/><text x="4" y="12" font-size="12" fill="white">+</text></svg>',
+                    'background-image-opacity': 1,
+                    'background-fit': 'cover'
+                }
             }
         ]
     })
 
-    cy.value.ready(() => updatePlusButtons())
-    cy.value.on('render zoom pan', updatePlusButtons)
-})
-
-// + gombos node-ok újrapozicionálása
-function updatePlusButtons() {
-    nodesWithChildren.value = cy.value.nodes().filter(n =>
-        n.data('hasChildren') && !n.data('expanded')
-    )
+    cy.value.on('tap', 'node', (evt) => {
+        const node = evt.target
+        if (node.data('hasChildren')) {
+            historyStack.value.push(currentNodeId.value)
+            fetchChildren(node.id())
+        }
+    })
 }
 
-// + ikon elhelyezése
-function getPlusPosition(node) {
-    const pos = node.renderedPosition()
-    return {
-        top: `${pos.y - 30}px`,
-        left: `${pos.x + 20}px`
-    }
-}
-
-// API-ból gyerekek betöltése
-async function onExpand(node) {
-    if (node.data('expanded')) return
-
-    try {
-        const res = await axios.get(`/api/hierarchy/children/${node.id()}`)
-
-        const newNodes = res.data.children.map(child => ({
-            data: {
-                id: child.id,
-                label: child.label,
-                hasChildren: child.hasChildren,
-                expanded: false
-            }
-        }))
-
-        const newEdges = res.data.children.map(child => ({
-            data: {
-                source: node.id(),
-                target: child.id
-            }
-        }))
-
-        cy.value.add([...newNodes, ...newEdges])
-        node.data('expanded', true)
-
-        cy.value.layout({
-            name: 'breadthfirst',
-            directed: true,
-            padding: 10,
-            spacingFactor: 1.4,
-            animate: true
-        }).run()
-
-        updatePlusButtons()
-    } catch (err) {
-        console.error('API hiba a bővítés során:', err)
+function goBack() {
+    const previousId = historyStack.value.pop()
+    if (previousId) {
+        fetchChildren(previousId)
     }
 }
 </script>
-
-<template>
-    <div ref="containerWrapper" class="relative w-full h-full bg-gray-100 overflow-hidden">
-        <!-- Cytoscape -->
-        <div ref="container" class="absolute inset-0 z-0"></div>
-
-        <!-- DOM overlay + ikonok -->
-        <div v-for="node in nodesWithChildren" :key="node.id()" class="absolute z-10" :style="getPlusPosition(node)">
-            <button
-                class="w-5 h-5 text-xs bg-blue-600 text-white rounded-full shadow flex items-center justify-center hover:bg-blue-700"
-                @click="onExpand(node)">
-                +
-            </button>
-        </div>
-    </div>
-</template>
