@@ -1,41 +1,8 @@
-<template>
-    <div ref="container" class="w-full h-full bg-gray-100 overflow-hidden relative">
-        <!-- Keresés -->
-        <Button
-            label="Keresés"
-            @click="handleSearch"
-            class="mr-2"
-        />
-        <!-- Vissza gomb -->
-        <Button
-            v-if="showBackButton"
-            label="← Vissza"
-            @click="goBack"
-        />
-
-        <!-- Search Dialog -->
-        <Dialog v-model:visible="showSearchDialog" header="Keresés" modal >
-            <div class="flex flex-col gap-4">
-
-                <InputText
-                    v-model="searchTerm"
-                    placeholder="Pl.: John Doe"
-                />
-
-                <div class="flex justify-end gap-2">
-                    <Button label="Mégse" severity="secondary" @click="showSearchDialog = false" />
-                    <Button label="Keresés" @click="performSearch" />
-                </div>
-            </div>
-        </Dialog>
-
-    </div>
-</template>
-
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
-import cytoscape from 'cytoscape'
+import { ref, onMounted, computed } from 'vue';
+import axios from 'axios';
+import cytoscape from 'cytoscape';
+import HierarchyService from '@/services/Hierarchy/HierarchySercice.js';
 
 const container = ref(null);
 let cy = null;
@@ -46,13 +13,26 @@ const showBackButton = computed(() => stack.value.length > 0);
 const showSearchDialog = ref(false);
 const searchTerm = ref('');
 
+const contextMenu = ref({ visible: false, x: 0, y: 0, node: null });
+
+const closeContextMenu = () => {
+    contextMenu.value.visible = false
+    contextMenu.value.node = null
+};
+
+const assignAction = (action) => {
+    console.log(`Művelet: ${action} a(z)`, contextMenu.value.node.data());
+    closeContextMenu();
+};
+
+
+
+
 const performSearch = async () => {
     if (!searchTerm.value.trim()) return;
 
     try {
-        const res = await axios.get(`/hierarchy/search`, {
-            params: { q: searchTerm.value }
-        });
+        const res = await HierarchyService.search(searchTerm.value);
 
         if (res.data?.employee) {
             stack.value = [] // reset stack
@@ -64,7 +44,7 @@ const performSearch = async () => {
             alert('Nincs találat!')
         }
 
-    } catch(error) {
+    } catch(err) {
         console.error('Keresési hiba:', err)
         alert('Hiba történt a keresés során.')
     } finally {
@@ -87,10 +67,11 @@ const goBack = () => {
 
 async function loadGraph(employeeId = null) {
     try {
-        const url = employeeId ? `/hierarchy/children/${employeeId}` : '/hierarchy/root'
-        const response = await axios.get(url)
+        //const url = employeeId ? `/hierarchy/children/${employeeId}` : '/hierarchy/root';
+        //const response = await axios.get(url);
 
-        const { employee, children } = response.data
+        const response = await HierarchyService.getHierarchy(employeeId);
+        const { employee, children } = response.data;
 
         // ✔️ Csak ha nem root szintű betöltés, akkor mentünk az előző állapotot
         if (employeeId && cy) {
@@ -197,9 +178,20 @@ onMounted(() => {
         if (node.data('hasChildren')) {
             loadGraph(node.id())
         }
-    })
+    });
 
-    loadGraph()
+    cy.on('cxttap', 'node', evt => {
+        const node = evt.target
+        contextMenu.value = {
+            visible: true,
+            x: evt.originalEvent.clientX,
+            y: evt.originalEvent.clientY,
+            node
+        }
+    });
+
+    window.addEventListener('click', closeContextMenu);
+    loadGraph();
 })
 </script>
 
@@ -208,3 +200,67 @@ onMounted(() => {
   pointer-events: none;
 }
 </style>
+
+<template>
+    <div ref="container" class="w-full h-full bg-gray-100 overflow-hidden relative">
+        <!-- Keresés -->
+        <Button
+            label="Keresés"
+            @click="handleSearch"
+            class="mr-2"
+        />
+        <!-- Vissza gomb -->
+        <Button
+            v-if="showBackButton"
+            label="← Vissza"
+            @click="goBack"
+        />
+
+        <!-- Kontextus menü -->
+        <div
+            v-if="contextMenu.visible"
+            :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }"
+            class="absolute z-50 bg-white shadow-lg border rounded text-sm"
+        >
+            <ul>
+                <li
+                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    @click="assignAction('add')"
+                >
+                    ✎ Dolgozó hozzáadása
+                </li>
+                <li
+                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    @click="assignAction('move')"
+                >
+                    ⇆ Áthelyezés
+                </li>
+                <li
+                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    @click="assignAction('remove')"
+                >
+                    ❌ Eltávolítás
+                </li>
+            </ul>
+        </div>
+
+
+
+        <!-- Search Dialog -->
+        <Dialog v-model:visible="showSearchDialog" header="Keresés" modal >
+            <div class="flex flex-col gap-4">
+
+                <InputText
+                    v-model="searchTerm"
+                    placeholder="Pl.: John Doe"
+                />
+
+                <div class="flex justify-end gap-2">
+                    <Button label="Mégse" severity="secondary" @click="showSearchDialog = false" />
+                    <Button label="Keresés" @click="performSearch" />
+                </div>
+            </div>
+        </Dialog>
+
+    </div>
+</template>
