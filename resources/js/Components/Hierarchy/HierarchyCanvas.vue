@@ -1,88 +1,119 @@
 <template>
-    <div class="w-full h-full bg-gray-100 relative">
+    <div ref="container" class="w-full h-full bg-gray-100 overflow-hidden relative">
         <button
-            v-if="historyStack.length > 0"
+            v-if="showBackButton"
             @click="goBack"
-            class="absolute z-10 top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded shadow"
+            class="px-3 py-1 mb-3 ml-6 bg-white border rounded shadow text-sm"
         >
             ← Vissza
         </button>
-        <div ref="container" class="w-full h-full"></div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import cytoscape from 'cytoscape'
 
 const container = ref(null)
-const cy = ref(null)
-const historyStack = ref([])
+let cy = null
 
-const currentNodeId = ref(null)
+const stack = ref([])
+const showBackButton = computed(() => stack.value.length > 0)
 
-onMounted(() => {
-    fetchRoot()
-})
+const goBack = () => {
+    if (stack.value.length === 0) return
 
-async function fetchRoot() {
-    try {
-        const response = await axios.get('/hierarchy/root')
-        renderGraph(response.data.employee, response.data.children)
-    } catch (error) {
-        console.error('Root lekérés hiba:', error)
+    const previous = stack.value.pop()
+    if (previous) {
+        renderHierarchy(previous.employee, previous.children)
     }
 }
 
-async function fetchChildren(employeeId) {
+async function loadGraph(employeeId = null) {
     try {
-        const response = await axios.get(`/hierarchy/children/${employeeId}`)
-        renderGraph(response.data.employee, response.data.children)
-    } catch (error) {
-        console.error('Children lekérés hiba:', error)
+        const url = employeeId ? `/hierarchy/children/${employeeId}` : '/hierarchy/root'
+        const response = await axios.get(url)
+
+        const { employee, children } = response.data
+
+        // ✔️ Csak ha nem root szintű betöltés, akkor mentünk az előző állapotot
+        if (employeeId && cy) {
+            const previousEmployee = cy.nodes().filter(node => node.incomers().length === 0)[0]
+            const previousChildren = cy.nodes()
+                .filter(node => node.outgoers().length === 0 && node.id() !== previousEmployee.id())
+                .map(n => ({
+                    id: n.id(),
+                    label: n.data('label').replace(/\s+\+$/, ''),
+                    hasChildren: n.data('hasChildren'),
+                }))
+
+            stack.value.push({
+                employee: {
+                    id: previousEmployee.id(),
+                    label: previousEmployee.data('label').replace(/\s+\+$/, '')
+                },
+                children: previousChildren
+            })
+        }
+
+        const elements = [
+            { data: { id: employee.id, label: employee.label, hasChildren: children.length > 0 } },
+            ...children.map(child => ({
+                data: {
+                    id: child.id,
+                    label: child.hasChildren ? `${child.label} +` : child.label,
+                    hasChildren: child.hasChildren
+                }
+            })),
+            ...children.map(child => ({ data: { source: employee.id, target: child.id } }))
+        ]
+
+        cy.elements().remove()
+        cy.add(elements)
+        cy.layout({ name: 'breadthfirst', directed: true, padding: 10, spacingFactor: 1.4, animate: true }).run()
+        cy.fit()
+    } catch (err) {
+        console.error('Hierarchy load error:', err)
     }
 }
 
-function renderGraph(root, children) {
-    if (cy.value) {
-        cy.value.destroy()
-    }
-
+function renderHierarchy(employee, children) {
     const elements = [
-        { data: { id: root.id, label: root.label, hasChildren: true } },
-        ...children.map((child) => ({
+        { data: { id: employee.id, label: employee.label, hasChildren: children.length > 0 } },
+        ...children.map(child => ({
             data: {
                 id: child.id,
-                label: child.label,
+                label: child.hasChildren ? `${child.label} +` : child.label,
                 hasChildren: child.hasChildren
             }
         })),
-        ...children.map((child) => ({
-            data: { source: root.id, target: child.id }
-        }))
+        ...children.map(child => ({ data: { source: employee.id, target: child.id } }))
     ]
 
-    currentNodeId.value = root.id
+    cy.elements().remove()
+    cy.add(elements)
+    cy.layout({ name: 'breadthfirst', directed: true, padding: 10, spacingFactor: 1.4, animate: true }).run()
+    cy.fit()
+}
 
-    cy.value = cytoscape({
+onMounted(() => {
+    cy = cytoscape({
         container: container.value,
-        elements,
-        layout: {
-            name: 'breadthfirst',
-            directed: true,
-            padding: 10,
-            spacingFactor: 1.4,
-            animate: true
-        },
+        zoomingEnabled: true,
+        minZoom: 0.1,
+        maxZoom: 1.5,
         style: [
             {
                 selector: 'node',
                 style: {
                     label: 'data(label)',
                     'text-valign': 'center',
-                    color: '#fff',
-                    'font-size': 14,
+                    'text-halign': 'center',
+                    'color': '#fff',
+                    'font-size': 12,
+                    'text-wrap': 'wrap',
+                    'text-max-width': 80,
                     'background-color': '#3b82f6',
                     'text-outline-color': '#3b82f6',
                     'text-outline-width': 2,
@@ -99,32 +130,19 @@ function renderGraph(root, children) {
                     'target-arrow-color': '#60a5fa',
                     'target-arrow-shape': 'triangle'
                 }
-            },
-            {
-                selector: 'node[hasChildren = 1]',
-                style: {
-                    'overlay-opacity': 0,
-                    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="8" r="8" fill="%23007bff"/><text x="4" y="12" font-size="12" fill="white">+</text></svg>',
-                    'background-image-opacity': 1,
-                    'background-fit': 'cover'
-                }
             }
         ]
     })
 
-    cy.value.on('tap', 'node', (evt) => {
+    cy.on('tap', 'node', (evt) => {
         const node = evt.target
         if (node.data('hasChildren')) {
-            historyStack.value.push(currentNodeId.value)
-            fetchChildren(node.id())
+            loadGraph(node.id())
         }
     })
-}
 
-function goBack() {
-    const previousId = historyStack.value.pop()
-    if (previousId) {
-        fetchChildren(previousId)
-    }
-}
+    loadGraph()
+})
 </script>
+
+<style scoped></style>
