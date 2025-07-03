@@ -7,6 +7,7 @@ use App\Models\Tenants\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use \DB;
 
 class HierarchyController extends Controller
 {
@@ -16,6 +17,94 @@ class HierarchyController extends Controller
             'title' => 'Hierarchy',
             'filters' => $request->all(['search', 'rield', 'order']),
         ]);
+    }
+    
+    public function search(Request $request)
+    {
+        $query = trim($request->get('q'));
+        if (!$query) {
+            return response()->json(['error' => 'Üres keresés'], 400);
+        }
+        
+        /** @var \App\Models\Tenants\Employee|null $employee */
+        $employee = Employee::where('name', 'like', "%{$query}%")
+            ->first();
+        
+        if (! $employee) {
+            return response()->json(['message' => 'Nincs találat'], 404);
+        }
+
+        // Ha van beosztottja, ő legyen a középpont
+        if ($employee->children()->exists()) {
+            $children = $employee->children()->get()->map(function ($child) {
+                return [
+                    'id' => (string) $child->id,
+                    'label' => $child->name,
+                    'hasChildren' => $child->children()->exists(),
+                ];
+            });
+
+            return response()->json([
+                'employee' => [
+                    'id' => (string) $employee->id,
+                    'label' => $employee->name,
+                ],
+                'children' => $children,
+            ]);
+        }
+        
+        // Ha nincs beosztottja, keressük meg a felettesét
+        $parentId = DB::table('hierarchy')
+            ->where('child_id', $employee->id)
+            ->value('parent_id');
+
+        if (! $parentId) {
+            // Se beosztott, se felettes — egyedül van
+            return response()->json([
+                'employee' => [
+                    'id' => (string) $employee->id,
+                    'label' => $employee->name,
+                ],
+                'children' => []
+            ]);
+        }
+        
+        $parent = Employee::find($parentId);
+
+        $siblings = $parent->children()->get()->map(function ($child) {
+            return [
+                'id' => (string) $child->id,
+                'label' => $child->name,
+                'hasChildren' => $child->children()->exists(),
+            ];
+        });
+        
+        return response()->json([
+            'employee' => [
+                'id' => (string) $parent->id,
+                'label' => $parent->name,
+            ],
+            'children' => $siblings,
+            'highlight' => (string) $employee->id, // opcionális: frontend tudja kiemelni
+        ]);
+        
+        /*
+        $children = $employee->children()->get()->map(function ($child) {
+            return [
+                'id' => (string) $child->id,
+                'label' => $child->name,
+                'hasChildren' => $child->children()->exists(),
+            ];
+        });
+        
+        return response()->json([
+            'employee' => [
+                'id' => (string) $employee->id,
+                'label' => $employee->name,
+            ],
+            'children' => $children,
+        ]);
+        */
     }
     
     public function root()

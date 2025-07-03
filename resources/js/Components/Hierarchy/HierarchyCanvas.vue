@@ -1,12 +1,34 @@
 <template>
     <div ref="container" class="w-full h-full bg-gray-100 overflow-hidden relative">
-        <button
+        <!-- Keresés -->
+        <Button
+            label="Keresés"
+            @click="handleSearch"
+            class="mr-2"
+        />
+        <!-- Vissza gomb -->
+        <Button
             v-if="showBackButton"
+            label="← Vissza"
             @click="goBack"
-            class="px-3 py-1 mb-3 ml-6 bg-white border rounded shadow text-sm"
-        >
-            ← Vissza
-        </button>
+        />
+
+        <!-- Search Dialog -->
+        <Dialog v-model:visible="showSearchDialog" header="Keresés" modal >
+            <div class="flex flex-col gap-4">
+
+                <InputText
+                    v-model="searchTerm"
+                    placeholder="Pl.: John Doe"
+                />
+
+                <div class="flex justify-end gap-2">
+                    <Button label="Mégse" severity="secondary" @click="showSearchDialog = false" />
+                    <Button label="Keresés" @click="performSearch" />
+                </div>
+            </div>
+        </Dialog>
+
     </div>
 </template>
 
@@ -15,11 +37,44 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import cytoscape from 'cytoscape'
 
-const container = ref(null)
-let cy = null
+const container = ref(null);
+let cy = null;
 
-const stack = ref([])
-const showBackButton = computed(() => stack.value.length > 0)
+const stack = ref([]);
+const showBackButton = computed(() => stack.value.length > 0);
+
+const showSearchDialog = ref(false);
+const searchTerm = ref('');
+
+const performSearch = async () => {
+    if (!searchTerm.value.trim()) return;
+
+    try {
+        const res = await axios.get(`/hierarchy/search`, {
+            params: { q: searchTerm.value }
+        });
+
+        if (res.data?.employee) {
+            stack.value = [] // reset stack
+            await loadGraph(res.data.employee.id);
+
+            searchTerm.value = '';
+            showSearchDialog.value = false;
+        } else {
+            alert('Nincs találat!')
+        }
+
+    } catch(error) {
+        console.error('Keresési hiba:', err)
+        alert('Hiba történt a keresés során.')
+    } finally {
+        //showSearchDialog.value = false;
+    }
+}
+
+const handleSearch = async () => {
+    showSearchDialog.value = true;
+}
 
 const goBack = () => {
     if (stack.value.length === 0) return
@@ -134,6 +189,9 @@ onMounted(() => {
         ]
     })
 
+    // ⬇️ Fontos: add class after mount
+    container.value.querySelector('canvas')?.classList.add('cy-core');
+
     cy.on('tap', 'node', (evt) => {
         const node = evt.target
         if (node.data('hasChildren')) {
@@ -145,4 +203,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.cy-core {
+  pointer-events: none;
+}
+</style>

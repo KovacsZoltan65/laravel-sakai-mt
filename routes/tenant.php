@@ -82,6 +82,7 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
             Route::get('/', [App\Http\Controllers\Tenants\HierarchyController::class, 'index'])->name('index');
             Route::get('/root', [App\Http\Controllers\Tenants\HierarchyController::class, 'root'])->name('root');
             Route::get('/children/{employee}', [App\Http\Controllers\Tenants\HierarchyController::class, 'children'])->name('children');
+            Route::get('/search', [\App\Http\Controllers\Tenants\HierarchyController::class, 'search'])->name('search');
         });
     });
 });

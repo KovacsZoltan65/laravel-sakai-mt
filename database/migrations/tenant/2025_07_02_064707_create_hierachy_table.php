@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()->constrained('employees')->onDelete('cascade');
             $table->foreignId('child_id')->constrained('employees')->onDelete('cascade');
+            
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
