@@ -44,13 +44,42 @@ const submit = () => {
 
                     <form @submit.prevent="submit">
                         <div>
-                            <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                            <InputText id="email1" type="text" placeholder="Email" class="w-full md:w-[30rem] mb-4" v-model="form.email" />
-                            <Message v-if="form.errors.email" class="mb-4" severity="error">{{ form.errors.email }}</Message>
 
-                            <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
-                            <Password id="password1" v-model="form.password" placeholder="Password" :toggleMask="true" class="mb-4" fluid :feedback="false"></Password>
-                            <Message v-if="form.errors.password" class="mb-4" severity="error">{{ form.errors.password }}</Message>
+                            <label
+                                for="email1"
+                                class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
+                            >Email</label>
+
+                            <InputText
+                                id="email1"
+                                type="text"
+                                placeholder="Email"
+                                class="w-full md:w-[30rem] mb-4"
+                                v-model="form.email"
+                            />
+                            <Message
+                                v-if="form.errors.email"
+                                class="mb-4"
+                                severity="error"
+                            >{{ form.errors.email }}</Message>
+
+                            <label
+                                for="password1"
+                                class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
+                            >Password</label>
+                            <Password
+                                id="password1"
+                                v-model="form.password"
+                                placeholder="Password"
+                                :toggleMask="true"
+                                class="mb-4" fluid
+                                :feedback="false"
+                            ></Password>
+                            <Message
+                                v-if="form.errors.password"
+                                class="mb-4"
+                                severity="error"
+                            >{{ form.errors.password }}</Message>
 
                             <div class="flex items-center justify-between mt-2 mb-8 gap-8">
                                 <div class="flex items-center">
@@ -59,7 +88,12 @@ const submit = () => {
                                 </div>
                                 <span class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</span>
                             </div>
-                            <Button type="submit" label="Sign In" class="w-full"></Button>
+
+                            <Button
+                                type="submit"
+                                label="Sign In" class="w-full"
+                            />
+
                         </div>
                     </form>
                 </div>
