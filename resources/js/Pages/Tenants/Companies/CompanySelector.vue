@@ -56,34 +56,52 @@
                     </div>
 
                     <form @submit.prevent="submit">
-                        <div class="w-full md:w-[30rem] mx-auto">
-                            <label
-                                for="company"
-                                class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
-                            >
-                                Cég
-                            </label>
+                        <transition name="fade-slide" appear>
+                            <div class="w-full md:w-[30rem] mx-auto">
 
-                            <Select
-                                id="company"
-                                v-model="selectedCompany"
-                                :options="props.companies"
-                                optionLabel="name"
-                                optionValue="id"
-                                placeholder="Válassz céget"
-                                class="w-full mb-6"
-                            />
+                                <!-- Cég választó -->
+                                <label
+                                    for="company"
+                                    class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
+                                >
+                                    Cég
+                                </label>
 
-                            <Button
-                                type="submit"
-                                label="Tovább"
-                                class="w-full"
-                                :disabled="!selectedCompany"
-                            />
-                        </div>
+                                <Select
+                                    id="company"
+                                    v-model="selectedCompany"
+                                    :options="props.companies"
+                                    optionLabel="name"
+                                    optionValue="id"
+                                    placeholder="Válassz céget"
+                                    class="w-full mb-6"
+                                />
+
+                                <Button
+                                    type="submit"
+                                    label="Tovább"
+                                    class="w-full"
+                                    :disabled="!selectedCompany"
+                                />
+                            </div>
+                        </transition>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+.fade-slide-enter-active {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.fade-slide-enter-from {
+    opacity: 0;
+    transform: translateY(20px);
+}
+.fade-slide-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
