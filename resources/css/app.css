@@ -6,6 +6,11 @@
 
 @layer tailwind-base {
     @tailwind base;
+
+    html, body, #app {
+        height: 100%;
+    }
+
 }
 
 @layer tailwind-utilities {

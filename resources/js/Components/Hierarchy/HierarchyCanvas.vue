@@ -1,6 +1,6 @@
+Mutatom az én beépítésemet:
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
 import cytoscape from 'cytoscape';
 import HierarchyService from '@/services/Hierarchy/HierarchySercice.js';
 
@@ -12,21 +12,6 @@ const showBackButton = computed(() => stack.value.length > 0);
 
 const showSearchDialog = ref(false);
 const searchTerm = ref('');
-
-const contextMenu = ref({ visible: false, x: 0, y: 0, node: null });
-
-const closeContextMenu = () => {
-    contextMenu.value.visible = false
-    contextMenu.value.node = null
-};
-
-const assignAction = (action) => {
-    console.log(`Művelet: ${action} a(z)`, contextMenu.value.node.data());
-    closeContextMenu();
-};
-
-
-
 
 const performSearch = async () => {
     if (!searchTerm.value.trim()) return;
@@ -47,8 +32,6 @@ const performSearch = async () => {
     } catch(err) {
         console.error('Keresési hiba:', err)
         alert('Hiba történt a keresés során.')
-    } finally {
-        //showSearchDialog.value = false;
     }
 }
 
@@ -67,13 +50,9 @@ const goBack = () => {
 
 async function loadGraph(employeeId = null) {
     try {
-        //const url = employeeId ? `/hierarchy/children/${employeeId}` : '/hierarchy/root';
-        //const response = await axios.get(url);
-
         const response = await HierarchyService.getHierarchy(employeeId);
         const { employee, children } = response.data;
 
-        // ✔️ Csak ha nem root szintű betöltés, akkor mentünk az előző állapotot
         if (employeeId && cy) {
             const previousEmployee = cy.nodes().filter(node => node.incomers().length === 0)[0]
             const previousChildren = cy.nodes()
@@ -170,36 +149,24 @@ onMounted(() => {
         ]
     })
 
-    // ⬇️ Fontos: add class after mount
     container.value.querySelector('canvas')?.classList.add('cy-core');
 
     cy.on('tap', 'node', (evt) => {
-        const node = evt.target
+        const node = evt.target;
         if (node.data('hasChildren')) {
-            loadGraph(node.id())
+            loadGraph(node.id());
         }
     });
 
-    cy.on('cxttap', 'node', evt => {
-        const node = evt.target
-        contextMenu.value = {
-            visible: true,
-            x: evt.originalEvent.clientX,
-            y: evt.originalEvent.clientY,
-            node
-        }
+    // Automatikus újrarajzolás méretváltozásra
+    window.addEventListener('resize', () => {
+        cy.resize();
+        cy.fit();
     });
 
-    window.addEventListener('click', closeContextMenu);
     loadGraph();
 })
 </script>
-
-<style scoped>
-.cy-core {
-  pointer-events: none;
-}
-</style>
 
 <template>
     <div ref="container" class="w-full h-full bg-gray-100 overflow-hidden relative">
@@ -215,36 +182,6 @@ onMounted(() => {
             label="← Vissza"
             @click="goBack"
         />
-
-        <!-- Kontextus menü -->
-        <div
-            v-if="contextMenu.visible"
-            :style="{ top: contextMenu.y + 'px', left: contextMenu.x + 'px' }"
-            class="absolute z-50 bg-white shadow-lg border rounded text-sm"
-        >
-            <ul>
-                <li
-                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    @click="assignAction('add')"
-                >
-                    ✎ Dolgozó hozzáadása
-                </li>
-                <li
-                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    @click="assignAction('move')"
-                >
-                    ⇆ Áthelyezés
-                </li>
-                <li
-                    class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    @click="assignAction('remove')"
-                >
-                    ❌ Eltávolítás
-                </li>
-            </ul>
-        </div>
-
-
 
         <!-- Search Dialog -->
         <Dialog v-model:visible="showSearchDialog" header="Keresés" modal >
@@ -264,3 +201,12 @@ onMounted(() => {
 
     </div>
 </template>
+
+<style scoped>
+.cy-core {
+  pointer-events: none;
+}
+html, body, #app {
+  height: 100%;
+}
+</style>
