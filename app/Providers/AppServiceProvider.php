@@ -43,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
             'available_locales' => $available_locales,
             'supported_locales' => $supported_locales,
             'locale' => $locale,
+            // 🆕 Kiválasztott cég globálisan
+            'selected_company' => fn () => Session::has('selected_company_id')
+                ? \App\Models\Company::select('id', 'name')->find(Session::get('selected_company_id'))
+                : null,
         ]);
 
         Inertia::share('flash', function(){
@@ -54,6 +58,19 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share('csrf_token', function(){
             return csrf_token();
         });
+        
+        /*
+        Inertia::share('selected_company', function() {
+            $companyId = Session::get('selected_company_id');
+            
+            if( !$companyId ) {
+                return null;
+            }
+            
+            // Ha szükséges, cache-elve is betöltheted (opcionális teljesítmény okokból)
+            return \App\Models\Company::select('id', 'name')->find($companyId);
+        });
+        */
 
     }
 }

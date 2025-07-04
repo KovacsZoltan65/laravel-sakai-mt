@@ -3,9 +3,16 @@ import { useLayout } from '@/sakai/layout/composables/layout';
 import AppConfigurator from './AppConfigurator.vue';
 import NavLink from "@/Components/NavLink.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 
 const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
+const page = usePage();
+
+// Opcionális: aktuálisan kiválasztott cég neve (ha propként elérhető)
+const selectedCompanyName = computed(() => page.props.selected_company?.name ?? '');
+
 </script>
 
 <template>
@@ -35,6 +42,18 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
 
                 <span>SAKAI</span>
             </nav-link>
+
+            <!-- Opcionális: cég neve kiírva -->
+            <div class="ml-4 max-w-[400px]">
+                <span
+                    v-if="selectedCompanyName"
+                    class="font-semibold text-primary whitespace-nowrap overflow-hidden text-ellipsis block"
+                    :title="selectedCompanyName"
+                >
+                    {{ selectedCompanyName }}
+                </span>
+            </div>
+
         </div>
 
         <div class="layout-topbar-actions">
@@ -64,16 +83,38 @@ const { onMenuToggle, toggleDarkMode, isDarkTheme } = useLayout();
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
                     <div class="relative">
-                        <button type="button" class="layout-topbar-action" v-styleclass="{ selector: '@next', enterFromClass: 'hidden', enterActiveClass: 'animate-scalein', leaveToClass: 'hidden', leaveActiveClass: 'animate-fadeout', hideOnOutsideClick: true }">
+
+                        <!-- Profil gomb -->
+                        <button
+                            type="button"
+                            class="layout-topbar-action"
+                            v-styleclass="{
+                                selector: '@next',
+                                enterFromClass: 'hidden',
+                                enterActiveClass: 'animate-scalein',
+                                leaveToClass: 'hidden',
+                                leaveActiveClass: 'animate-fadeout',
+                                hideOnOutsideClick: true
+                            }"
+                        >
                             <i class="pi pi-user"></i>
                             <span>Profile</span>
                         </button>
+
                         <div class="hidden bg-white shadow-md absolute right-0 mt-2 w-48 py-2 rounded-md">
+
+                            <!-- Cég váltás gomb -->
+                            <DropdownLink href="/select-company" as="button">
+                                Cég váltása
+                            </DropdownLink>
+
+                            <!-- Klépés gomb -->
                             <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
-                                        </DropdownLink>
+                                Log Out
+                            </DropdownLink>
                             <!-- <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button> -->
                         </div>
+
                     </div>
                 </div>
             </div>
