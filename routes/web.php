@@ -29,12 +29,12 @@ Route::get(
 )->name('get.menu');
 //Route::resource('menu-items', App\Http\Controllers\MenuItemController::class);
 
-Route::middleware(['tenant'])->group(function() {
-    Route::get(
-        '/menu-items',
-        [App\Http\Controllers\MenuItemController::class, 'index']
-    )->name('get.menu');
-});
+//Route::middleware(['tenant'])->group(function() {
+//    Route::get(
+//        '/menu-items',
+//        [App\Http\Controllers\MenuItemController::class, 'index']
+//    )->name('get.menu');
+//});
 
 /*
 Route::get('/', function () {

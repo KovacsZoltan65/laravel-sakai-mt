@@ -2,24 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MenuItem;
-use App\Models\MenuItemUsage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
+use App\Models\MenuItem;
+use App\Models\MenuItemUsage;
 
 class MenuItemController extends Controller
 {
     public function index(Request $request)
     {
         $host = $request->getHost();
-        $type = str_contains($host, 'hq') ? 'hq' : 'tenant';
+        //$type = str_contains($host, 'hq') ? 'hq' : 'tenant';
 
         $menuItems = MenuItem::with(['children', 'usages'])
             ->whereNull('parent_id')
             ->orderBy('order_index')->get();
 
-        return response()->json($menuItems);
+        // Rekurzívan szűrjük a menüpontokat
+        $filtered = $menuItems->filter(function ($item) {
+            return $this->isValidMenuItem($item);
+        })->values(); // újraindexeljük az elemeket
+        
+        foreach($filtered as $filter) {
+\Log::info('$filter: ' . print_r($filter->label, true));
+            
+            if( $filter->children ) {
+                foreach($filter->children as $cild) {
+\Log::info('$cild: ' . print_r($cild->label, true));
+                }
+            }
+        }
+        
+        return response()->json($filtered);
+        
+        //return response()->json($menuItems);
     }
     
     public function show(MenuItem $menuItem): JsonResponse
@@ -93,5 +111,21 @@ class MenuItemController extends Controller
         $this->updateMenuUsage($menuItemId);
 
         return response()->json(['message' => 'Usage updated successfully.']);
+    }
+    
+    private function isValidMenuItem($item)
+    {
+        // 1. Ellenőrizzük, hogy a route létezik-e (ha van route neve)
+        if ($item->route_name && !Route::has($item->route_name)) {
+//\Log::info('$item->route_name: ' . print_r("{$item->route_name} false", true));
+            return false;
+        }
+
+        // 2. Gyerekek rekurzív szűrése
+        $item->children = $item->children->filter(function ($child) {
+            return $this->isValidMenuItem($child);
+        })->values();
+//\Log::info('$item->route_name: ' . print_r("{$item->route_name} true", true));
+        return true;
     }
 }
