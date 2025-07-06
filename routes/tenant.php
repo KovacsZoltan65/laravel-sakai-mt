@@ -37,6 +37,25 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
 
         /**
          * ==============================================
+         * APP SETTINGS
+         * ==============================================
+         */
+        Route::prefix('app_settings')->name('tenant.app_settings.')->group(function() {
+            Route::get('/', [\App\Http\Controllers\Tenants\AppSettingController::class, 'index'])->name('index');
+        });
+        
+        /**
+         * ==============================================
+         * COMPANY SETTINGS
+         * ==============================================
+         */
+        Route::prefix('comp_settings')->name('tenant.comp_settings.')->group(function() {
+            Route::get('/', [\App\Http\Controllers\Tenants\CompanySettingController::class, 'index'])->name('index');
+            Route::post('/fetch', [\App\Http\Controllers\Tenants\CompanySettingController::class, 'fetch'])->name('fetch');
+        });
+        
+        /**
+         * ==============================================
          * EMPLOYEES
          * ==============================================
          */

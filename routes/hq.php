@@ -47,7 +47,7 @@ Route::domain('hq.mt')->middleware(['auth', 'check.tenant.lock'])->group(functio
      * TENANTS
      * ==============================================
      */
-     Route::prefix('tenants')->name('hq.tenants.')->group(function() {
+    Route::prefix('tenants')->name('hq.tenants.')->group(function() {
         Route::get('/', [App\Http\Controllers\Hq\TenantController::class, 'index'])->name('index');
         Route::post('/fetch', [App\Http\Controllers\Hq\TenantController::class, 'fetch'])->name('fetch');
         Route::post('/', [App\Http\Controllers\Hq\TenantController::class, 'storeTenant'])->name('store');
@@ -57,6 +57,16 @@ Route::domain('hq.mt')->middleware(['auth', 'check.tenant.lock'])->group(functio
         Route::delete('/{id}/force-delete', [App\Http\Controllers\Hq\TenantController::class, 'realDeleteTenant'])->name('force-delete');
      });
 
+    /**
+     * ==============================================
+     * SETTINGS
+     * ==============================================
+     */
+    Route::prefix('settings')->name('hq.settings.')->group(function() {
+        Route::get('/', [App\Http\Controllers\Hq\AppSettingController::class, 'index'])->name('index');
+        Route::post('/fetch', [App\Http\Controllers\Hq\AppSettingController::class, 'fetch'])->name('fetch');
+    });
+     
     /**
      * ========================================
      * EMPLOYEES
@@ -110,8 +120,8 @@ Route::domain('hq.mt')->middleware(['auth', 'check.tenant.lock'])->group(functio
      * HIERARCHY
      * ==============================================
      */
-    Route::prefix('hierarchy')->name('hq.hierarchy')->group(function() {
+    Route::prefix('hierarchy')->name('hq.hierarchy.')->group(function() {
         Route::get('/', [\App\Http\Controllers\Hq\HierarchyController::class, 'index'])->name('index');
+        Route::get('/{employee}', [\App\Http\Controllers\Hq\HierarchyController::class, 'children'])->name('children');
     });
-    Route::get('/hierarchy/{employee}', [\App\Http\Controllers\Hq\HierarchyController::class, 'children'])->name('children');
 });

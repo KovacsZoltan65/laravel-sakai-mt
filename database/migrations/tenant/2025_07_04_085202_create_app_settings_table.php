@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('app_settings', function (Blueprint $table) {
             $table->engine('InnoDB');
             $table->charset('utf8mb3');
             $table->collation('utf8mb3_unicode_ci');
             
             $table->id()->comment('Rekord azonosító');
-            $table->string('name')->comment('Név');
-            $table->string('position')->comment('Pozíció');
-            $table->string('email')->unique()->comment('Email cím');
-
-            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
-            
+            $table->string('key')->unique()->index()->comment('Paraméter kulcsa');
+            $table->text('value')->comment('Paraméter értéke');
+            $table->enum('type', ['string', 'int', 'bool', 'json'])->comment('Paraméter típusa');
             $table->boolean('active')->default(1)->index()->comment('Aktív');
             
             $table->timestamps();
@@ -35,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('tenant')->dropIfExists('employees');
+        Schema::dropIfExists('app_settings');
     }
 };

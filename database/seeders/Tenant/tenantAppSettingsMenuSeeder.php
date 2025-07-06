@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Céges beállítások menüpont
+ * Céges applikációs beállítások menüpont
  */
 
 namespace Database\Seeders\Tenant;
@@ -9,54 +9,53 @@ namespace Database\Seeders\Tenant;
 use App\Models\MenuItem;
 use Illuminate\Database\Seeder;
 
-class tenantCompaniesMenuSeeder extends Seeder
+class tenantAppSettingsMenuSeeder extends Seeder
 {
     public function run(): void
     {
         $administration = MenuItem::where('label', 'administration')->first();
-
+        
         if( !$administration ) {
             $this->command->warn("Parent menu 'Administration' not found. Skipping...");
             return;
         }
-
+        
         // Keressük meg, hogy létezik-e már a 'companies' menü
         /** @var \App\Models\MenuItem|null $companies */
-        $companies = $administration->children()
-            ->where('label', 'companies')
+        $appSettings = $administration->children()
+            ->where('label', 'AppSettings')
             ->first();
-
+        
         $data = [
-            'label' => 'companies',
+            'label' => 'AppSettings',
             'icon' => 'pi pi-building',
-            'can' => 'view company',
+            'can' => 'view app_settings',
             'url' => null,
-            'route_name' => 'tenant.companies.index',
+            'route_name' => 'tenant.app_settings.index',
             'default_weight' => 1,
-            'order_index' => 2,
+            'order_index' => 1,
         ];
-
-        if ($companies) {
+        
+        if( $appSettings ) {
             // Csak akkor frissítsünk, ha ténylegesen változott valami
             $dirty = false;
             foreach ($data as $key => $value) {
-                if ($companies->$key !== $value) {
-                    $companies->$key = $value;
+                if ($appSettings->$key !== $value) {
+                    $appSettings->$key = $value;
                     $dirty = true;
                 }
             }
-
-            if ($dirty) {
-                $companies->save();
-                $this->command->info("'companies' menu updated.");
+            
+            if( $dirty ) {
+                $appSettings->save();
+                $this->command->info("'AppSettings' menu updated.");
             } else {
-                $this->command->info("'companies' menu already up-to-date.");
+                $this->command->info("'AppSettings' menu already up-to-date.");
             }
-
         } else {
             // Ha nem létezik, hozzuk létre
-            $administration->children()->create(array_merge(['label' => 'companies'], $data));
-            $this->command->info("'companies' menu created.");
+            $administration->children()->create(array_merge(['label' => 'AppSettings'], $data));
+            $this->command->info("'AppSettings' menu created.");
         }
     }
 }

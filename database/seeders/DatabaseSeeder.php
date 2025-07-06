@@ -7,12 +7,15 @@ namespace Database\Seeders;
 
 use App\Models\Tenant;
 
+use Database\Seeders\Hq\hqAppSettingsMenuSeeder;
 use Database\Seeders\Hq\hqMenuSeeder;
 use Database\Seeders\Hq\hqTenantsMenuSeeder;
 use Database\Seeders\Hq\hqEmployeesMenuSeeder;
 use Database\Seeders\Hq\hqCompaniesMenuSeeder;
 use Database\Seeders\Hq\hqHierarchyMenuSeeder;
 
+use Database\Seeders\Tenant\tenantAppSettingsMenuSeeder;
+use Database\Seeders\Tenant\tenantCompanySettingsMenuSeeder;
 use Database\Seeders\Tenant\tenantMenuSeeder;
 use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
@@ -68,6 +71,9 @@ class DatabaseSeeder extends Seeder
             EmployeeSeeder::class,
             HierarchySeeder::class,
 
+            AppSettingsSeeder::class,
+            CompanySettingsSeeder::class,
+
         ]);
 
 
@@ -84,6 +90,9 @@ class DatabaseSeeder extends Seeder
                 hqCompaniesMenuSeeder::class,
                 hqHierarchyMenuSeeder::class,
                 
+                // Beállítások
+                hqAppSettingsMenuSeeder::class,
+
             ]);
         } else {
             $this->call([
@@ -95,6 +104,10 @@ class DatabaseSeeder extends Seeder
                 tenantEmployeesMenuSeeder::class,
                 tenantCompaniesMenuSeeder::class,
                 tenantHierarchyMenuSeeder::class,
+                
+                // Beállítások
+                tenantAppSettingsMenuSeeder::class,
+                tenantCompanySettingsMenuSeeder::class,
 
                 AcsSystemSeeder::class,
 

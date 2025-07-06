@@ -1,62 +1,57 @@
 <?php
 
-/**
- * Céges beállítások menüpont
- */
-
 namespace Database\Seeders\Tenant;
 
 use App\Models\MenuItem;
 use Illuminate\Database\Seeder;
 
-class tenantCompaniesMenuSeeder extends Seeder
+class tenantCompanySettingsMenuSeeder extends Seeder
 {
     public function run(): void
     {
         $administration = MenuItem::where('label', 'administration')->first();
-
+        
         if( !$administration ) {
             $this->command->warn("Parent menu 'Administration' not found. Skipping...");
             return;
         }
-
+        
         // Keressük meg, hogy létezik-e már a 'companies' menü
         /** @var \App\Models\MenuItem|null $companies */
-        $companies = $administration->children()
-            ->where('label', 'companies')
+        $compSettings = $administration->children()
+            ->where('label', 'CompanySettings')
             ->first();
-
+        
         $data = [
-            'label' => 'companies',
+            'label' => 'CompanySettings',
             'icon' => 'pi pi-building',
-            'can' => 'view company',
+            'can' => 'view comp_settings',
             'url' => null,
-            'route_name' => 'tenant.companies.index',
+            'route_name' => 'tenant.settings.index',
             'default_weight' => 1,
             'order_index' => 2,
         ];
-
-        if ($companies) {
+        
+        if( $compSettings ) {
             // Csak akkor frissítsünk, ha ténylegesen változott valami
             $dirty = false;
             foreach ($data as $key => $value) {
-                if ($companies->$key !== $value) {
-                    $companies->$key = $value;
+                if ($compSettings->$key !== $value) {
+                    $compSettings->$key = $value;
                     $dirty = true;
                 }
             }
-
-            if ($dirty) {
-                $companies->save();
-                $this->command->info("'companies' menu updated.");
+            
+            if( $dirty ) {
+                $compSettings->save();
+                $this->command->info("'CompanySettings' menu updated.");
             } else {
-                $this->command->info("'companies' menu already up-to-date.");
+                $this->command->info("'CompanySettings' menu already up-to-date.");
             }
-
         } else {
             // Ha nem létezik, hozzuk létre
-            $administration->children()->create(array_merge(['label' => 'companies'], $data));
-            $this->command->info("'companies' menu created.");
+            $administration->children()->create(array_merge(['label' => 'CompanySettings'], $data));
+            $this->command->info("'CompanySettings' menu created.");
         }
     }
 }
