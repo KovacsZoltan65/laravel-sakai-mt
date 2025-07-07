@@ -27,7 +27,7 @@ class tenantCompanySettingsMenuSeeder extends Seeder
             'icon' => 'pi pi-building',
             'can' => 'view comp_settings',
             'url' => null,
-            'route_name' => 'tenant.settings.index',
+            'route_name' => 'tenant.comp_settings.index',
             'default_weight' => 1,
             'order_index' => 2,
         ];

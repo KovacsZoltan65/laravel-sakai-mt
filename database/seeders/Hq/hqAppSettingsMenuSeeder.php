@@ -31,7 +31,7 @@ class hqAppSettingsMenuSeeder extends Seeder
             'icon' => 'pi pi-building',
             'can' => 'view hq_app_settings',
             'url' => null,
-            'route_name' => 'hq.settings.index',
+            'route_name' => 'hq.comp_settings.index',
             'default_weight' => 1,
             'order_index' => 1,
         ];
