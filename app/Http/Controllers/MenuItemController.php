@@ -25,6 +25,30 @@ class MenuItemController extends Controller
     protected function buildMenuTree($parentId = null)
     {
         return MenuItem::where('parent_id', $parentId)
+            ->orderBy('order_index')
+            ->get()
+            ->filter(function ($item) {
+                // ❗ Ellenőrizzük a route meglétét (ha van route_name)
+                if ($item->route_name && !Route::has($item->route_name)) {
+                    return false;
+                }
+                return true;
+            })
+            ->map(function ($item) {
+                return [
+                    'label' => $item->label,
+                    'icon' => $item->icon,
+                    'to' => $item->url ?? ($item->route_name ? route($item->route_name) : null),
+                    'items' => $this->buildMenuTree($item->id)
+                ];
+            })
+            ->values(); // újraintexelés
+    }
+    
+    /*
+    protected function buildMenuTree($parentId = null)
+    {
+        return MenuItem::where('parent_id', $parentId)
             ->orderBy('order_index') // 💡 fontos
             ->get()
             ->map(function ($item) {
@@ -36,6 +60,7 @@ class MenuItemController extends Controller
                 ];
             });
     }
+    */
 
     private function isValidMenuItem($item)
     {
