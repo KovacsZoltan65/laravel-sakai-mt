@@ -7,19 +7,57 @@ use App\Models\MenuItemUsage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Route;
 
 class MenuItemController extends Controller
 {
     public function index(Request $request)
     {
-        $host = $request->getHost();
-        $type = str_contains($host, 'hq') ? 'hq' : 'tenant';
+        $menuTree = $this->buildMenuTree();
 
-        $menuItems = MenuItem::with(['children', 'usages'])
-            ->whereNull('parent_id')
-            ->orderBy('order_index')->get();
-
+        $menuItems = [
+            ['items' => $menuTree]
+        ];
+        
         return response()->json($menuItems);
+    }
+    
+    protected function buildMenuTree($parentId = null)
+    {
+        return MenuItem::where('parent_id', $parentId)
+            ->orderBy('order_index')
+            ->get()
+            ->filter(function ($item) {
+                // ❗ Ellenőrizzük a route meglétét (ha van route_name)
+                if ($item->route_name && !Route::has($item->route_name)) {
+                    return false;
+                }
+                return true;
+            })
+            ->map(function ($item) {
+                return [
+                    'label' => $item->label,
+                    'icon' => $item->icon,
+                    'to' => $item->url ?? ($item->route_name ? route($item->route_name) : null),
+                    'items' => $this->buildMenuTree($item->id)
+                ];
+            })
+            ->values(); // újraintexelés
+    }
+    
+    private function isValidMenuItem($item)
+    {
+        // 1. Ellenőrizzük, hogy a route létezik-e (ha van route neve)
+        if ($item->route_name && !Route::has($item->route_name)) {
+            return false;
+        }
+
+        // 2. Gyerekek rekurzív szűrése
+        $item->children = $item->children->filter(function ($child) {
+            return $this->isValidMenuItem($child);
+        })->values();
+
+        return true;
     }
     
     public function show(MenuItem $menuItem): JsonResponse
