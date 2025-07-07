@@ -1,11 +1,12 @@
 <script setup>
+import { ref, computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
 
 const props = defineProps({
   item: Object
 })
 
+const isOpen = ref(false)
 const page = usePage()
 
 const isActive = computed(() => {
@@ -13,20 +14,26 @@ const isActive = computed(() => {
   const current = page.url || window.location.pathname
   return current.startsWith(new URL(props.item.to, window.location.origin).pathname)
 })
+
+const toggle = () => {
+  isOpen.value = !isOpen.value
+}
 </script>
 
 <template>
   <li>
-    <!-- Főcím: ha nincs to -->
     <div
       v-if="!item.to"
-      class="uppercase text-gray-400 font-bold text-xs px-2 pt-4 pb-2 tracking-wide"
+      class="uppercase text-gray-400 font-bold text-xs px-2 pt-4 pb-2 tracking-wide flex items-center justify-between cursor-pointer"
+      @click="toggle"
     >
-      <i v-if="item.icon" :class="item.icon" class="mr-2 text-sm" />
-      {{ item.label }}
+      <span>
+        <i v-if="item.icon" :class="item.icon" class="mr-2 text-sm" />
+        {{ item.label }}
+      </span>
+      <i v-if="item.items?.length" :class="['pi', isOpen ? 'pi-chevron-down' : 'pi-chevron-right']" class="text-xs" />
     </div>
 
-    <!-- Link menüpont -->
     <a
       v-else
       :href="item.to"
@@ -40,16 +47,29 @@ const isActive = computed(() => {
       <span class="text-sm">{{ item.label }}</span>
     </a>
 
-    <!-- Rekurzív gyerekek -->
-    <ul
-      v-if="item.items && item.items.length"
-      class="ml-4 pl-2 border-l border-gray-200"
-    >
-      <RecursiveMenuItem
-        v-for="(child, i) in item.items"
-        :key="i"
-        :item="child"
-      />
-    </ul>
+    <transition name="fade">
+      <ul
+        v-show="isOpen"
+        class="ml-4 pl-2 border-l border-gray-200"
+      >
+        <RecursiveMenuItem
+          v-for="(child, i) in item.items"
+          :key="i"
+          :item="child"
+        />
+      </ul>
+    </transition>
   </li>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+</style>
