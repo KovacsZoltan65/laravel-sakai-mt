@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -9,10 +9,32 @@ const props = defineProps({
 const isOpen = ref(false)
 const page = usePage()
 
+const currentPath = computed(() => page.url || window.location.pathname)
+
 const isActive = computed(() => {
   if (!props.item.to) return false
-  const current = page.url || window.location.pathname
-  return current.startsWith(new URL(props.item.to, window.location.origin).pathname)
+  const target = new URL(props.item.to, window.location.origin).pathname
+  return currentPath.value.startsWith(target)
+})
+
+// Ellenőrizzük, hogy van-e aktív gyermek
+const hasActiveChild = computed(() => {
+  const check = (items) => {
+    return items?.some(child => {
+      const childPath = child.to ? new URL(child.to, window.location.origin).pathname : null
+      return (
+        childPath && currentPath.value.startsWith(childPath)
+      ) || check(child.items || [])
+    })
+  }
+  return check(props.item.items || [])
+})
+
+// Nyissuk ki, ha aktív vagy van aktív gyermek
+watchEffect(() => {
+  if (isActive.value || hasActiveChild.value) {
+    isOpen.value = true
+  }
 })
 
 const toggle = () => {
@@ -22,9 +44,11 @@ const toggle = () => {
 
 <template>
   <li>
+    <!-- Szülő menü -->
     <div
       v-if="!item.to"
       class="uppercase text-gray-400 font-bold text-xs px-2 pt-4 pb-2 tracking-wide flex items-center justify-between cursor-pointer"
+      :class="{ 'text-primary': isOpen }"
       @click="toggle"
     >
       <span>
@@ -34,6 +58,7 @@ const toggle = () => {
       <i v-if="item.items?.length" :class="['pi', isOpen ? 'pi-chevron-down' : 'pi-chevron-right']" class="text-xs" />
     </div>
 
+    <!-- Kattintható menüpont -->
     <a
       v-else
       :href="item.to"
@@ -47,6 +72,7 @@ const toggle = () => {
       <span class="text-sm">{{ item.label }}</span>
     </a>
 
+    <!-- Gyermekek -->
     <transition name="fade">
       <ul
         v-show="isOpen"
