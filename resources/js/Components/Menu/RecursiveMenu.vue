@@ -7,10 +7,7 @@ import MenuService from '@/services/MenuService.js';
 const menu = ref(null);
 
 onMounted(async () => {
-    console.log('onMounted');
-    //const data = await MenuService.getMenu();
-    const data = await MenuService.getMenu_api();
-    menu.value = data;
+    menu.value = await MenuService.getMenu_api();
 });
 </script>
 

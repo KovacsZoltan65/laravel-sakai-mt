@@ -99,11 +99,21 @@ const toggle = () => {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.3s ease;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
 }
 .fade-enter-from,
 .fade-leave-to {
-  opacity: 0;
   max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  max-height: 1000px; /* elég nagy legyen */
+  opacity: 1;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 </style>
