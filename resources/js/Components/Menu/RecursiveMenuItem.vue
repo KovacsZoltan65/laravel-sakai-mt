@@ -6,16 +6,24 @@ const props = defineProps({
   item: Object
 })
 
-const isOpen = ref(false)
 const page = usePage()
+const isOpen = ref(false)
+const hasChildren = computed(() => props.item.items && props.item.items.length > 0)
 
 const currentPath = computed(() => page.url || window.location.pathname)
 
+/**
+ * Checks if the current path matches the given path.
+ * @param {string} target
+ * @returns {boolean}
+ */
 const isActive = computed(() => {
   if (!props.item.to) return false
+  // Create a new URL object from the given path and the current origin
   const target = new URL(props.item.to, window.location.origin).pathname
+  // Check if the current path starts with the target path
   return currentPath.value.startsWith(target)
-})
+});
 
 // Ellenőrizzük, hogy van-e aktív gyermek
 const hasActiveChild = computed(() => {
