@@ -7,17 +7,44 @@ const model = ref([]);
 
 onMounted(async () => {
     const response = await MenuService.getMenu();
-    model.value = transformMenuToSakaiModel(response.data);
-    //console.log('model.value', model.value);
+    const rawMenu = response.data;
+
+    // 1. Megkeressük az "employees" menüpontot
+    const adminSection = rawMenu[0]?.items?.find(i => i.label === 'administration');
+    const employeesItem = adminSection?.items?.find(i => i.label === 'employees');
+
+    // 2. Hozzáadjuk a két új almenüpontot, ha megtaláltuk
+    if (employeesItem) {
+        employeesItem.items = [
+            ...(employeesItem.items || []),
+            {
+                label: 'Leaders',
+                icon: 'pi pi-user-plus',
+                to: 'http://company-02.mt/employees',
+                items: []
+            },
+            {
+                label: 'Workers',
+                icon: 'pi pi-user',
+                to: 'http://company-02.mt/employees',
+                items: []
+            }
+        ];
+    }
+
+    // 3. Átalakítás saját modellre
+    model.value = transformMenuToSakaiModel(rawMenu);
+
+    console.log('model.value', model.value);
 });
 
 function routeExists(name) {
-  try {
-    route(name);
-    return true;
-  } catch (error) {
-    return false;
-  }
+    try {
+        route(name);
+        return true;
+    } catch (error) {
+        return false;
+    }
 }
 
 function transformMenuToSakaiModel(items) {
@@ -48,44 +75,12 @@ function convertItem(item) {
             .filter(Boolean)
     };
 }
-
-/*
-function convertItem(item) {
-    const entry = {
-        label: item.label,
-        icon: item.icon || 'pi pi-fw pi-circle', // alapértelmezett ikon
-    };
-
-    if (item.route_name) {
-        entry.to = route(item.route_name);
-    }
-
-    if (item.url) {
-        entry.url = item.url;
-        entry.target = '_blank';
-    }
-
-    if (item.children && item.children.length) {
-        entry.items = item.children.map(convertItem);
-    }
-
-    if (item.can) {
-        entry.can = item.can;
-    }
-
-    return entry;
-}
-*/
 </script>
 
 <template>
     <ul class="layout-menu">
         <template v-for="(group, i) in model" :key="i">
-            <AppMenuItem
-                v-show="!item?.can || has(item.can)"
-                v-for="(item, j) in group.items"
-                :key="j"
-                :item="item"
+            <AppMenuItem v-show="!item?.can || has(item.can)" v-for="(item, j) in group.items" :key="j" :item="item"
                 :index="j" />
         </template>
     </ul>

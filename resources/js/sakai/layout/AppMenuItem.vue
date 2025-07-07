@@ -94,7 +94,8 @@ const isActive = computed(() => {
         >
             <i :class="item.icon" class="layout-menuitem-icon"></i>
             <span class="layout-menuitem-text">{{ item.label }}</span>
-            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+            <!--<i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>-->
+            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items && item.items.length"></i>
         </a>
 
         <!-- Belső Inertia link -->
@@ -106,7 +107,8 @@ const isActive = computed(() => {
         >
             <i :class="item.icon" class="layout-menuitem-icon"></i>
             <span class="layout-menuitem-text">{{ item.label }}</span>
-            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
+            <!--<i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>-->
+            <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items && item.items.length"></i>
         </NavLink>
 
         <Transition v-if="item.items && item.visible !== false" name="layout-submenu">

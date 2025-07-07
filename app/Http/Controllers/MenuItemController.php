@@ -25,16 +25,6 @@ class MenuItemController extends Controller
             return $this->isValidMenuItem($item);
         })->values(); // újraindexeljük az elemeket
         
-        foreach($filtered as $filter) {
-\Log::info('$filter: ' . print_r($filter->label, true));
-            
-            if( $filter->children ) {
-                foreach($filter->children as $cild) {
-\Log::info('$cild: ' . print_r($cild->label, true));
-                }
-            }
-        }
-        
         return response()->json($filtered);
         
         //return response()->json($menuItems);
