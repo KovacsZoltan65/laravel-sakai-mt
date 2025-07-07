@@ -5,9 +5,13 @@
 
     import CompanyService from "@/services/Company/CompanyService.js";
 
-    import CreateModal from "@/Pages/Tenants/Company/Create.vue";
-    import EditModal from "@/Pages/Tenants/Company/Edit.vue";
-    import DeleteModal from "@/Pages/Tenants/Company/Delete.vue";
+    //import CreateModal from "@/Pages/Tenants/Company/Create.vue";
+    //import EditModal from "@/Pages/Tenants/Company/Edit.vue";
+    //import DeleteModal from "@/Pages/Tenants/Company/Delete.vue";
+
+    import CreateModal from '@/Pages/Tenants/Companies/Create.vue';
+    import EditModal from '@/Pages/Tenants/Companies/Edit.vue';
+    import DeleteModal from '@/Pages/Tenants/Companies/Delete.vue';
 
     import { usePermissions } from "@/composables/usePermissions";
     import { useDataTableFetcher } from "@/composables/useDataTableFetcher";
