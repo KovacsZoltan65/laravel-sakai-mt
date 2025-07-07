@@ -14,23 +14,22 @@ class MenuItem extends Model
 
     protected $table = 'menu_items';
 
-    protected $fillable = ['title', 'icon', 'url', 'route_name', 'default_weight', 'parent_id'];
+    protected $fillable = [
+        'label', 'icon', 'can', 'url', 'route_name',
+        'default_weight', 'parent_id', 'order_index'
+    ];
 
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('active', '=', 1);
     }
 
-    public function children(): HasMany
+    public function children()
     {
-        //return $this->hasMany(MenuItem::class, 'parent_id');
-        //return $this->hasMany(MenuItem::class, 'parent_id')->with('children');
-        return $this->hasMany(MenuItem::class, 'parent_id')
-            ->with('children')
-            ->orderBy('order_index');
+        return $this->hasMany(MenuItem::class, 'parent_id')->orderBy('order_index');
     }
 
-    public function parent(): BelongsTo
+    public function parent()
     {
         return $this->belongsTo(MenuItem::class, 'parent_id');
     }

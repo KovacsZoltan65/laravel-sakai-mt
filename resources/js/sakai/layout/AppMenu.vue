@@ -4,5 +4,5 @@ import RecursiveMenu from '@/Components/Menu/RecursiveMenu.vue';
 </script>
 
 <template>
-  <RecursiveMenu />
+    <RecursiveMenu />
 </template>
