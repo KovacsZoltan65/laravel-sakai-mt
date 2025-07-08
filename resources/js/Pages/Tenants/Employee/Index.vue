@@ -68,7 +68,13 @@ onMounted(fetchData);
             <!-- CREATE MODAL -->
             <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false" @saved="fetchData" />
             <!-- EDIT MODAL -->
-            <EditModal :show="data.editOpen" :employee="data.employee" :title="props.title" @close="data.editOpen = false" @saved="fetchData" />
+            <EditModal 
+                :show="data.editOpen" 
+                :employee="data.employee" 
+                :title="props.title" 
+                @close="data.editOpen = false" 
+                @saved="fetchData"
+            />
             <!-- DELETE MODAL -->
             <DeleteModal :show="data.deleteOpen" :employee="data.employee" :title="props.title" @close="data.deleteOpen = false" @deleted="fetchData" />
 

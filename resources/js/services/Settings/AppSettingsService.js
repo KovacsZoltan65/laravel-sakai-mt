@@ -5,12 +5,12 @@ class AppSettingsService extends BaseService
     constructor()
     {
         super();
-        this.url = "app.settings";
+        this.url = "tenant.app_settings";
     }
 
     getSettings(params = {})
     {
-        return this.get(route(`${this.url}.fetch`), params);
+        return this.post(route(`${this.url}.fetch`), params);
     }
 }
 

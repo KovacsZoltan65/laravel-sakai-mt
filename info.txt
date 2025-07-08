@@ -30,6 +30,13 @@ php artisan view:clear        # Nézet cache
 php artisan event:clear       # Esemény cache
 php artisan optimize:clear
 
+Query logolása:
+\DB::enableQueryLog();
+... adatkérés ...
+$queries = \DB::getQueryLog();
+\Log::info('$queries: ' . print_r($queries, true));
+\DB::disableQueryLog();
+
 // ===========================================
 // @import probléma
 // ===========================================

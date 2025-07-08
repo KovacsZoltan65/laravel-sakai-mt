@@ -42,6 +42,7 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          */
         Route::prefix('app_settings')->name('tenant.app_settings.')->group(function() {
             Route::get('/', [\App\Http\Controllers\Tenants\AppSettingController::class, 'index'])->name('index');
+            Route::post('/fetch', [App\Http\Controllers\Tenants\AppSettingController::class, 'fetch'])->name('fetch');
         });
         
         /**
