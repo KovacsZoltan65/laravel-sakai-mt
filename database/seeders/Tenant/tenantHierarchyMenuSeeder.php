@@ -19,7 +19,7 @@ class tenantHierarchyMenuSeeder extends Seeder
             'icon' => 'pi pi-share-alt',
             'can' => 'view hierarchy',
             'default_weight' => 1,
-            'order_index' => 1,
+            'order_index' => 3,
         ]);
     }
 }

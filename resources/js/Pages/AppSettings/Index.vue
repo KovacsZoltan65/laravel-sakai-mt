@@ -19,4 +19,12 @@ const props = defineProps({
     filters: Object
 });
 </script>
-<template></template>
+<template>
+    <Head :title="props.title"/>
+
+    <AppLayout>
+        <div class="card">
+            <h1 class="text-2xl font-bold mb-4">App beállítások kezelése</h1>
+        </div>
+    </AppLayout>
+</template>

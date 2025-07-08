@@ -9,16 +9,16 @@ class tenantCompanySettingsMenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $administration = MenuItem::where('label', 'administration')->first();
+        $settings = MenuItem::where('label', 'settings')->first();
         
-        if( !$administration ) {
-            $this->command->warn("Parent menu 'Administration' not found. Skipping...");
+        if( !$settings ) {
+            $this->command->warn("Parent menu 'settings' not found. Skipping...");
             return;
         }
         
         // Keressük meg, hogy létezik-e már a 'companies' menü
         /** @var \App\Models\MenuItem|null $companies */
-        $compSettings = $administration->children()
+        $compSettings = $settings->children()
             ->where('label', 'CompanySettings')
             ->first();
         
@@ -28,6 +28,7 @@ class tenantCompanySettingsMenuSeeder extends Seeder
             'can' => 'view comp_settings',
             'url' => null,
             'route_name' => 'tenant.comp_settings.index',
+            //'parent_id' => $administration->id,
             'default_weight' => 1,
             'order_index' => 2,
         ];
@@ -50,7 +51,7 @@ class tenantCompanySettingsMenuSeeder extends Seeder
             }
         } else {
             // Ha nem létezik, hozzuk létre
-            $administration->children()->create(array_merge(['label' => 'CompanySettings'], $data));
+            $settings->children()->create(array_merge(['label' => 'CompanySettings'], $data));
             $this->command->info("'CompanySettings' menu created.");
         }
     }

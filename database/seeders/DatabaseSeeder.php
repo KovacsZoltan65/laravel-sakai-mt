@@ -106,6 +106,7 @@ class DatabaseSeeder extends Seeder
                 tenantHierarchyMenuSeeder::class,
                 
                 // Beállítások
+                tenantSettingsMenuSeeder::class,
                 tenantAppSettingsMenuSeeder::class,
                 tenantCompanySettingsMenuSeeder::class,
 

@@ -4,7 +4,7 @@ import AppLayout from "@/sakai/layout/AppLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Inertia } from '@inertiajs/inertia';
 
-import CompanySettingService from "@/services/Settings/CompanySettingsService.js";
+import AppSettingService from "@/services/Settings/AppSettingsService.js";
 
 import CreateModal from "./Create.vue";
 import EditModal from "./Edit.vue";
@@ -19,4 +19,12 @@ const props = defineProps({
     filters: Object
 });
 </script>
-<template></template>
+<template>
+    <Head :title="props.title"/>
+
+    <AppLayout>
+        <div class="card">
+            <h1 class="text-2xl font-bold mb-4">Céges beállítások kezelése</h1>
+        </div>
+    </AppLayout>
+</template>

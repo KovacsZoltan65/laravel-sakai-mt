@@ -13,16 +13,16 @@ class tenantAppSettingsMenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $administration = MenuItem::where('label', 'administration')->first();
+        $settings = MenuItem::where('label', 'settings')->first();
         
-        if( !$administration ) {
-            $this->command->warn("Parent menu 'Administration' not found. Skipping...");
+        if( !$settings ) {
+            $this->command->warn("Parent menu 'settings' not found. Skipping...");
             return;
         }
         
         // Keressük meg, hogy létezik-e már a 'companies' menü
         /** @var \App\Models\MenuItem|null $companies */
-        $appSettings = $administration->children()
+        $appSettings = $settings->children()
             ->where('label', 'AppSettings')
             ->first();
         
@@ -54,7 +54,7 @@ class tenantAppSettingsMenuSeeder extends Seeder
             }
         } else {
             // Ha nem létezik, hozzuk létre
-            $administration->children()->create(array_merge(['label' => 'AppSettings'], $data));
+            $settings->children()->create(array_merge(['label' => 'AppSettings'], $data));
             $this->command->info("'AppSettings' menu created.");
         }
     }
