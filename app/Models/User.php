@@ -16,7 +16,8 @@ class User extends Authenticatable
         Notifiable, 
         HasRoles;
 
-    //protected $connection = 'tenant'; // Nem feltétlenül kell, ha a provider már ezt használja
+    // Ezt ne vedd ki!!!
+    protected $connection = 'tenant'; // Nem feltétlenül kell, ha a provider már ezt használja
     
     protected $table = 'users';
     

@@ -18,7 +18,7 @@ class MenuItemController extends Controller
         $menuItems = [
             ['items' => $menuTree]
         ];
-        
+//\Log::info('$menuTree: ' . print_r($menuTree, true));
         return response()->json($menuItems);
     }
     

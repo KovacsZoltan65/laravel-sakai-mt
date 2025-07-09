@@ -1,11 +1,13 @@
+// resources/js/services/Settings/UserSettingsService.js
+
 import BaseService from '@/services/BaseService.js';
 
-class AppSettingsService extends BaseService
+class UserSettingsService extends BaseService
 {
     constructor()
     {
         super();
-        this.url = "tenant.app_settings";
+        this.url = "tenant.user_settings";
     }
 
     getSettings(params = {})
@@ -26,4 +28,4 @@ class AppSettingsService extends BaseService
     }
 }
 
-export default new AppSettingsService();
+export default new UserSettingsService();

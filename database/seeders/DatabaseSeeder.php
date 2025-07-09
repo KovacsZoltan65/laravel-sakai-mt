@@ -16,6 +16,7 @@ use Database\Seeders\Hq\hqHierarchyMenuSeeder;
 
 use Database\Seeders\Tenant\tenantAppSettingsMenuSeeder;
 use Database\Seeders\Tenant\tenantCompanySettingsMenuSeeder;
+use Database\Seeders\Tenant\tenantUserSettingsMenuSeeder;
 use Database\Seeders\Tenant\tenantMenuSeeder;
 use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
@@ -112,6 +113,7 @@ class DatabaseSeeder extends Seeder
                 tenantSettingsMenuSeeder::class,
                 tenantAppSettingsMenuSeeder::class,
                 tenantCompanySettingsMenuSeeder::class,
+                tenantUserSettingsMenuSeeder::class,
 
                 AcsSystemSeeder::class,
 

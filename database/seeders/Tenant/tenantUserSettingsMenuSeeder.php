@@ -5,7 +5,7 @@ namespace Database\Seeders\Tenant;
 use App\Models\MenuItem;
 use Illuminate\Database\Seeder;
 
-class tenantCompanySettingsMenuSeeder extends Seeder
+class tenantUserSettingsMenuSeeder extends Seeder
 {
     public function run(): void
     {
@@ -18,41 +18,41 @@ class tenantCompanySettingsMenuSeeder extends Seeder
         
         // Keressük meg, hogy létezik-e már a 'companies' menü
         /** @var \App\Models\MenuItem|null $companies */
-        $compSettings = $settings->children()
-            ->where('label', 'CompanySettings')
+        $userSettings = $settings->children()
+            ->where('label', 'UserSettings')
             ->first();
         
         $data = [
-            'label' => 'CompanySettings',
+            'label' => 'UserSettings',
             'icon' => 'pi pi-building',
-            'can' => 'view company_setting',
+            'can' => 'view user_setting',
             'url' => null,
-            'route_name' => 'tenant.comp_settings.index',
+            'route_name' => 'tenant.user_settings.index',
             //'parent_id' => $administration->id,
             'default_weight' => 1,
             'order_index' => 2,
         ];
         
-        if( $compSettings ) {
+        if( $userSettings ) {
             // Csak akkor frissítsünk, ha ténylegesen változott valami
             $dirty = false;
             foreach ($data as $key => $value) {
-                if ($compSettings->$key !== $value) {
-                    $compSettings->$key = $value;
+                if ($userSettings->$key !== $value) {
+                    $userSettings->$key = $value;
                     $dirty = true;
                 }
             }
             
             if( $dirty ) {
-                $compSettings->save();
-                $this->command->info("'CompanySettings' menu updated.");
+                $userSettings->save();
+                $this->command->info("'UserSettings' menu updated.");
             } else {
-                $this->command->info("'CompanySettings' menu already up-to-date.");
+                $this->command->info("'UserSettings' menu already up-to-date.");
             }
         } else {
             // Ha nem létezik, hozzuk létre
-            $settings->children()->create( $data );
-            $this->command->info("'CompanySettings' menu created.");
+            $settings->children()->create($data);
+            $this->command->info("'UserSettings' menu created.");
         }
     }
 }

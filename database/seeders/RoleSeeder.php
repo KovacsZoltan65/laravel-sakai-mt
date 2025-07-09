@@ -62,6 +62,11 @@ class RoleSeeder extends Seeder
             'create company_setting',
             'update company_setting',
             'delete company_setting',
+            
+            'view user_setting',
+            'create user_setting',
+            'update user_setting',
+            'delete user_setting',
         ]);
 
         // Admin

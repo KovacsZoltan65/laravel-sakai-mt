@@ -37,6 +37,20 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
 
         /**
          * ==============================================
+         * SETTINGS
+         * ==============================================
+         */
+        Route::middleware(['auth'])->prefix('settings')->as('tenant.')->group(function() {
+            // App Settings
+            Route::post('/app-settings/fetch', [App\Http\Controllers\Tenants\Settings\AppSettingsController::class, 'fetch'])->name('app_settings.fetch');
+            // Company Settings
+            Route::post('/company-settings/fetch', [\App\Http\Controllers\Tenants\Settings\CompanySettingsController::class, 'fetch'])->name('comp_settings.fetch');
+            // User Settings
+            Route::post('/user-settings/fetch', [App\Http\Controllers\Tenants\Settings\UserSettingsController::class, 'fetch'])->name('user_settings.fetch');
+        });
+        
+        /**
+         * ==============================================
          * APP SETTINGS
          * ==============================================
          */
@@ -53,6 +67,16 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
         Route::prefix('comp_settings')->name('tenant.comp_settings.')->group(function() {
             Route::get('/', [\App\Http\Controllers\Tenants\CompanySettingController::class, 'index'])->name('index');
             Route::post('/fetch', [\App\Http\Controllers\Tenants\CompanySettingController::class, 'fetch'])->name('fetch');
+        });
+        
+        /**
+         * ==============================================
+         * USER SETTINGS
+         * ==============================================
+         */
+        Route::prefix('user_settings')->name('tenant.user_settings.')->group(function() {
+            Route::get('/', [\App\Http\Controllers\Tenants\UserSettingController::class, 'index'])->name('index');
+            Route::post('/fetch', [\App\Http\Controllers\Tenants\UserSettingController::class, 'fetch'])->name('fetch');
         });
         
         /**

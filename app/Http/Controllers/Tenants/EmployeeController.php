@@ -46,8 +46,6 @@ class EmployeeController extends Controller
         //$page = $params['params'] ?? 1;
         $page = $request->input('page', 1);
 
-        $employees = null;
-
         try {
             $_employees = Employee::query();
 
@@ -63,15 +61,16 @@ class EmployeeController extends Controller
             
             $employees = $_employees->paginate(10, ['*'], 'page', $page);
             
+            return response()->json($employees, Response::HTTP_OK);
+            
 //$queryLog = DB::getQueryLog();
 //\Log::info('Employees lekérdezés: '. print_r($queryLog, true));
 //DB::disableQueryLog();
             
         } catch( Exception $ex ) {
             \Log::info('$ex message: ' . print_r($ex->getMessage(), true));
+            return response()->json($ex->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return response()->json($employees);
     }
 
     public function getEmployee(Request $request): JsonResponse

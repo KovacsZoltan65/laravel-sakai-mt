@@ -37,6 +37,15 @@ Route::middleware(['tenant'])->group(function() {
 });
 
 /*
+ |============================================== 
+ | SETTINGS
+ |==============================================
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/settings-panel', [\App\Http\Controllers\Tenants\Settings\SettingsPanelController::class, 'index'])->name('settings.panel');
+});
+
+/*
 Route::get('/', function () {
     return redirect('login');
 });

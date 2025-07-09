@@ -29,7 +29,7 @@ class tenantAppSettingsMenuSeeder extends Seeder
         $data = [
             'label' => 'AppSettings',
             'icon' => 'pi pi-building',
-            'can' => 'view app_settings',
+            'can' => 'view app_setting',
             'url' => null,
             'route_name' => 'tenant.app_settings.index',
             'default_weight' => 1,
