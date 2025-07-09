@@ -15,6 +15,10 @@ return new class extends Migration
             $table->engine('InnoDB');
             $table->charset('utf8mb3');
             $table->collation('utf8mb3_unicode_ci');
+        
+            $table->engine('InnoDB');
+            $table->charset('utf8mb3');
+            $table->collation('utf8mb3_unicode_ci');
             
             $table->increments('id')->comment('Rekord azonosító');
             $table->string('name', 255)->unique()->comment('ACS rendszer neve');

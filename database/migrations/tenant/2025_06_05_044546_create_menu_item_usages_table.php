@@ -10,8 +10,12 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+    {    
         Schema::create('menu_item_usages', function (Blueprint $table) {
+            $table->engine('InnoDB');
+            $table->charset('utf8mb3');
+            $table->collation('utf8mb3_unicode_ci');
+        
             $table->engine('InnoDB');
             $table->charset('utf8mb3');
             $table->collation('utf8mb3_unicode_ci');

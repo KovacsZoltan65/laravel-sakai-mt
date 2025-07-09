@@ -7,8 +7,13 @@
 @layer tailwind-base {
     @tailwind base;
 
-    html, body, #app {
+    html, body {
         height: 100%;
+        overflow-y: auto;
+    }
+    .layout-wrapper {
+        min-height: 100vh;
+        overflow-y: auto;
     }
 
 }

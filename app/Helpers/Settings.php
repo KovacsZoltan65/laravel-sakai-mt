@@ -2,31 +2,34 @@
 
 namespace App\Helpers;
 
+use App\Models\AppSetting;
+use App\Models\CompanySetting;
+
 class Settings
 {
     public static function getApp($key, $default = null)
     {
-        return App\Models\AppSetting::where('key', $key)->value('value') ?? $default;
+        return AppSetting::where('key', $key)->value('value') ?? $default;
     }
     
     public static function getCompany($key, $default = null)
     {
-        return App\Models\CompanySetting::where('key', $key)->value('value') ?? $default;
+        return CompanySetting::where('key', $key)->value('value') ?? $default;
     }
     
-    public static function setApp($key, $value)
+    public static function setApp($key, $value, $type = 'string')
     {
-        return App\Models\AppSetting::updateOrCreate(
+        return AppSetting::updateOrCreate(
             ['key' => $key],
-            ['value' => $value]
+            ['value' => $value, 'type' => $type]
         );
     }
     
-    public static function setCompany($key, $value)
+    public static function setCompany($key, $value, $type = 'string')
     {
-        return App\Models\CompanySetting::updateOrCreate(
+        return CompanySetting::updateOrCreate(
             ['key' => $key],
-            ['value' => $value]
+            ['value' => $value, 'type' => $type]
         );
     }
 }

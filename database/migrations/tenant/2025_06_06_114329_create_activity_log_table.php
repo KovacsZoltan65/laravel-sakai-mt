@@ -7,8 +7,12 @@ use Illuminate\Database\Migrations\Migration;
 class CreateActivityLogTable extends Migration
 {
     public function up()
-    {
+    {    
         Schema::connection(config('activitylog.database_connection'))->create(config('activitylog.table_name'), function (Blueprint $table) {
+            $table->engine('InnoDB');
+            $table->charset('utf8mb3');
+            $table->collation('utf8mb3_unicode_ci');
+        
             $table->bigIncrements('id');
             $table->string('log_name')->nullable();
             $table->text('description');

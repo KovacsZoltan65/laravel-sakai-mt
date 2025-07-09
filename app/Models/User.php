@@ -16,7 +16,9 @@ class User extends Authenticatable
         Notifiable, 
         HasRoles;
 
-    protected $connection = 'tenant'; // Nem feltétlenül kell, ha a provider már ezt használja
+    //protected $connection = 'tenant'; // Nem feltétlenül kell, ha a provider már ezt használja
+    
+    protected $table = 'users';
     
     /**
      * The attributes that are mass assignable.

@@ -11,15 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hierarchy', function (Blueprint $table) {
+        //dd(DB::connection()->getDatabaseName());
+        
+        Schema::create('user_settings', function (Blueprint $table) {
             $table->engine('InnoDB');
             $table->charset('utf8mb3');
             $table->collation('utf8mb3_unicode_ci');
-            
+
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('employees')->onDelete('cascade');
-            $table->foreignId('child_id')->constrained('employees')->onDelete('cascade');
-            
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('key');
+            $table->text('value');
+            $table->enum('type', ['string', 'int', 'bool', 'json']);
+            $table->boolean('active')->default(1)->index()->comment('Aktív');
+
+            $table->unique(['user_id', 'key'], 'user_settings_user_key_unique');
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hierachy');
+        Schema::dropIfExists('user_settings');
     }
 };

@@ -1,6 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Request;
+use App\Models\Tenant;
+use App\Services\SettingsService;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 
 if (!function_exists('is_hq')) {
@@ -30,9 +33,9 @@ if (!function_exists('tenant')) {
     /**
      * Visszaadja az aktuális tenant példányt.
      *
-     * @return \App\Models\Tenant|null
+     * @return Tenant|null
      */
-    function tenant(): ?\App\Models\Tenant
+    function tenant(): ?Tenant
     {
         return SpatieTenant::current();
     }
@@ -52,8 +55,23 @@ if (!function_exists('user')) {
     /**
      * Rövidítés az aktuális bejelentkezett felhasználóra.
      */
-    function user(): ?\Illuminate\Contracts\Auth\Authenticatable
+    function user(): ?Authenticatable
     {
         return Auth::user();
+    }
+}
+
+/**
+ * ========================================
+ * HASZNÁLAT
+ * ========================================
+ * settings('locale');                 // pl. "hu"
+ * settings('timezone');               // pl. "Europe/Budapest"
+ * settings('unknown_key', 'default'); // fallback értékkel
+ */
+if( !function_exists('settings') ) {
+    function settings(string $key, $default = null): mixed
+    {
+        return app(SettingsService::class)->get($key, $default);
     }
 }

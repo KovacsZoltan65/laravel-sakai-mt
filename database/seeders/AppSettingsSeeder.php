@@ -22,10 +22,12 @@ class AppSettingsSeeder extends Seeder
         if( $tenant->name !== 'Hq' ) {
 
             $settings = [
-                ['key' => 'default_locale', 'value' => 'hu', 'type' => 'string'],
-                ['key' => 'default_timezone', 'value' => 'Europe/Budapest', 'type' => 'string'],
-                ['key' => 'maintenance_mode', 'value' => '0', 'type' => 'bool'],
-                ['key' => 'support_email', 'value' => 'support@example.com', 'type' => 'string'],
+                ['key' => 'default_locale',   'value' => 'hu',                              'type' => 'string'],
+                ['key' => 'default_timezone', 'value' => 'Europe/Budapest',                 'type' => 'string'],
+                ['key' => 'maintenance_mode', 'value' => '0',                               'type' => 'bool'],
+                ['key' => 'support_email',    'value' => 'support@example.com',             'type' => 'string'],
+                ['key' => 'default_workdays', 'value' => '5',                               'type' => 'int'],
+                ['key' => 'default_result',    'value' => '{"errors": {}, "errorBags": []}', 'type' => 'JSON'],
             ];
 
             foreach ($settings as $setting) {
@@ -40,10 +42,12 @@ class AppSettingsSeeder extends Seeder
 
         } else {
             $settings = [
-                ['key' => 'default_locale', 'value' => 'hu', 'type' => 'string'],
-                ['key' => 'default_timezone', 'value' => 'Europe/Budapest', 'type' => 'string'],
-                ['key' => 'maintenance_mode', 'value' => '0', 'type' => 'bool'],
-                ['key' => 'support_email', 'value' => 'support@example.com', 'type' => 'string'],
+                ['key' => 'default_locale',   'value' => 'hu',                  'type' => 'string'],
+                ['key' => 'default_timezone', 'value' => 'Europe/Budapest',     'type' => 'string'],
+                ['key' => 'maintenance_mode', 'value' => '0',                   'type' => 'bool'],
+                ['key' => 'support_email',    'value' => 'support@example.com', 'type' => 'string'],
+                ['key' => 'default_workdays', 'value' => '5',                               'type' => 'int'],
+                ['key' => 'default_result',    'value' => '{"errors": {}, "errorBags": []}', 'type' => 'JSON'],
             ];
 
             foreach ($settings as $setting) {
