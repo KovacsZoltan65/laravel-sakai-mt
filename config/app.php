@@ -117,7 +117,7 @@ return [
         [ 'name' => "Great Britain", 'code' => "GB" ],
     ],
 
-    'supported_locales' => ['en', 'hu'],
+    'supported_locales' => ['gb', 'hu'],
 
     /*
     |--------------------------------------------------------------------------

@@ -17,6 +17,10 @@ import '@/sakai/assets/tailwind.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Sakai';
 
+// resources/js/app.js
+window.available_locales = JSON.parse(document.querySelector('meta[name=available-locales]').getAttribute('content'));
+window.supported_locales = JSON.parse(document.querySelector('meta[name=supported-locales]').getAttribute('content'));
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),

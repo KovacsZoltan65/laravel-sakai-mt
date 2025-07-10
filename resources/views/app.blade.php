@@ -4,10 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <meta name="available-locales" content='@json(config("app.available_locales"))'>
+        <meta name="supported-locales" content='@json(config("app.supported_locales"))'>
+
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
-        
+
         <link href="https://fonts.cdnfonts.com/css/lato" rel="stylesheet">
 
         <!-- Scripts -->

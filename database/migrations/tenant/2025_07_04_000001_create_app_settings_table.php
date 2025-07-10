@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id()->comment('Rekord azonosító');
             $table->string('key')->unique()->index()->comment('Paraméter kulcsa');
             $table->text('value')->comment('Paraméter értéke');
-            $table->enum('type', ['string', 'int', 'bool', 'json', 'timezone'])->comment('Paraméter típusa');
+            $table->enum('type', ['string', 'int', 'bool', 'json', 'timezone', 'locale'])->comment('Paraméter típusa');
             $table->boolean('active')->default(1)->index()->comment('Aktív');
             
             $table->timestamps();

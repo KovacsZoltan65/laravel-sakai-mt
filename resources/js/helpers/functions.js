@@ -14,5 +14,6 @@ export function getTypes ()
         { label: 'Boolean', value: 'bool' },
         { label: 'JSON', value: 'json' },
         { label: 'Timezone', value: 'timezone' },
+        { label: 'Locale', value: 'locale' },
     ];
 }

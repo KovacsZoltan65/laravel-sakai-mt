@@ -6,6 +6,7 @@ import { getTypes } from '@/helpers/functions.js';
 import AppSettingService from "@/services/Settings/AppSettingsService.js";
 import TimezoneSelect from "@/Components/TimezoneSelect.vue";
 import { useToast } from "primevue/usetoast";
+import LanguageSelect from "@/Components/LanguageSelect.vue";
 const toast = useToast();
 
 const props = defineProps({
@@ -126,6 +127,11 @@ const closeModal = () => {
                     <TimezoneSelect v-model="form.value" />
                 </template>
 
+                <!-- NELV -->
+                <template v-else-if="form.type === 'locale' || form.key === 'locale'">
+                    <LanguageSelect v-model="form.value" />
+                </template>
+
                 <!-- LOGIKAI -->
                 <template v-else-if="form.type === 'bool'">
                     <div class="mt-2">
@@ -142,7 +148,6 @@ const closeModal = () => {
                         v-model="form.value"
                         class="w-full"
                         showButtons fluid
-                        :min="1" :max="7"
                         buttonLayout="horizontal" />
                 </template>
 

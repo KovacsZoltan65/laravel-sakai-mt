@@ -4,6 +4,7 @@ import { getTypes } from '@/helpers/functions.js';
 import AppSettingService from "@/services/Settings/AppSettingsService.js";
 import TimezoneSelect from "@/Components/TimezoneSelect.vue";
 import { useToast } from "primevue/usetoast";
+import LanguageSelect from "@/Components/LanguageSelect.vue";
 const toast = useToast();
 
 const props = defineProps({
@@ -122,6 +123,11 @@ const closeModal = () => {
                 <!-- IDŐZÓNA -->
                 <template v-if="form.type === 'timezone' || form.key === 'timezone'">
                     <TimezoneSelect v-model="form.value" />
+                </template>
+
+                <!-- NELV -->
+                <template v-if="form.type === 'locale' || form.key === 'locale'">
+                    <LanguageSelect v-model="form.value" />
                 </template>
 
                 <!-- LOGIKAI -->
