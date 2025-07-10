@@ -43,6 +43,10 @@ Route::middleware(['tenant'])->group(function() {
 */
 Route::middleware(['auth'])->group(function () {
     Route::get('/settings-panel', [\App\Http\Controllers\Tenants\Settings\SettingsPanelController::class, 'index'])->name('settings.panel');
+    
+    Route::get('/timezones', function() {
+        return \App\Helpers\TimezoneHelper::european(); // vagy all()
+    })->name('timezone.list');
 });
 
 /*

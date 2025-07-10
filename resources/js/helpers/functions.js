@@ -13,5 +13,6 @@ export function getTypes ()
         { label: 'Szám', value: 'int' },
         { label: 'Boolean', value: 'bool' },
         { label: 'JSON', value: 'json' },
+        { label: 'Timezone', value: 'timezone' },
     ];
 }

@@ -15,15 +15,18 @@ class UserSettingsService extends BaseService
         return this.post(route(`${this.url}.fetch`), params);
     }
 
-    createSetting(data) {
+    createSetting(data)
+    {
         return this.post(route(`${this.url}.store`), data);
     }
 
-    updateSetting(id, data) {
+    updateSetting(id, data)
+    {
         return this.put(route(`${this.url}.update`, id), data);
     }
 
-    deleteSetting(id) {
+    deleteSetting(id)
+    {
         return this.delete(route(`${this.url}.destroy`, id));
     }
 }

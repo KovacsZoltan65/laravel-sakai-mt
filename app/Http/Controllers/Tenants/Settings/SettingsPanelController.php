@@ -12,7 +12,8 @@ class SettingsPanelController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Settings/SettingsPanel', [
-            'title' => 'Beállítások áttekintő'
+            'title' => 'Beállítások áttekintő',
+            'filters' => $request->all(['search', 'field', 'order']),
         ]);
     }
     

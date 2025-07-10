@@ -66,17 +66,30 @@ onMounted(fetchData);
             <h1 class="text-2xl font-bold mb-4">Céges dolgozók kezelése</h1>
 
             <!-- CREATE MODAL -->
-            <CreateModal :show="data.createOpen" :title="props.title" @close="data.createOpen = false" @saved="fetchData" />
-            <!-- EDIT MODAL -->
-            <EditModal 
-                :show="data.editOpen" 
-                :employee="data.employee" 
-                :title="props.title" 
-                @close="data.editOpen = false" 
+            <CreateModal
+                :show="data.createOpen"
+                :title="props.title"
+                @close="data.createOpen = false"
                 @saved="fetchData"
             />
+
+            <!-- EDIT MODAL -->
+            <EditModal
+                :show="data.editOpen"
+                :employee="data.employee"
+                :title="props.title"
+                @close="data.editOpen = false"
+                @saved="fetchData"
+            />
+
             <!-- DELETE MODAL -->
-            <DeleteModal :show="data.deleteOpen" :employee="data.employee" :title="props.title" @close="data.deleteOpen = false" @deleted="fetchData" />
+            <DeleteModal
+                :show="data.deleteOpen"
+                :employee="data.employee"
+                :title="props.title"
+                @close="data.deleteOpen = false"
+                @deleted="fetchData"
+            />
 
             <!-- CREATE BUTTON -->
             <Button v-if="has('create employee')" icon="pi pi-plus" label="Create" @click="data.createOpen = true" class="mr-2" />

@@ -55,8 +55,9 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          * ==============================================
          */
         Route::prefix('app_settings')->name('tenant.app_settings.')->group(function() {
-            Route::get('/', [\App\Http\Controllers\Tenants\AppSettingController::class, 'index'])->name('index');
-            Route::post('/fetch', [App\Http\Controllers\Tenants\AppSettingController::class, 'fetch'])->name('fetch');
+            
+            Route::get('/', [\App\Http\Controllers\Tenants\Settings\AppSettingsController::class, 'index'])->name('index');
+            Route::post('/fetch', [\App\Http\Controllers\Tenants\Settings\AppSettingsController::class, 'fetch'])->name('fetch');
         });
         
         /**
@@ -65,8 +66,8 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          * ==============================================
          */
         Route::prefix('comp_settings')->name('tenant.comp_settings.')->group(function() {
-            Route::get('/', [\App\Http\Controllers\Tenants\CompanySettingController::class, 'index'])->name('index');
-            Route::post('/fetch', [\App\Http\Controllers\Tenants\CompanySettingController::class, 'fetch'])->name('fetch');
+            Route::get('/', [\App\Http\Controllers\Tenants\Settings\CompanySettingsController::class, 'index'])->name('index');
+            Route::post('/fetch', [\App\Http\Controllers\Tenants\Settings\CompanySettingsController::class, 'fetch'])->name('fetch');
         });
         
         /**
@@ -75,8 +76,8 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          * ==============================================
          */
         Route::prefix('user_settings')->name('tenant.user_settings.')->group(function() {
-            Route::get('/', [\App\Http\Controllers\Tenants\UserSettingController::class, 'index'])->name('index');
-            Route::post('/fetch', [\App\Http\Controllers\Tenants\UserSettingController::class, 'fetch'])->name('fetch');
+            Route::get('/', [App\Http\Controllers\Tenants\Settings\UserSettingsController::class, 'index'])->name('index');
+            Route::post('/fetch', [App\Http\Controllers\Tenants\Settings\UserSettingsController::class, 'fetch'])->name('fetch');
         });
         
         /**

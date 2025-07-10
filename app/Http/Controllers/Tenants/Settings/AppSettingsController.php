@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Tenants\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\AppSetting;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Exception;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
+use App\Helpers\TimezoneHelper;
 
 class AppSettingsController extends Controller
 {
     public function index(Request $request)
     {
         return Inertia::render('Settings/AppSettings/Index', [
-            'title' => 'Cég beállítások'
+            'title' => 'Cég beállítások',
+            'filters' => $request->all(['search', 'field', 'order']),
         ]);
     }
     
@@ -25,7 +28,7 @@ class AppSettingsController extends Controller
             $_settings = AppSetting::query();
             
             if( $request->has('search') ) {
-                $_settings->whereRaw("CONCAT(key,'',vale) LIKE '%{$request->get('search')}%'");
+                $_settings->whereRaw("CONCAT(key,' ',vale) LIKE '%{$request->get('search')}%'");
             }
             
             if( $request->has('field') && $request->has('order') ) {

@@ -5,10 +5,10 @@ class CompanySettingsService extends BaseService
     constructor()
     {
         super();
-        this.url = "company.settings";
+        this.url = "tenant.comp_settings";
     }
 
-    getCompanySettings(params = {})
+    getSettings(params = {})
     {
         return this.post(route(`${this.url}.fetch`), params);
     }

@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Tenants\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\CompanySetting;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Exception;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanySettingsController extends Controller
 {
     public function index(Request $request)
     {
         return Inertia::render('Settings/CompanySettings/Index', [
-            'title' => 'Cég beállítások'
+            'title' => 'Cég beállítások',
+            'filters' => $request->all(['search', 'field', 'order']),
         ]);
     }
     
@@ -24,7 +26,7 @@ class CompanySettingsController extends Controller
         try {
             $company_id = selected_company();
             
-            if ( !$companyId ) {
+            if ( !$company_id ) {
                 return response()->json(['message' => 'Nincs kiválasztott cég!'], Response::HTTP_FORBIDDEN);
             }
             
