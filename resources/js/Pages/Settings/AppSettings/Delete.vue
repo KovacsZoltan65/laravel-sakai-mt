@@ -27,10 +27,29 @@ const close = () => emit('close');
 </script>
 <template>
     <Dialog :visible="show" modal header="Törlés megerősítése" @hide="close" :style="{ width: '400px' }">
-        <div class="mb-4">Biztosan törlöd a(z) <strong>{{ props.setting?.key }}</strong> beállítást?</div>
+
+        <!-- FELIRAT -->
+        <div
+            class="mb-4"
+        >Biztosan törlöd a(z) <strong>{{ props.setting?.key }}</strong> beállítást?</div>
+
         <div class="flex justify-end gap-2">
-            <Button label="Mégsem" severity="secondary" @click="close" />
-            <Button label="Törlés" icon="pi pi-trash" severity="danger" :loading="isDeleting" @click="confirmDelete" />
+
+            <!-- MÉGSEM GOMB -->
+            <Button
+                label="Mégsem"
+                severity="secondary"
+                @click="close"
+            />
+
+            <!-- TÖRLÉS GOMB -->
+            <Button
+                label="Törlés"
+                icon="pi pi-trash"
+                severity="danger"
+                :loading="isDeleting"
+                @click="confirmDelete"
+            />
         </div>
     </Dialog>
 </template>

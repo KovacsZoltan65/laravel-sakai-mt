@@ -131,12 +131,12 @@ const closeModal = () => {
                 </template>
 
                 <!-- LOGIKAI -->
-                <template v-else-if="form.type === 'bool'">
+                <template v-else-if="form.type === 'bool' || form.key === 'bool'">
                     <ToggleSwitch v-model="form.value" />
                 </template>
 
                 <!-- EGÉSZ SZÁM -->
-                <template v-else-if="form.type === 'int'">
+                <template v-else-if="form.type === 'int' || form.key === 'int'">
                     <InputNumber
                         v-model="form.value"
                         class="w-full"
@@ -146,12 +146,12 @@ const closeModal = () => {
                 </template>
 
                 <!-- JSON -->
-                <template v-else-if="form.type === 'json'">
+                <template v-else-if="form.type === 'json' || form.key === 'json'">
                     <Textarea v-model="form.value" class="w-full" rows="6" />
                 </template>
 
                 <!-- SZÖVEG -->
-                <template v-else>
+                <template v-else-if="form.type === 'string' || form.key === 'string'">
                     <InputText v-model="form.value" class="w-full" />
                 </template>
             </div>

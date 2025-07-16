@@ -7,6 +7,7 @@ import AppSettingService from "@/services/Settings/AppSettingsService.js";
 import TimezoneSelect from "@/Components/TimezoneSelect.vue";
 import { useToast } from "primevue/usetoast";
 import LanguageSelect from "@/Components/LanguageSelect.vue";
+import ThemeSelect from "@/Components/ThemeSelect.vue";
 const toast = useToast();
 
 const props = defineProps({
@@ -127,13 +128,18 @@ const closeModal = () => {
                     <TimezoneSelect v-model="form.value" />
                 </template>
 
-                <!-- NELV -->
+                <!-- NYELV -->
                 <template v-else-if="form.type === 'locale' || form.key === 'locale'">
                     <LanguageSelect v-model="form.value" />
                 </template>
 
+                <!-- THEME -->
+                <template v-else-if="form.key === 'theme' || form.type === 'theme'">
+                    <ThemeSelect v-model="form.value" />
+                </template>
+
                 <!-- LOGIKAI -->
-                <template v-else-if="form.type === 'bool'">
+                <template v-else-if="form.type === 'bool' || form.key === 'bool'">
                     <div class="mt-2">
                         <ToggleSwitch
                             id="value" name="value"
@@ -143,7 +149,7 @@ const closeModal = () => {
                 </template>
 
                 <!-- EGÉSZ SZÁM -->
-                <template v-else-if="form.type === 'int'">
+                <template v-else-if="form.type === 'int' || form.key === 'int'">
                     <InputNumber
                         v-model="form.value"
                         class="w-full"
@@ -152,23 +158,27 @@ const closeModal = () => {
                 </template>
 
                 <!-- JSON -->
-                <template v-else-if="form.type === 'json'">
+                <template v-else-if="form.type === 'json' || form.key === 'json'">
                     <Textarea v-model="form.value" class="w-full" rows="6" />
                 </template>
 
                 <!-- SZÖVEG -->
-                <template v-else>
+                <template v-else-if="form.type === 'string' || form.key === 'string'">
                     <InputText v-model="form.value" class="w-full" />
                 </template>
             </div>
 
             <!-- Gombok -->
             <div class="flex justify-end gap-2 mt-4">
+
+                <!-- MÉGSEM GOMB -->
                 <Button
                     label="Mégsem"
                     severity="secondary"
                     @click="closeModal"
                 />
+
+                <!-- LÉTREHOZÁS GOMB -->
                 <Button
                     label="Létrehozás"
                     icon="pi pi-check"

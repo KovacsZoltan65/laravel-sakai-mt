@@ -84,11 +84,19 @@ onMounted(fetchData);
                 @saved="fetchData" />
 
             <!-- EDIT MODAL -->
-            <EditModal :show="data.editOpen" :title="props.title" :setting="data.setting" @close="data.editOpen = false"
+            <EditModal
+                :show="data.editOpen"
+                :title="props.title"
+                :setting="data.setting"
+                @close="data.editOpen = false"
                 @saved="fetchData" />
 
             <!-- DELETE MODAL -->
-            <DeleteModal :show="data.deleteOpen" :title="props.title" @close="data.deleteOpen = false"
+            <DeleteModal
+                :show="data.deleteOpen"
+                :title="props.title"
+                :setting="data.setting"
+                @close="data.deleteOpen = false"
                 @deleted="fetchData" />
 
             <!-- CREATE BUTTON -->

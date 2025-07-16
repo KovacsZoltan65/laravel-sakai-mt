@@ -15,5 +15,6 @@ export function getTypes ()
         { label: 'JSON', value: 'json' },
         { label: 'Timezone', value: 'timezone' },
         { label: 'Locale', value: 'locale' },
+        { label: 'Theme', value: 'theme' },
     ];
 }

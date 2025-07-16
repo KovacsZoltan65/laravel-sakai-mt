@@ -3,6 +3,9 @@ import { ref, watch } from "vue";
 import { getTypes } from '@/helpers/functions.js';
 import CompanySettingsService from "@/services/Settings/CompanySettingsService";
 import { useToast } from "primevue/usetoast";
+import TimezoneSelect from "@/Components/TimezoneSelect.vue";
+import LanguageSelect from "@/Components/LanguageSelect.vue";
+import ThemeSelect from "@/Components/ThemeSelect.vue";
 const toast = useToast();
 
 const props = defineProps({
@@ -117,9 +120,28 @@ const closeModal = () => {
             <!-- VALUE mező dinamikusan -->
             <div>
                 <label class="font-bold">Érték:</label>
-                <template v-if="form.type === 'bool'">
+
+                <!-- IDŐZÓNA -->
+                <template v-if="form.type === 'timezone' || form.key === 'timezone'">
+                    <TimezoneSelect v-model="form.value" />
+                </template>
+
+                <!-- NYELV -->
+                <template v-else-if="form.type === 'locale' || form.key === 'locale'">
+                    <LanguageSelect v-model="form.value" />
+                </template>
+
+                <!-- THEME -->
+                <template v-else-if="form.type === 'theme' || form.key === 'theme'">
+                    <ThemeSelect v-model="form.value" />
+                </template>
+
+                <!-- LOGIKAI -->
+                <template v-if="form.type === 'bool' || form.key === 'bool'">
                     <ToggleSwitch v-model="form.value" />
                 </template>
+
+                <!-- EGÉSZ SZÁM -->
                 <template v-else-if="form.type === 'int'">
                     <InputNumber
                         v-model="form.value"
@@ -128,10 +150,14 @@ const closeModal = () => {
                         :min="1" :max="7"
                         buttonLayout="horizontal" />
                 </template>
-                <template v-else-if="form.type === 'json'">
+
+                <!-- JSON -->
+                <template v-else-if="form.type === 'json' || form.key === 'json'">
                     <Textarea v-model="form.value" class="w-full" rows="6" />
                 </template>
-                <template v-else>
+
+                <!-- SZÖVEG -->
+                <template v-else-if="form.type === 'string' || form.key === 'string'">
                     <InputText v-model="form.value" class="w-full" />
                 </template>
             </div>
