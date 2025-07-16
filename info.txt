@@ -18,6 +18,7 @@ php artisan tenants:artisan "migrate:fresh --path=database/migrations/tenant --d
 
 route:
 php artisan route:list | findstr tenant
+php artisan route:list | findstr setting
 
 cache törlés
 php artisan tenants:artisan "cache:clear"

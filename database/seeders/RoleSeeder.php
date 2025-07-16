@@ -53,6 +53,11 @@ class RoleSeeder extends Seeder
             'update hierarchy',
             'delete hierarchy',
 
+            'view setting_panel',
+            //'create setting_panel',
+            //'update setting_panel',
+            //'delete setting_panel',
+            
             'view app_setting',
             'create app_setting',
             'update app_setting',

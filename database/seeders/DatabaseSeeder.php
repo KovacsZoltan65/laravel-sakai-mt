@@ -21,6 +21,7 @@ use Database\Seeders\Tenant\tenantMenuSeeder;
 use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
 
+use Database\Seeders\Tenant\tenantSettingsPanelMenuSeeder;
 use Database\Seeders\Tenant\tenantSettingsMenuSeeder;
 use Database\Seeders\Tenant\tenantTenantsMenuSeeder;
 use Database\Seeders\Tenant\tenantHierarchyMenuSeeder;
@@ -111,6 +112,7 @@ class DatabaseSeeder extends Seeder
                 
                 // Beállítások
                 tenantSettingsMenuSeeder::class,
+                tenantSettingsPanelMenuSeeder::class,
                 tenantAppSettingsMenuSeeder::class,
                 tenantCompanySettingsMenuSeeder::class,
                 tenantUserSettingsMenuSeeder::class,

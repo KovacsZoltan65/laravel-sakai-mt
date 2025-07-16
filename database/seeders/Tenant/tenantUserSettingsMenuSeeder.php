@@ -30,7 +30,7 @@ class tenantUserSettingsMenuSeeder extends Seeder
             'route_name' => 'tenant.user_settings.index',
             //'parent_id' => $administration->id,
             'default_weight' => 1,
-            'order_index' => 2,
+            'order_index' => 4,
         ];
         
         if( $userSettings ) {

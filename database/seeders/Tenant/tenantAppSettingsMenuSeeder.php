@@ -33,7 +33,7 @@ class tenantAppSettingsMenuSeeder extends Seeder
             'url' => null,
             'route_name' => 'tenant.app_settings.index',
             'default_weight' => 1,
-            'order_index' => 1,
+            'order_index' => 2,
         ];
         
         if( $appSettings ) {

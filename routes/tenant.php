@@ -41,6 +41,10 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          * ==============================================
          */
         Route::middleware(['auth'])->prefix('settings')->as('tenant.')->group(function() {
+            // Settings Panel
+            Route::get(
+                '/settings_panel', [\App\Http\Controllers\Tenants\Settings\SettingsPanelController::class, 'index']
+            )->name('settings_panel.index');
             // App Settings
             Route::post('/app-settings/fetch', [App\Http\Controllers\Tenants\Settings\AppSettingsController::class, 'fetch'])->name('app_settings.fetch');
             // Company Settings
@@ -55,7 +59,6 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
          * ==============================================
          */
         Route::prefix('app_settings')->name('tenant.app_settings.')->group(function() {
-            
             Route::get('/', [\App\Http\Controllers\Tenants\Settings\AppSettingsController::class, 'index'])->name('index');
             Route::post('/fetch', [\App\Http\Controllers\Tenants\Settings\AppSettingsController::class, 'fetch'])->name('fetch');
         });

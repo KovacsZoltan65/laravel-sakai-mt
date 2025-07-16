@@ -30,7 +30,7 @@ class tenantCompanySettingsMenuSeeder extends Seeder
             'route_name' => 'tenant.comp_settings.index',
             //'parent_id' => $administration->id,
             'default_weight' => 1,
-            'order_index' => 2,
+            'order_index' => 3,
         ];
         
         if( $compSettings ) {

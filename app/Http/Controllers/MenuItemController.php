@@ -19,11 +19,28 @@ class MenuItemController extends Controller
             ['items' => $menuTree]
         ];
 //\Log::info('$menuTree: ' . print_r($menuTree, true));
+
+        foreach($menuTree as $menu) {
+//\Log::info('$menu: ' . print_r($menu, true));
+//\Log::info('$menu label: ' . print_r($menu['label'], true));
+            if( count($menu['items']) > 0 ) {
+                foreach($menu['items'] as $child_1) {
+//\Log::info('$child_1 label: ' . print_r($child_1['label'], true));
+                    if( count($child_1['items']) > 0 ) {
+                        foreach( $child_1['items'] as $child_2 ) {
+//\Log::info('$child_2 label: ' . print_r($child_2['label'], true));
+                        }
+                    }
+                }
+            }
+        }
+
         return response()->json($menuItems);
     }
     
     protected function buildMenuTree($parentId = null)
     {
+\Log::info('$parentId: ' . print_r($parentId, true));
         return MenuItem::where('parent_id', $parentId)
             ->orderBy('order_index')
             ->get()

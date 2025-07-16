@@ -48,6 +48,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'update hierarchy']);
         Permission::create(['name' => 'delete hierarchy']);
 
+        Permission::create(['name' => 'view setting_panel']);
+        //Permission::create(['name' => 'create setting_panel']);
+        //Permission::create(['name' => 'update setting_panel']);
+        //Permission::create(['name' => 'delete setting_panel']);
+        
         Permission::create(['name' => 'view app_setting']);
         Permission::create(['name' => 'create app_setting']);
         Permission::create(['name' => 'update app_setting']);
