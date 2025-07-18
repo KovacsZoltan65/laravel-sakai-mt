@@ -83,6 +83,7 @@ class DatabaseSeeder extends Seeder
                 hqEmployeesMenuSeeder::class,
                 hqCompaniesMenuSeeder::class,
                 hqHierarchyMenuSeeder::class,
+                Hq\hqMenuManagerMenuSeeder::class,
                 
             ]);
         } else {

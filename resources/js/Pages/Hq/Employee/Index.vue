@@ -90,9 +90,17 @@
             <h1 class="text-2xl font-bold mb-4">Céges dolgozók kezelése</h1>
 
             <!--  CREATE MODAL -->
-            <CreateModal :show="data.createOpen" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="props.createOpen = false" @saved="fetchData" />
+            <CreateModal :show="data.createOpen" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="data.createOpen = false" @saved="fetchData" />
             <!-- EDIT MODAL -->
-            <EditModal :show="data.editOpen" :employee="data.employee" :title="props.title" :tenantId="selectedTenant" :companyId="selectedCompany" @close="props.editOpen = false" @saved="fetchData" />
+            <EditModal
+                :show="data.editOpen"
+                :employee="data.employee"
+                :title="props.title"
+                :tenantId="selectedTenant"
+                :companyId="selectedCompany"
+                @close="data.editOpen = false"
+                @saved="fetchData"
+            />
             <!-- DELETE MODAL -->
             <DeleteModal :show="data.deleteOpen" :employee="data.employee" :title="props.title" :tenantId="selectedTenant" @close="props.deleteOpen = false" @deleted="fetchData" />
 

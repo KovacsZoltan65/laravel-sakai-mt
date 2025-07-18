@@ -114,4 +114,25 @@ Route::domain('hq.mt')->middleware(['auth', 'check.tenant.lock'])->group(functio
         Route::get('/', [\App\Http\Controllers\Hq\HierarchyController::class, 'index'])->name('index');
     });
     Route::get('/hierarchy/{employee}', [\App\Http\Controllers\Hq\HierarchyController::class, 'children'])->name('children');
+    
+    /**
+     * ==============================================
+     * MENU
+     * ==============================================
+     */
+    Route::prefix('menu')->name('hq.menu.')->group(function() {
+        // GET /hq/menu
+        Route::get('/', [\App\Http\Controllers\MenuItemController::class, 'manage'])->name('manage'); // 👈 új metódus: menü admin nézet
+        // GET /hq/menu/fetch
+        Route::get('/fetch', [\App\Http\Controllers\MenuItemController::class, 'fetch'])->name('fetch'); // Vue fetchTree()
+        // POST /hq/menu
+        Route::post('/', [\App\Http\Controllers\MenuItemController::class, 'store'])->name('store');
+        // PUT /hq/menu/{menuItem}
+        Route::put('/{menuItem}', [\App\Http\Controllers\MenuItemController::class, 'update'])->name('update');
+        // DELETE /hq/menu/{menuItem}
+        Route::delete('/{menuItem}', [\App\Http\Controllers\MenuItemController::class, 'destroy'])->name('delete');
+        // GET /hq/menu/{menuItem}
+        Route::get('/{menuItem}', [\App\Http\Controllers\MenuItemController::class, 'show'])->name('show');
+        
+    });
 });

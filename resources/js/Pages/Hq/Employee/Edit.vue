@@ -187,7 +187,11 @@ const closeModal = () => {
 
             <!-- Gombok -->
             <div class="flex justify-end gap-2 mt-4">
-                <Button label="Cancel" severity="secondary" @click="closeModal" />
+                <Button
+                    label="Cancel"
+                    severity="secondary"
+                    @click="closeModal"
+                />
                 <Button label="Update" icon="pi pi-check" @click="updateEmployee" />
             </div>
 

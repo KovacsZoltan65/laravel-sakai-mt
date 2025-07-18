@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Route;
 use App\Models\MenuItem;
 use App\Models\MenuItemUsage;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 class MenuItemController extends Controller
 {
+    // Menü elemek lekérése a menü felépítéséhez
     public function index(Request $request)
     {
         $menuTree = $this->buildMenuTree();
@@ -18,10 +19,29 @@ class MenuItemController extends Controller
         $menuItems = [
             ['items' => $menuTree]
         ];
-        
+
         return response()->json($menuItems);
     }
 
+    // Manager oldal index
+    public function manage(Request $request)
+    {
+        return Inertia::render('Hq/MenuManager/Index', [
+            'title' => 'Employees',
+            'filters' => $request->all(['search', 'field', 'order']),
+        ]);
+    }
+    
+    // Manager oldal adatkérése
+    public function fetch(Request $request): JsonResponse
+    {
+        $menuTree = $this->buildMenuTree();
+        
+        return response()->json([
+            ['items' => $menuTree]
+        ]);
+    }
+    
     protected function buildMenuTree($parentId = null)
     {
         return MenuItem::where('parent_id', $parentId)
@@ -44,23 +64,6 @@ class MenuItemController extends Controller
             })
             ->values(); // újraintexelés
     }
-    
-    /*
-    protected function buildMenuTree($parentId = null)
-    {
-        return MenuItem::where('parent_id', $parentId)
-            ->orderBy('order_index') // 💡 fontos
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'label' => $item->label,
-                    'icon' => $item->icon,
-                    'to' => $item->url ?? ($item->route_name ? route($item->route_name) : null),
-                    'items' => $this->buildMenuTree($item->id) // 🧠 ez is rendezett lesz
-                ];
-            });
-    }
-    */
 
     private function isValidMenuItem($item)
     {
@@ -76,74 +79,48 @@ class MenuItemController extends Controller
 
         return true;
     }
-    
-    public function index_old(Request $request)
-    {
-        $host = $request->getHost();
-        //$type = str_contains($host, 'hq') ? 'hq' : 'tenant';
-
-        $menuItems = MenuItem::with(['children', 'usages'])
-            ->whereNull('parent_id')
-            ->orderBy('order_index')->get();
-
-        // Rekurzívan szűrjük a menüpontokat
-        $filtered = $menuItems->filter(function ($item) {
-            return $this->isValidMenuItem($item);
-        })->values(); // újraindexeljük az elemeket
-
-        /*
-        foreach($filtered as $filter) {
-//\Log::info('$filter: ' . print_r($filter->label, true));
-
-            if( $filter->children ) {
-                foreach($filter->children as $cild) {
-//\Log::info('$cild: ' . print_r($cild->label, true));
-                }
-            }
-        }
-        */
-
-        return response()->json($filtered);
-
-        //return response()->json($menuItems);
-    }
 
     public function show(MenuItem $menuItem): JsonResponse
     {
         return response()->json($menuItem->load('children'));
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'label' => 'required|string|max:255',
+            'route_name' => 'nullable|string|max:255',
             'icon' => 'nullable|string|max:255',
-            'url' => 'nullable|string|max:255',
-            'default_weight' => 'nullable|integer',
-            'parent_id' => 'nullable|exists:menu_items,id'
+            'parent_id' => 'nullable|exists:menu_items,id',
+            'order_index' => 'required|integer',
         ]);
 
         $menuItem = MenuItem::create($validated);
-        return response()->json($menuItem, 201);
-    }
 
-    public function update(Request $request, MenuItem $menuItem): JsonResponse
-    {
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'url' => 'nullable|string|max:255',
-            'parent_id' => 'nullable|exists:menu_items,id',
-            'default_weight' => 'sometimes|required|integer',
-        ]);
-
-        $menuItem->update($validated);
         return response()->json($menuItem);
     }
 
-    public function destroy(MenuItem $menuItem): Response
+    public function update(Request $request, MenuItem $menuItem)
     {
+        $validated = $request->validate([
+            'label' => 'required|string|max:255',
+            'route_name' => 'nullable|string|max:255',
+            'icon' => 'nullable|string|max:255',
+            'order_index' => 'required|integer',
+        ]);
+
+        $menuItem->update($validated);
+
+        return response()->json($menuItem);
+    }
+
+    public function destroy(MenuItem $menuItem)
+    {
+        // Gyerekekkel együtt törli
+        $menuItem->descendants()->delete(); // ha van ilyen relationshiped
         $menuItem->delete();
-        return response()->noContent();
+
+        return response()->json(['status' => 'deleted']);
     }
 
     public function getMenu(): JsonResponse
@@ -181,77 +158,3 @@ class MenuItemController extends Controller
         return response()->json(['message' => 'Usage updated successfully.']);
     }
 }
-
-/*
-        // Itt később jogosultság/tenant szerint is szűrhetsz
-        return response()->json([
-            [
-                'items' => [
-                    [
-                        'label' => 'home',
-                        'icon' => 'pi pi-home',
-                        'to' => null,
-                        'items' => [
-                            [
-                                'label' => 'dashboard',
-                                'icon' => 'pi pi-th-large',
-                                'to' => 'http://company-02.mt/dashboard',
-                                'items' => []
-                            ]
-                        ]
-                    ],
-                    [
-                        'label' => 'administration',
-                        'icon' => 'pi pi-cog',
-                        'to' => null,
-                        'items' => [
-                            [
-                                'label' => 'employees',
-                                'icon' => 'pi pi-users',
-                                'to' => 'http://company-02.mt/employees',
-                                'items' => []
-                            ],
-                            [
-                                'label' => 'hierarchy',
-                                'icon' => 'pi pi-share-alt',
-                                'to' => 'http://company-02.mt/hierarchy',
-                                'items' => []
-                            ],
-                            [
-                                'label' => 'companies',
-                                'icon' => 'pi pi-building',
-                                'to' => 'http://company-02.mt/companies',
-                                'items' => []
-                            ]
-                        ]
-                    ],
-                    [
-                        'label' => 'reports',
-                        'icon' => 'pi pi-chart-line',
-                        'to' => null,
-                        'items' => [
-                            [
-                                'label' => 'monthly',
-                                'icon' => 'pi pi-calendar',
-                                'to' => null,
-                                'items' => [
-                                    [
-                                        'label' => 'monthly_01',
-                                        'icon' => '',
-                                        'to' => 'http://company-02.mt/dashboard',
-                                        'items' => []
-                                    ]
-                                ]
-                            ],
-                            [
-                                'label' => 'annual',
-                                'icon' => 'pi pi-file',
-                                'to' => 'http://company-02.mt/dashboard',
-                                'items' => []
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-        */
