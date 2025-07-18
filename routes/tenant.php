@@ -30,6 +30,18 @@ Route::middleware(['tenant', 'auth', 'check.tenant.lock'])->group(function() {
 
         /**
          * ==============================================
+         * SETTINGS
+         * ==============================================
+         */
+        Route::prefix('settings')->group(function() {
+            Route::get('/app', [App\Http\Controllers\Tenants\Settings\AppSettingController::class, 'index']);
+            Route::post('/app', [App\Http\Controllers\Tenants\Settings\AppSettingController::class, 'store']);
+            Route::delete('/app/{key}', [App\Http\Controllers\Tenants\Settings\AppSettingController::class, 'destroy']);
+            Route::get('/resolve/{key}', [App\Http\Controllers\Tenants\Settings\AppSettingController::class, 'resolve']);
+        });
+        
+        /**
+         * ==============================================
          * DASHBOARD
          * ==============================================
          */

@@ -52,6 +52,8 @@ class RoleSeeder extends Seeder
             'create hierarchy',
             'update hierarchy',
             'delete hierarchy',
+            
+            'view settings',
         ]);
 
         // Admin

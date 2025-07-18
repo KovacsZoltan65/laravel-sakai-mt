@@ -4,21 +4,20 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+//use Database\Seeders\Tenant\tenantTenantsMenuSeeder;
+
 
 use App\Models\Tenant;
-
+use Database\Seeders\Hq\hqCompaniesMenuSeeder;
+use Database\Seeders\Hq\hqEmployeesMenuSeeder;
+use Database\Seeders\Hq\hqHierarchyMenuSeeder;
 use Database\Seeders\Hq\hqMenuSeeder;
 use Database\Seeders\Hq\hqTenantsMenuSeeder;
-use Database\Seeders\Hq\hqEmployeesMenuSeeder;
-use Database\Seeders\Hq\hqCompaniesMenuSeeder;
-use Database\Seeders\Hq\hqHierarchyMenuSeeder;
-
-use Database\Seeders\Tenant\tenantMenuSeeder;
-use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantCompaniesMenuSeeder;
-use Database\Seeders\Tenant\tenantTenantsMenuSeeder;
+use Database\Seeders\Tenant\tenantEmployeesMenuSeeder;
 use Database\Seeders\Tenant\tenantHierarchyMenuSeeder;
-
+use Database\Seeders\Tenant\tenantMenuSeeder;
+use Database\Seeders\Tenant\tenantSettingMenuSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -68,6 +67,7 @@ class DatabaseSeeder extends Seeder
             EmployeeSeeder::class,
             HierarchySeeder::class,
 
+            SettingsMetaSeeder::class,
         ]);
 
 
@@ -95,6 +95,7 @@ class DatabaseSeeder extends Seeder
                 tenantEmployeesMenuSeeder::class,
                 tenantCompaniesMenuSeeder::class,
                 tenantHierarchyMenuSeeder::class,
+                tenantSettingMenuSeeder::class,
 
                 AcsSystemSeeder::class,
 

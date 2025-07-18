@@ -58,6 +58,25 @@ export default defineConfig({
 sass-migrator module --migrate-deps C:\wamp64\www\laravel-sakai-mt\resources\js\sakai\assets\styles.scss
 
 // ===========================================
+// SETTINGS
+// ===========================================
+Példa meta rekordra (JSON-ben)
+{
+    "key": "dark_mode",
+    "type": "bool",
+    "default_value": false,
+    "scope": "user",
+    "depends_on": ["theme"],
+    "active_when": {
+        "theme": "dark"
+    },
+    "description": "Sötét mód bekapcsolása csak akkor érvényes, ha a téma 'dark'.",
+    "group": "appearance"
+}
+
+
+
+// ===========================================
 // ACS SYSTEMS
 // ===========================================
 php artisan make:model AcsSystem

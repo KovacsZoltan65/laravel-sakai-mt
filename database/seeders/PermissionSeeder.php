@@ -47,5 +47,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'create hierarchy']);
         Permission::create(['name' => 'update hierarchy']);
         Permission::create(['name' => 'delete hierarchy']);
+        
+        Permission::create(['name' => 'view settings']);
     }
 }
