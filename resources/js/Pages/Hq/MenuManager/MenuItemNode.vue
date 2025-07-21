@@ -6,6 +6,7 @@ import EditModal from "@/Pages/Hq/MenuManager/Edit.vue";
 const props = defineProps({
     item: Object,
     depth: Number,
+    menuTree: Array
 });
 
 const emit = defineEmits(['refresh']);
@@ -42,11 +43,16 @@ const moveDown = async () => {
 </script>
 
 <template>
-    <div :style="{ marginLeft: depth * 20 + 'px' }" class="mb-1 p-1 border rounded bg-gray-50">
+    <div
+        :style="{ marginLeft: depth * 20 + 'px' }"
+        class="mb-1 p-1 border rounded bg-gray-50">
 
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <i v-if="item.icon" :class="['pi', item.icon]" class="text-sm"></i>
+                <i
+                    v-if="item.icon"
+                    :class="['pi', item.icon]"
+                    class="text-sm"></i>
                 <strong>{{ item.label }}</strong>
                 <span v-if="item.route_name" class="ml-2 text-sm text-blue-600">[{{ item.route_name }}]</span>
             </div>
@@ -71,6 +77,7 @@ const moveDown = async () => {
             :key="child.id"
             :item="child"
             :depth="depth + 1"
+            :menuTree="menuTree"
             @refresh="emit('refresh')"
         />
 
@@ -78,6 +85,8 @@ const moveDown = async () => {
         <EditModal
             v-if="showEdit"
             :menuItem="item"
+            :menuTree="menuTree"
+            :parentId="item.parent_id"
             @close="showEdit = false"
             @saved="emit('refresh')"
         />
@@ -85,7 +94,8 @@ const moveDown = async () => {
         <!-- Új hozzáadása -->
         <EditModal
             v-if="showAdd"
-            :parentId="item.id"
+            :parentId="item.parent_id"
+            :menuTree="menuTree"
             @close="showAdd = false"
             @saved="emit('refresh')"
         />

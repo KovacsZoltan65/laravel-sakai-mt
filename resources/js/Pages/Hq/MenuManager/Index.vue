@@ -37,6 +37,7 @@ onMounted(fetchMenu);
                     :key="item.id"
                     :item="item"
                     :depth="0"
+                    :menuTree="menuTree"
                     @refresh="fetchMenu"
                 />
             </div>

@@ -38,7 +38,7 @@ class hqMenuSeeder extends Seeder
                 'route_name' => 'dashboard',
                 'icon' => 'pi pi-th-large',
                 'default_weight' => 1,
-                'order_index' => 1,
+                'order_index' => 2,
             ]
         );
 
@@ -48,7 +48,7 @@ class hqMenuSeeder extends Seeder
             'url' => null,
             'route_name' => null,
             'icon' => 'pi pi-cog',
-            'default_weight' => 2,
+            'default_weight' => 1,
             'order_index' => 1,
         ]);
 
