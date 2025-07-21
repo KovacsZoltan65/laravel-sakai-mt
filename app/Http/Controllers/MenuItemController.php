@@ -35,11 +35,15 @@ class MenuItemController extends Controller
     // Manager oldal adatkérése
     public function fetch(Request $request): JsonResponse
     {
-        $menuTree = $this->buildMenuTree();
+        $tree = $this->buildFullTree();
+
+//\Log::info('$tree: ' . print_r(json_encode($tree) , true));
         
-        return response()->json([
-            ['items' => $menuTree]
-        ]);
+        return response()->json($tree);
+        
+        //$menuTree = $this->buildMenuTree();
+        
+        //return response()->json([ ['items' => $menuTree] ]);
     }
     
     protected function buildMenuTree($parentId = null)
@@ -63,6 +67,26 @@ class MenuItemController extends Controller
                 ];
             })
             ->values(); // újraintexelés
+    }
+    
+    protected function buildFullTree($parentId = null)
+    {
+        return MenuItem::where('parent_id', $parentId)
+            ->orderBy('order_index')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'label' => $item->label,
+                    'icon' => $item->icon,
+                    'url' => $item->url,
+                    'route_name' => $item->route_name,
+                    'can' => $item->can,
+                    'order_index' => $item->order_index,
+                    'parent_id' => $item->parent_id,
+                    'items' => $this->buildFullTree($item->id), // 👈 rekurzió
+                ];
+            })->values();
     }
 
     private function isValidMenuItem($item)

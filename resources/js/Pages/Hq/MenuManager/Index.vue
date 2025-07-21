@@ -1,9 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { ref, onMounted, computed } from 'vue';
+import { Head, usePage } from '@inertiajs/vue3';
+
 import MenuService from '@/services/Menu/MenuService.js';
 import MenuItemNode from './MenuItemNode.vue';
 import AppLayout from '@/sakai/layout/AppLayout.vue';
+
+const page = usePage();
 
 const props = defineProps({
     title: String,
@@ -14,7 +17,8 @@ const menuTree = ref([]);
 
 const fetchMenu = async () => {
     const response = await MenuService.fetchTree();
-    menuTree.value = response.data[0].items;
+    //menuTree.value = response.data[0].items;
+    menuTree.value = response.data;
 };
 
 onMounted(fetchMenu);
@@ -40,19 +44,3 @@ onMounted(fetchMenu);
     </AppLayout>
 
 </template>
-<!--
-<template>
-  <div class="p-4">
-    <h2 class="text-xl font-bold mb-4">Menü adminisztráció</h2>
-    <div v-if="menuTree.length > 0">
-      <MenuItemNode
-        v-for="(item, index) in menuTree"
-        :key="item.id"
-        :item="item"
-        :depth="0"
-        @refresh="fetchMenu"
-      />
-    </div>
-  </div>
-</template>
--->
