@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed, onMounted } from "vue";
 import { usePage } from '@inertiajs/vue3';
-import MenuService from "@/services/MenuService.js";
+import MenuService from "@/services/Menu/MenuService.js";
 
 // =======================================
 // SELECTORS
@@ -71,6 +71,8 @@ onMounted(() => {
 // Mentés
 const save = async () => {
     isSaving.value = true;
+
+console.log('props.menuItem', props.menuItem);
 
     try {
         if (props.menuItem?.id) {

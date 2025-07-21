@@ -15,7 +15,8 @@ class MenuService extends BaseService {
     }
 
     async update(id, params) {
-        return this.put(route(`${this.url}.update`), id, params);
+        //return this.put(route(`${this.url}.update`), id, params);
+        return this.put(route(`${this.url}.update`, { menuItem: id }), params);
     }
 
     async delete(id) {

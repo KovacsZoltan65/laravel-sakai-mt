@@ -111,6 +111,8 @@ class MenuItemController extends Controller
 
     public function store(Request $request)
     {
+\Log::info('store all: ' . print_r($request->all(), true));
+        /*
         $validated = $request->validate([
             'label' => 'required|string|max:255',
             'route_name' => 'nullable|string|max:255',
@@ -122,10 +124,13 @@ class MenuItemController extends Controller
         $menuItem = MenuItem::create($validated);
 
         return response()->json($menuItem);
+        */
     }
 
     public function update(Request $request, MenuItem $menuItem)
     {
+\Log::info('update all: ' . print_r($request->all(), true));
+        /*
         $validated = $request->validate([
             'label' => 'required|string|max:255',
             'route_name' => 'nullable|string|max:255',
@@ -136,6 +141,7 @@ class MenuItemController extends Controller
         $menuItem->update($validated);
 
         return response()->json($menuItem);
+        */
     }
 
     public function destroy(MenuItem $menuItem)
