@@ -38,7 +38,7 @@ class tenantMenuSeeder extends Seeder
                 'route_name' => 'dashboard',
                 'icon' => 'pi pi-th-large',
                 'default_weight' => 1,
-                'order_index' => 0,
+                'order_index' => 2,
             ]
         );
 
